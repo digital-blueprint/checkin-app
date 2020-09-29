@@ -1,0 +1,21 @@
+{
+  "short_name": "TUGrazCheckIn",
+  "name": "TUGraz Check-in",
+  "start_url": "./dbp-check-in.html",
+  "icons": [
+    {
+      "src": "local/dbp-check-in/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "local/dbp-check-in/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "background_color": "#245B78",
+  "display": "standalone",
+  "theme_color": "#E4154B"
+}
+

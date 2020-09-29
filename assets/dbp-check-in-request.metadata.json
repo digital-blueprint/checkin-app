@@ -1,0 +1,17 @@
+{
+  "element": "dbp-check-in-request",
+  "module_src": "dbp-check-in-request.js",
+  "routing_name": "check-in-request",
+  "name": {
+    "de": "An Ort anmelden",
+    "en": "Check-in at a place"
+  },
+  "short_name": {
+    "de": "An Ort anmelden",
+    "en": "Check-in at a place"
+  },
+  "description": {
+    "de": "Meldet den eingeloggten User an einem Ort an.",
+    "en": "Logs the logged in user in one place."
+  }
+}
