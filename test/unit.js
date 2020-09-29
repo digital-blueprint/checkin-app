@@ -1,13 +1,13 @@
 import {assert} from 'chai';
 
-import '../src/dbp-authentic-image-request';
-import '../src/dbp-authentic-document.js';
+import '../src/dbp-check-in-request';
+import '../src/dbp-check-in.js';
 
-suite('dbp-authentic-image-request basics', () => {
+suite('dbp-check-in-request basics', () => {
   let node;
 
   suiteSetup(async () => {
-    node = document.createElement('dbp-authentic-image-request');
+    node = document.createElement('dbp-check-in-request');
     document.body.appendChild(node);
     await node.updateComplete;
   });
@@ -21,7 +21,7 @@ suite('dbp-authentic-image-request basics', () => {
   });
 });
 
-suite('dbp-authentic-document-app basics', () => {
+suite('dbp-check-in-app basics', () => {
   let node;
 
   suiteSetup(async () => {
