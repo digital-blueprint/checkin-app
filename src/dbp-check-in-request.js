@@ -5,6 +5,7 @@ import * as commonUtils from 'dbp-common/utils';
 import {Button, Icon, MiniSpinner} from 'dbp-common';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
+import {QrCodeScanner} from 'dbp-qr-code-scanner';
 
 const i18n = createI18nInstance();
 
@@ -21,6 +22,7 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
           'dbp-mini-spinner': MiniSpinner,
           'dbp-button': Button,
           'dbp-textswitch': TextSwitch,
+          'dbp-qr-code-scanner': QrCodeScanner,
         };
     }
 
@@ -91,6 +93,7 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
         return html`
            <h2>${i18n.t('check-in.title')}</h2>
            <p>${i18n.t('check-in.description')}</p>
+           <dbp-qr-code-scanner lang="${this.lang}"></dbp-qr-code-scanner>
         `;
     }
 }
