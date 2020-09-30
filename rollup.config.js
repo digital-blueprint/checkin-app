@@ -82,7 +82,7 @@ switch (build) {
     break;
   case 'bs':
     basePath = '/dist/';
-    entryPointURL = 'http://bs-local.com:8000';
+    entryPointURL = 'https://bs-local.com:8000';
     keyCloakServer = 'auth-dev.tugraz.at';
     keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
     keyCloakClientId = 'auth-dev-mw-frontend-local';
