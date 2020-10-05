@@ -1,7 +1,11 @@
 {
   "check-in": {
     "title": "Check-in at a place.",
-    "description": "With this application you can check-in at a place.",
-    "check-out-button": "Check-Out"
+    "description": "With this application you can check-in at a place."
+  },
+  "check-out": {
+    "title": "Check-out at a place",
+    "description": "With this application you can check-out at a checked-in location.",
+    "button-text": "Abmelden"
   }
 }

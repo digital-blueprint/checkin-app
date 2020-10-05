@@ -14,6 +14,10 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
         super();
         this.lang = i18n.language;
         this.entryPointUrl = commonUtils.getAPiUrl();
+        this.locationHash = '';
+        this.isCheckedIn = false;
+        this.identifier = '';
+        this.agent = '';
     }
 
     static get scopedElements() {
@@ -30,6 +34,8 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
         return {
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
+            locationHash: { type: String, attribute: false },
+            isCheckedIn: { type: Boolean, attribute: false}
         };
     }
 
@@ -60,15 +66,91 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
 
         return response;
     }
+    
+    async doCheckIn(event) {
+        let url = event.detail;
+        event.stopPropagation();
 
-    parseJwt(token) {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+        if (!this.isCheckedIn) {
+            this.locationHash = this.decodeUrl(url);
+            console.log(this.locationHash);
 
-        return JSON.parse(jsonPayload);
+            if (this.locationHash.length > 0) {
+                let responseData = await this.sendCheckInRequest();
+                try {
+                    this.parseCheckInInformation(responseData);
+                } catch(exception) {
+                    console.log("error: returned data cannot be parsed");
+                }
+            } else {
+                console.log('error: location hash is empty');
+            }
+        }
+    }
+
+    decodeUrl(url) {
+        console.log(url);
+        let params = new URLSearchParams(url);
+        return params.get('l');
+    }
+
+    parseCheckInInformation(data) {
+        this.identifier = data['identifier'];
+        this.agent = data['agent'];
+        console.log(this.identifier);
+        console.log(this.agent);
+    }
+
+    async sendCheckInRequest() {
+        let response;
+
+        let body = {
+            "location": this.locationHash,
+        };
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/ld+json',
+                Authorization: "Bearer " + window.DBPAuthToken
+            },
+            body: JSON.stringify(body)
+        };
+
+        this.isCheckedIn = true;
+
+        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);     
+
+        console.log('response: ', response);
+
+        return response;
+    }
+
+    async sendCheckOutRequest() {
+        let response;
+
+        let body = {
+            "identifier": this.identifier,
+            "agent": this.agent,
+            "location": this.locationHash,
+        };
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/ld+json',
+                Authorization: "Bearer " + window.DBPAuthToken
+            },
+            body: JSON.stringify(body)
+        };
+
+        this.isCheckedIn = false;
+
+        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_out_actions', options);
+
+        console.log('response: ', response);
+
+        return response;
     }
 
     static get styles() {
@@ -91,9 +173,10 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
 
     render() {
         return html`
-           <h2>${i18n.t('check-in.title')}</h2>
-           <p>${i18n.t('check-in.description')}</p>
-           <dbp-qr-code-scanner lang="${this.lang}"></dbp-qr-code-scanner>
+            <h2>${i18n.t('check-in.title')}</h2>
+            <p>${i18n.t('check-in.description')}</p>
+            ${!this.isCheckedIn ? html`<dbp-qr-code-scanner lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner>` : ``}
+            ${this.isCheckedIn ? html`<button class="button is-primary" @click="${this.sendCheckOutRequest}">${i18n.t('check-out.button-text')}</button>` : ``}
         `;
     }
 }

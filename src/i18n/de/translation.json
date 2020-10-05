@@ -1,7 +1,11 @@
 {
   "check-in": {
     "title": "An Ort anmelden",
-    "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
-    "check-out-button": "Abmelden"
+    "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden."
+  },
+  "check-out": {
+    "title": "An Ort abmelden",
+    "description": "Mit dieser Applikation können Sie sich an einem angemeldeten Ort wieder abmelden.",
+    "button-text": "Abmelden"
   }
 }
