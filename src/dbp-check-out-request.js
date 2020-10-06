@@ -106,8 +106,7 @@ class CheckOut extends ScopedElementsMixin(LitElement) {
         let list = [];
         
         let response = this.requestActiveCheckins();
-
-        //TODO parse response
+        console.log(response); //TODO parse response
 
         return list;
     }

@@ -1,9 +1,10 @@
 import {createI18nInstance} from './i18n.js';
-import {css, html, LitElement} from 'lit-element'; //TODO
-import DBPLitElement from 'dbp-common/dbp-lit-element'; //TODO
+import {css, html} from 'lit-element';
+import DBPLitElement from 'dbp-common/dbp-lit-element';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
 import {Button, Icon, MiniSpinner} from 'dbp-common';
+import {classMap} from 'lit-html/directives/class-map.js';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from 'dbp-qr-code-scanner';
@@ -16,12 +17,13 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.lang = i18n.language;
         this.entryPointUrl = commonUtils.getAPiUrl();
         this.locationHash = '';
+        this.seatNr = '';
         this.isCheckedIn = false;
         this.identifier = '';
         this.agent = '';
         this.showQrContainer = false;
         this.showManuallyContainer = false;
-        this.borderContainer = "display:none";
+        this.showBorder = false;
     }
 
     static get scopedElements() {
@@ -39,10 +41,11 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             locationHash: { type: String, attribute: false },
+            seatNr: { type: String, attribute: false },
             isCheckedIn: { type: Boolean, attribute: false},
             showQrContainer: { type: Boolean, attribute: false},
             showManuallyContainer: { type: Boolean, attribute: false},
-            borderContainer: { type: String, attribute: false}
+            showBorder: { type: Boolean, attribute: false},
         };
     }
 
@@ -75,10 +78,6 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async doCheckOut() {
-        this.showManuallyContainer = false;
-        this.showQrContainer = false;
-        this.borderContainer = "display:none";
-
         let responseData = await this.sendCheckOutRequest();
 
         return responseData;
@@ -87,16 +86,21 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     async doCheckIn(event) {
         let url = event.detail;
         event.stopPropagation(); //TODO await?
-        this._("#qr-scanner").stopScan = true;
+        this._("#qr-scanner").stopScan = true; //TODO error handling
+
+        this.showManuallyContainer = false;
+        this.showQrContainer = false;
+        this.showBorder = false;
 
         if (!this.isCheckedIn) {
-            this.locationHash = this.decodeUrl(url);
-            console.log(this.locationHash);
+            this.decodeUrl(url);
+            console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
             if (this.locationHash.length > 0) {
-                let responseData = await this.sendCheckInRequest();
+                let responseData = await this.sendCheckInRequest(); //TODO error handling
                 try {
-                    this.parseCheckInInformation(responseData);
+                    this.identifier = responseData['identifier'];
+                    this.agent = responseData['agent'];
                 } catch(exception) {
                     console.log("error: returned data cannot be parsed");
                 }
@@ -109,21 +113,22 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     decodeUrl(url) {
         console.log(url);
         let params = new URLSearchParams(url);
-        return params.get('l');
-    }
-
-    parseCheckInInformation(data) {
-        this.identifier = data['identifier'];
-        this.agent = data['agent'];
-        // console.log(this.identifier);
-        // console.log(this.agent);
+        let locationParam = params.get('l');
+        let splitted = locationParam.split('-');
+        if (splitted.length > 1) {
+            this.locationHash = splitted[0];
+            this.seatNr = splitted[1]; //TODO check if valid number?
+        } else {
+            console.log('error: parsing went wrong');
+        }
     }
 
     async sendCheckInRequest() {
         let response;
 
         let body = {
-            "location": this.locationHash,
+            "location": '/check_in_places/' + this.locationHash,
+            "seatNumber": this.seatNr,
         };
 
         const options = {
@@ -172,13 +177,13 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
 
     showQrReader() {
-        this.borderContainer = "display:flex";
+        this.showBorder = true;
         this.showQrContainer = true;
         this.showManuallyContainer = false;
     }
 
     showRoomSelector() {
-        this.borderContainer = "display:flex";
+        this.showBorder = true;
         this.showQrContainer = false;
         this.showManuallyContainer = true;
     }
@@ -231,22 +236,21 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     render() {
         return html`
             <h2>${i18n.t('check-in.title')}</h2>
-            ${this.isCheckedIn ? html`
-                <p>${i18n.t('check-in.checked-in-description')}</p>
-                <div>
-                    <button class="button is-primary" @click="${this.doCheckOut}">${i18n.t('check-out.button-text')}</button>
-                </div>` : 
-            html`
-                <p>${i18n.t('check-in.description')}</p>
-                <div id="btn-container">
-                    <button class="button is-primary" @click="${this.showQrReader}">${i18n.t('check-in.qr-button-text')}</button>
-                    <button class="button" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button>
-                </div>
-                <div class="border" style="${this.borderContainer}">
-                    ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
-                    ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element"></div><dbp-person-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}"></dbp-person-select></div>` : ``}
-                </div>`
-            }
+            
+            <p class="${classMap({hidden: !this.isCheckedIn})}">${i18n.t('check-in.checked-in-description')}</p>
+            <div>
+                <button class="button is-primary ${classMap({hidden: !this.isCheckedIn})}" @click="${this.doCheckOut}">${i18n.t('check-out.button-text')}</button>
+            </div>
+
+            <p class="${classMap({hidden: this.isCheckedIn})}">${i18n.t('check-in.description')}</p>
+            <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
+                <button class="button is-primary" @click="${this.showQrReader}">${i18n.t('check-in.qr-button-text')}</button>
+                <button class="button" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button>
+            </div>
+            <div class="border ${classMap({hidden: !this.showBorder})}">
+                ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
+                ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element">TODO</div>` : ``}
+            </div>
         `;
     }
 }
