@@ -226,8 +226,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 }
 
                 #btn-container {
-                    display: flex;
-                    flex-direction: column;
+                    text-align: center;
                 }
             }
         `;
