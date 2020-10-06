@@ -1,5 +1,6 @@
 import {createI18nInstance} from './i18n.js';
-import {css, html, LitElement} from 'lit-element';
+import {css, html, LitElement} from 'lit-element'; //TODO
+import DBPLitElement from 'dbp-common/dbp-lit-element'; //TODO
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
 import {Button, Icon, MiniSpinner} from 'dbp-common';
@@ -9,7 +10,7 @@ import {QrCodeScanner} from 'dbp-qr-code-scanner';
 
 const i18n = createI18nInstance();
 
-class CheckIn extends ScopedElementsMixin(LitElement) {
+class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     constructor() {
         super();
         this.lang = i18n.language;
@@ -77,12 +78,16 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
         this.showManuallyContainer = false;
         this.showQrContainer = false;
         this.borderContainer = "display:none";
+
         let responseData = await this.sendCheckOutRequest();
+
+        return responseData;
     }
     
     async doCheckIn(event) {
         let url = event.detail;
-        event.stopPropagation();
+        event.stopPropagation(); //TODO await?
+        this._("#qr-scanner").stopScan = true;
 
         if (!this.isCheckedIn) {
             this.locationHash = this.decodeUrl(url);
@@ -207,6 +212,19 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
                 margin-top: 2rem;
                 border-top: 1px solid black;
             }
+
+            @media only screen
+            and (orientation: portrait)
+            and (max-device-width: 765px) {   
+                .inline-block{    
+                    width: 100%;
+                }
+
+                #btn-container {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
         `;
     }
 
@@ -225,8 +243,8 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
                     <button class="button" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button>
                 </div>
                 <div class="border" style="${this.borderContainer}">
-                    ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
-                    ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element"></div><dbp-person-select lang="${this.lang}"></dbp-person-select></div>` : ``}
+                    ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
+                    ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element"></div><dbp-person-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}"></dbp-person-select></div>` : ``}
                 </div>`
             }
         `;
