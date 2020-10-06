@@ -1,0 +1,17 @@
+{
+  "element": "dbp-check-out-request",
+  "module_src": "dbp-check-out-request.js",
+  "routing_name": "check-out-request",
+  "name": {
+    "de": "Zeige alle Anmeldungen",
+    "en": "Show all check-ins"
+  },
+  "short_name": {
+    "de": "Zeige alle Anmeldungen",
+    "en": "Show all check-ins"
+  },
+  "description": {
+    "de": "Zeigt alle angemeldeten Orte.",
+    "en": "Shows all checked-in places."
+  }
+}
