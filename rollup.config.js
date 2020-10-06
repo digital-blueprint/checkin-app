@@ -139,6 +139,7 @@ export default {
     input: (build != 'test') ? [
       'src/' + pkg.name + '.js',
       'src/dbp-check-in-request.js',
+      'src/dbp-check-out-request.js',
     ] : glob.sync('test/**/*.js'),
     output: {
       dir: 'dist',

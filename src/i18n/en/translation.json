@@ -1,11 +1,14 @@
 {
   "check-in": {
     "title": "Check-in at a place.",
-    "description": "With this application you can check-in at a place."
+    "description": "With this application you can check-in at a place.",
+    "qr-button-text": "Check-in with QR Code",
+    "manually-button-text": "Select location manually",
+    "checked-in-description": "You are already registered at a location."
   },
   "check-out": {
-    "title": "Check-out at a place",
-    "description": "With this application you can check-out at a checked-in location.",
-    "button-text": "Abmelden"
+    "title": "Show all check-ins",
+    "description": "With this application you can check-out from your registered locations.",
+    "button-text": "Check-out"
   }
 }

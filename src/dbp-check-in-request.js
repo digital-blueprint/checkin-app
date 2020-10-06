@@ -18,6 +18,9 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
         this.isCheckedIn = false;
         this.identifier = '';
         this.agent = '';
+        this.showQrContainer = false;
+        this.showManuallyContainer = false;
+        this.borderContainer = "display:none";
     }
 
     static get scopedElements() {
@@ -35,7 +38,10 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             locationHash: { type: String, attribute: false },
-            isCheckedIn: { type: Boolean, attribute: false}
+            isCheckedIn: { type: Boolean, attribute: false},
+            showQrContainer: { type: Boolean, attribute: false},
+            showManuallyContainer: { type: Boolean, attribute: false},
+            borderContainer: { type: String, attribute: false}
         };
     }
 
@@ -65,6 +71,13 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
         });
 
         return response;
+    }
+
+    async doCheckOut() {
+        this.showManuallyContainer = false;
+        this.showQrContainer = false;
+        this.borderContainer = "display:none";
+        let responseData = await this.sendCheckOutRequest();
     }
     
     async doCheckIn(event) {
@@ -97,8 +110,8 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
     parseCheckInInformation(data) {
         this.identifier = data['identifier'];
         this.agent = data['agent'];
-        console.log(this.identifier);
-        console.log(this.agent);
+        // console.log(this.identifier);
+        // console.log(this.agent);
     }
 
     async sendCheckInRequest() {
@@ -153,6 +166,18 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
         return response;
     }
 
+    showQrReader() {
+        this.borderContainer = "display:flex";
+        this.showQrContainer = true;
+        this.showManuallyContainer = false;
+    }
+
+    showRoomSelector() {
+        this.borderContainer = "display:flex";
+        this.showQrContainer = false;
+        this.showManuallyContainer = true;
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -168,15 +193,42 @@ class CheckIn extends ScopedElementsMixin(LitElement) {
             h2 {
                 margin-bottom: 10px;
             }
+
+            #btn-container {
+                margin-top: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .element {
+                margin-top: 1.5rem;
+            }
+
+            .border {
+                margin-top: 2rem;
+                border-top: 1px solid black;
+            }
         `;
     }
 
     render() {
         return html`
             <h2>${i18n.t('check-in.title')}</h2>
-            <p>${i18n.t('check-in.description')}</p>
-            ${!this.isCheckedIn ? html`<dbp-qr-code-scanner lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner>` : ``}
-            ${this.isCheckedIn ? html`<button class="button is-primary" @click="${this.sendCheckOutRequest}">${i18n.t('check-out.button-text')}</button>` : ``}
+            ${this.isCheckedIn ? html`
+                <p>${i18n.t('check-in.checked-in-description')}</p>
+                <div>
+                    <button class="button is-primary" @click="${this.doCheckOut}">${i18n.t('check-out.button-text')}</button>
+                </div>` : 
+            html`
+                <p>${i18n.t('check-in.description')}</p>
+                <div id="btn-container">
+                    <button class="button is-primary" @click="${this.showQrReader}">${i18n.t('check-in.qr-button-text')}</button>
+                    <button class="button" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button>
+                </div>
+                <div class="border" style="${this.borderContainer}">
+                    ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
+                    ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element"></div><dbp-person-select lang="${this.lang}"></dbp-person-select></div>` : ``}
+                </div>`
+            }
         `;
     }
 }

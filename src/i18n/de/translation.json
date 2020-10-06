@@ -1,11 +1,14 @@
 {
   "check-in": {
     "title": "An Ort anmelden",
-    "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden."
+    "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
+    "qr-button-text": "Mit QR Code anmelden",
+    "manually-button-text": "Ort manuell auswählen",
+    "checked-in-description": "Sie sind bereits an einem Ort angemeldet."
   },
   "check-out": {
-    "title": "An Ort abmelden",
-    "description": "Mit dieser Applikation können Sie sich an einem angemeldeten Ort wieder abmelden.",
+    "title": "Zeige alle Anmeldungen",
+    "description": "Mit dieser Applikation können Sie sich von ihren angemeldeten Orten wieder abmelden.",
     "button-text": "Abmelden"
   }
 }
