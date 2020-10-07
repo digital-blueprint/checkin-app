@@ -4,7 +4,15 @@
     "description": "With this application you can check-in at a place.",
     "qr-button-text": "Check-in with QR Code",
     "manually-button-text": "Select location manually",
-    "checked-in-description": "You are already registered at a location."
+    "checked-in-description": "You are already registered at a location.",
+    "hash-false-title": "Room doesn't exist!",
+    "hash-false-body": "The scanned room does not exist, please contact a TU Graz employee.",
+    "qr-false-title": "Wrong QR-Code!",
+    "qr-false-body": "This code is not for this application. Please use a check-in QR code.",
+    "success-checkin-title": "Checked in!",
+    "success-checkin-body": "You have successfully checked into {{room}}.",
+    "error-title": "Error!",
+    "error-body": "We're sorry, something went wrong."
   },
   "check-out": {
     "title": "Show all check-ins",

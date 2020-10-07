@@ -4,7 +4,15 @@
     "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
     "qr-button-text": "Mit QR Code anmelden",
     "manually-button-text": "Ort manuell auswählen",
-    "checked-in-description": "Sie sind bereits an einem Ort angemeldet."
+    "checked-in-description": "Sie sind in {{room}} angemeldet.",
+    "hash-false-title": "Raum existiert nicht!",
+    "hash-false-body": "Der gescannte Raum existiert nicht, bitte wenden Sie sich an einen Mitarbeiter der Gebäudetechnik.",
+    "qr-false-title": "Falscher QR-Code!",
+    "qr-false-body": "Dieser Code ist nicht für diese Applikation. Bitte benutzen Sie einen Checkin QR-Code.",
+    "success-checkin-title": "Erfolgreich angemeldet!",
+    "success-checkin-body": "Sie haben sich erfolgreich im {{room}} angemeldet.",
+    "error-title": "Fehler!",
+    "error-body": "Es tut uns leid, etwas ist schief gelaufen."
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",

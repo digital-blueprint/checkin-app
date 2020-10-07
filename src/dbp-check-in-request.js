@@ -8,6 +8,8 @@ import {classMap} from 'lit-html/directives/class-map.js';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from 'dbp-qr-code-scanner';
+import { send } from 'dbp-common/notification';
+import select2CSSPath from 'select2/dist/css/select2.min.css';
 
 const i18n = createI18nInstance();
 
@@ -19,13 +21,15 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.locationHash = '';
         this.seatNr = '';
         this.isCheckedIn = false;
+        this.checkedInRoom = '';
         this.identifier = '';
         this.agent = '';
         this.showManuallyContainer = false;
         this.showQrContainer = false;
         this.showBorder = false;
-
+        this.searchHashString = "tugrazcheckin: -";
         this.wrongHash = [];
+        this.wrongQR = [];
     }
 
     static get scopedElements() {
@@ -93,7 +97,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         let check = await this.decodeUrl(data);
         if (check) {
 
-            // TODO sho better success message!
+            // TODO logout button should be 'fancier' + You are checked in at "ROOMXX" in frontend
 
 
             if (!this.isCheckedIn) {
@@ -101,7 +105,13 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
                 if (this.locationHash.length > 0) {
                     let responseData = await this.sendCheckInRequest();
-                    if(responseData.status === 424) {
+                    if (responseData.status === 424) {
+                        send({
+                            "summary": i18n.t('check-in.hash-false-title'),
+                            "body":  i18n.t('check-in.hash-false-body'),
+                            "type": "danger",
+                            "timeout": 5,
+                        });
                         console.log("error: room doesn't exists.");
                         this.wrongHash.push(this.locationHash + '-' + this.seatNr);
                     } else {
@@ -110,11 +120,32 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                             this.agent = responseData['agent'];
                             this.stopQRReader();
                             this.isCheckedIn = true;
+                            this.checkedInRoom = "HS P1 PHEG024C"; //TODO parse response and get room name
+
+
+                            send({
+                                "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
+                                "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
+                                "type": "success",
+                                "timeout": 5,
+                            });
                         } catch(exception) {
+                            send({
+                                "summary": i18n.t('check-in.error-title'),
+                                "body": i18n.t('check-in.error-body'),
+                                "type": "danger",
+                                "timeout": 5,
+                            });
                             console.log("error: returned data cannot be parsed");
                         }
                     }
                 } else {
+                    send({
+                        "summary": i18n.t('check-in.error-title'),
+                        "body": i18n.t('check-in.error-body'),
+                        "type": "danger",
+                        "timeout": 5,
+                    });
                     console.log('error: location hash is empty');
                 }
             }
@@ -122,7 +153,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
 
     stopQRReader() {
-        if(this._("#qr-scanner")) {
+        if (this._("#qr-scanner")) {
             this._("#qr-scanner").stopScan = true;
             this.showManuallyContainer = false;
             this.showQrContainer = false;
@@ -134,16 +165,24 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async decodeUrl(data) {
-        let searchString = "tugrazcheckin: -"; //TODO nach oben verlagern = tu spezifica
-        let index = data.search(searchString);
+        let index = data.search(this.searchHashString);
         if (index === -1) {
-            return false; //TODO Inform User wrong QR Code
+            if ( !this.wrongQR.includes(data) ) {
+                this.wrongQR.push(data);
+                send({
+                    "summary": i18n.t('check-in.qr-false-title'),
+                    "body":  i18n.t('check-in.qr-false-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            }
+            return false;
         }
-        let locationParam = data.substring(index + searchString.length);
+        let locationParam = data.substring(index + this.searchHashString.length);
         let checkAlreadySend = await this.wrongHash.includes(locationParam);
 
         if (checkAlreadySend) {
-            return false;  //TODO Inform User wrong hash
+            return false;
         }
         let splitted = locationParam.split('-');
         if (splitted.length > 1) {
@@ -177,7 +216,6 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             body: JSON.stringify(body)
         };
 
-        //this.isCheckedIn = true; //TODO move to checked after login
         response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
         console.log('response: ', response);
 
@@ -215,12 +253,11 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.showBorder = true;
         this.showQrContainer = true;
         this.showManuallyContainer = false;
+        this._('#qr-scanner').stopScan = false;
     }
 
     showRoomSelector() {
-        if (this._("#qr-scanner")) {
-            this._("#qr-scanner").stopScan = true;
-        }
+        this._("#qr-scanner").stopScan = true;
         this.showBorder = true;
         this.showManuallyContainer = true;
         this.showQrContainer = false;
@@ -259,6 +296,14 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 margin-top: 2rem;
                 border-top: 1px solid black;
             }
+            
+            .grid-container {
+                margin-top: 2rem;
+                padding-top: 2rem;
+                flex-flow: column;
+            }
+            
+            
 
             @media only screen
             and (orientation: portrait)
@@ -273,29 +318,64 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                     text-align: center;
                     margin-bottom: 0.5rem;
                 }
+                .logout {
+                    width: 100%;
+                    box-sizing: border-box;
+                }
             }
         `;
     }
 
     render() {
+        const select2CSS = commonUtils.getAssetURL(select2CSSPath);
         return html`
+            <link rel="stylesheet" href="${select2CSS}">
+            <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
             <h2>${i18n.t('check-in.title')}</h2>
             
-            <p class="${classMap({hidden: !this.isCheckedIn})}">${i18n.t('check-in.checked-in-description')}</p>
-            <div>
-                <button class="button is-primary ${classMap({hidden: !this.isCheckedIn})}" @click="${this.doCheckOut}">${i18n.t('check-out.button-text')}</button>
-            </div>
+            
 
-            <p class="${classMap({hidden: this.isCheckedIn})}">${i18n.t('check-in.description')}</p>
+            <p class="">${i18n.t('check-in.description')}</p>
+            
+            <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
+                <h2> ${this.checkedInRoom} </h2> <!-- //TODO Übersetzen -->
+                <p class="${classMap({hidden: !this.isCheckedIn})}">${i18n.t('check-in.checked-in-description', {room: this.checkedInRoom})}</p>
+                <div>
+                    <button class="logout button is-primary " @click="${this.doCheckOut}">${i18n.t('check-out.button-text')}</button>
+                </div>
+            </div>
+            
             <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
                 <div class="btn"><button class="button ${classMap({'is-primary': !this.showManuallyContainer})}" @click="${this.showQrReader}">${i18n.t('check-in.qr-button-text')}</button></div>
                 <div class="btn"><button class="button ${classMap({'is-primary': this.showManuallyContainer})}" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button></div>
             </div>
+            
+            
             <div class="border ${classMap({hidden: !this.showBorder})}">
-                ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element">
-                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-data="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
-                ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element">TODO</div>` : ``}
-            </div>
+                <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
+                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>
+                <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
+                
+                    hab mal nur code rein kopiert vom person select
+                    <div class="select">
+                        <div class="field has-addons">
+                            <div class="select2-control control">
+                                <!-- https://select2.org-->
+                                <select id="${this.selectId}" name="person" class="select" ?disabled=${!this.active}>${!this.active ? html`<option value="" disabled selected>${ i18n.t('person-select.login-required')}</option>` : ''}</select>
+                            </div>
+                            <a class="control button"
+                               id="reload-button"
+                               ?disabled=${this.object === null}
+                               @click="${this.reloadClick}"
+                               style="display: ${this.showReloadButton ? "flex" : "none"}"
+                               title="${this.reloadButtonTitle}">
+                                <dbp-icon name="reload"></dbp-icon>
+                            </a>
+                        </div>
+                        <div id="person-select-dropdown"></div>
+                    </div> 
+                </div>  
+           </div>
         `;
     }
 }
