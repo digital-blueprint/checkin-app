@@ -88,7 +88,6 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     
     async doCheckIn(event) {
         let data = event.detail;
-        this._("#qr-scanner") ? this._("#qr-scanner").stopScan = true : console.log('error: qr scanner is not available. Is it already stopped?');
         event.stopPropagation();
 
         let check = await this.decodeUrl(data);
