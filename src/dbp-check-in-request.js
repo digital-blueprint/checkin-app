@@ -209,6 +209,10 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 margin-bottom: 2rem;
             }
 
+            .btn {
+                display: contents;
+            }
+
             .element {
                 margin-top: 1.5rem;
             }
@@ -225,8 +229,11 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                     width: 100%;
                 }
 
-                #btn-container {
+                .btn {
+                    display: flex;
+                    flex-direction: column;
                     text-align: center;
+                    margin-bottom: 0.5rem;
                 }
             }
         `;
@@ -243,8 +250,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
             <p class="${classMap({hidden: this.isCheckedIn})}">${i18n.t('check-in.description')}</p>
             <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
-                <button class="button is-primary" @click="${this.showQrReader}">${i18n.t('check-in.qr-button-text')}</button>
-                <button class="button" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button>
+                <div class="btn"><button class="button ${classMap({'is-primary': !this.showManuallyContainer})}" @click="${this.showQrReader}">${i18n.t('check-in.qr-button-text')}</button></div>
+                <div class="btn"><button class="button ${classMap({'is-primary': this.showManuallyContainer})}" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button></div>
             </div>
             <div class="border ${classMap({hidden: !this.showBorder})}">
                 ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
