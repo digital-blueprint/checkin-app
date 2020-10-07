@@ -247,7 +247,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 <button class="button" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button>
             </div>
             <div class="border ${classMap({hidden: !this.showBorder})}">
-                ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-url="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
+                ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-data="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
                 ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element">TODO</div>` : ``}
             </div>
         `;
