@@ -24,6 +24,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.showQrContainer = false;
         this.showManuallyContainer = false;
         this.showBorder = false;
+
+        this.wrongHash = [];
     }
 
     static get scopedElements() {
@@ -72,6 +74,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             return result.json();
         }).catch(error => {
             console.log("fetch error:", error);
+            return error;
         });
 
         return response;
@@ -84,42 +87,71 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
     
     async doCheckIn(event) {
-        let url = event.detail;
-        event.stopPropagation(); //TODO await?
-        this._("#qr-scanner").stopScan = true; //TODO error handling
+        let data = event.detail;
+        event.stopPropagation();
 
-        this.showManuallyContainer = false;
-        this.showQrContainer = false;
-        this.showBorder = false;
+        let check = await this.decodeUrl(data);
+        if (check) {
 
-        if (!this.isCheckedIn) {
-            this.decodeUrl(url);
-            console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
+            // TODO sho better success message!
 
-            if (this.locationHash.length > 0) {
-                let responseData = await this.sendCheckInRequest(); //TODO error handling
-                try {
-                    this.identifier = responseData['identifier'];
-                    this.agent = responseData['agent'];
-                } catch(exception) {
-                    console.log("error: returned data cannot be parsed");
+
+            if (!this.isCheckedIn) {
+                console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
+
+                if (this.locationHash.length > 0) {
+                    let responseData = await this.sendCheckInRequest();
+                    if(responseData.status === 424) {
+                        console.log("error: room doesn't exists.");
+                        this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+                    } else {
+                        try {
+                            this.identifier = responseData['identifier'];
+                            this.agent = responseData['agent'];
+                            this.stopQRReader();
+                            this.isCheckedIn = true;
+                        } catch(exception) {
+                            console.log("error: returned data cannot be parsed");
+                        }
+                    }
+                } else {
+                    console.log('error: location hash is empty');
                 }
-            } else {
-                console.log('error: location hash is empty');
             }
         }
     }
 
-    decodeUrl(url) {
-        console.log(url);
-        let params = new URLSearchParams(url);
-        let locationParam = params.get('l');
+    stopQRReader() {
+        this._("#qr-scanner").stopScan = true;
+        this.showManuallyContainer = false;
+        this.showQrContainer = false;
+        this.showBorder = false;
+    }
+
+    async decodeUrl(data) {
+        let searchString = "tugrazcheckin: -"; //TODO nach oben verlagern = tu spezifica
+        let index = data.search(searchString);
+        if (index === -1) {
+            return false; //TODO Inform User wrong QR Code
+        }
+        let locationParam = data.substring(index + searchString.length);
+        let checkAlreadySend = await this.wrongHash.includes(locationParam);
+
+        if (checkAlreadySend) {
+            return false;  //TODO Inform User wrong hash
+        }
         let splitted = locationParam.split('-');
         if (splitted.length > 1) {
-            this.locationHash = splitted[0];
-            this.seatNr = splitted[1]; //TODO check if valid number?
+            if (splitted [0] === this.locationHash && splitted[1] === this.seatNr) {
+                return false;
+            } else {
+                this.locationHash = splitted[0];
+                this.seatNr = splitted[1];
+                return true;
+            }
         } else {
-            console.log('error: parsing went wrong');
+            return false;
+            //console.log('error: no correct QR code');
         }
     }
 
@@ -140,10 +172,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             body: JSON.stringify(body)
         };
 
-        this.isCheckedIn = true;
-
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);     
-
+        //this.isCheckedIn = true; //TODO move to checked after login
+        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
         console.log('response: ', response);
 
         return response;
@@ -167,7 +197,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             body: JSON.stringify(body)
         };
 
-        this.isCheckedIn = false;
+
 
         response = await this.httpGetAsync(this.entryPointUrl + '/location_check_out_actions', options);
 
