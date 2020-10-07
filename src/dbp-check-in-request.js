@@ -22,6 +22,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.identifier = '';
         this.agent = '';
         this.showManuallyContainer = false;
+        this.showQrContainer = false;
         this.showBorder = false;
     }
 
@@ -43,6 +44,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             seatNr: { type: String, attribute: false },
             isCheckedIn: { type: Boolean, attribute: false},
             showManuallyContainer: { type: Boolean, attribute: false},
+            showQrContainer: { type: Boolean, attribute: false},
             showBorder: { type: Boolean, attribute: false},
         };
     }
@@ -88,6 +90,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         event.stopPropagation(); //TODO await?
 
         this.showManuallyContainer = false;
+        this.showQrContainer = false;
         this.showBorder = false;
 
         if (!this.isCheckedIn) {
@@ -176,6 +179,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
     showQrReader() {
         this.showBorder = true;
+        this.showQrContainer = true;
         this.showManuallyContainer = false;
     }
 
@@ -185,6 +189,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         }
         this.showBorder = true;
         this.showManuallyContainer = true;
+        this.showQrContainer = false;
     }
 
     static get styles() {
@@ -253,7 +258,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 <div class="btn"><button class="button ${classMap({'is-primary': this.showManuallyContainer})}" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button></div>
             </div>
             <div class="border ${classMap({hidden: !this.showBorder})}">
-                ${!this.isCheckedIn && !this.showManuallyContainer ? html`<div class="element">
+                ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element">
                     <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-data="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
                 ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element">TODO</div>` : ``}
             </div>
