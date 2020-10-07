@@ -21,8 +21,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.isCheckedIn = false;
         this.identifier = '';
         this.agent = '';
-        this.showQrContainer = false;
         this.showManuallyContainer = false;
+        this.showQrContainer = false;
         this.showBorder = false;
 
         this.wrongHash = [];
@@ -45,8 +45,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             locationHash: { type: String, attribute: false },
             seatNr: { type: String, attribute: false },
             isCheckedIn: { type: Boolean, attribute: false},
-            showQrContainer: { type: Boolean, attribute: false},
             showManuallyContainer: { type: Boolean, attribute: false},
+            showQrContainer: { type: Boolean, attribute: false},
             showBorder: { type: Boolean, attribute: false},
         };
     }
@@ -88,6 +88,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     
     async doCheckIn(event) {
         let data = event.detail;
+        this._("#qr-scanner") ? this._("#qr-scanner").stopScan = true : console.log('error: qr scanner is not available. Is it already stopped?');
         event.stopPropagation();
 
         let check = await this.decodeUrl(data);
@@ -122,10 +123,15 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
 
     stopQRReader() {
-        this._("#qr-scanner").stopScan = true;
-        this.showManuallyContainer = false;
-        this.showQrContainer = false;
-        this.showBorder = false;
+        if(this._("#qr-scanner")) {
+            this._("#qr-scanner").stopScan = true;
+            this.showManuallyContainer = false;
+            this.showQrContainer = false;
+            this.showBorder = false;
+        } else {
+            console.log('error: qr scanner is not available. Is it already stopped?');
+        }
+
     }
 
     async decodeUrl(data) {
@@ -213,9 +219,12 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
 
     showRoomSelector() {
+        if (this._("#qr-scanner")) {
+            this._("#qr-scanner").stopScan = true;
+        }
         this.showBorder = true;
-        this.showQrContainer = false;
         this.showManuallyContainer = true;
+        this.showQrContainer = false;
     }
 
     static get styles() {
@@ -284,7 +293,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 <div class="btn"><button class="button ${classMap({'is-primary': this.showManuallyContainer})}" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button></div>
             </div>
             <div class="border ${classMap({hidden: !this.showBorder})}">
-                ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element"><dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-data="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
+                ${!this.isCheckedIn && this.showQrContainer ? html`<div class="element">
+                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" @dbp-qr-code-scanner-data="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>` : ``}
                 ${!this.isCheckedIn && this.showManuallyContainer ? html`<div class="element">TODO</div>` : ``}
             </div>
         `;
