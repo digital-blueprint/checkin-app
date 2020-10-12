@@ -97,16 +97,11 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
     
     async doCheckIn(event) {
-        
-        let check = false;
+        let data = event.detail;
+        event.stopPropagation();
 
-        if (!this.isManuallySet) {
-            let data = event.detail;
-            event.stopPropagation();
-
-            check = await this.decodeUrl(data);
-        }
-        if (this.isManuallySet || check) {
+        let check = await this.decodeUrl(data);
+        if (check) {
 
             // TODO logout button should be 'fancier' + You are checked in at "ROOMXX" in frontend
 
