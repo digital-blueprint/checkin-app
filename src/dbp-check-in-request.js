@@ -49,7 +49,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             locationHash: { type: String, attribute: false },
-            seatNr: { type: String, attribute: false },
+            seatNr: { type: Number, attribute: false },
             isCheckedIn: { type: Boolean, attribute: false},
             showManuallyContainer: { type: Boolean, attribute: false},
             showQrContainer: { type: Boolean, attribute: false},
@@ -79,7 +79,6 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             if (!result.ok) throw result;
             return result.json();
         }).catch(error => {
-            console.log("fetch error:", error);
             return error;
         });
 
@@ -147,9 +146,13 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
                     // Other errors
                     } else if (responseData.status === 424) {
+                        let errorBody = await responseData.json();
+                        let errorDescription = errorBody["hydra:description"];
+                        console.log("err: ", errorDescription);
+                        console.log("err: ", errorBody);
 
                         // Error: invalid seat number
-                        if( responseData.statusText === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || responseData.statusText === 'seatNumber too low!') {
+                        if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
                             send({
                                 "summary": i18n.t('check-in.invalid-seatnr-title'),
                                 "body":  i18n.t('check-in.invalid-seatnr-body'),
@@ -161,7 +164,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                         }
 
                         // Error: no seat numbers
-                        else if( responseData.statusText === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
+                        else if( errorDescription === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
                             send({
                                 "summary": i18n.t('check-in.no-seatnr-title'),
                                 "body":  i18n.t('check-in.no-seatnr-body'),
@@ -173,15 +176,15 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                         }
 
                         // Error: you are already checked in here
-                        else if( responseData.statusText === 'There are already check-ins at the location for the current user!' ) {
+                        else if( errorDescription === 'There are already check-ins at the location with provided seat for the current user!' ) {
 
                             this.identifier = responseData['identifier'];
                             this.agent = responseData['agent'];
                             this.stopQRReader();
                             this.isCheckedIn = true;
-                            this.checkedInRoom = "HS P1 PHEG024C"; //TODO parse response and get room name
-                            // TODO get active checkin request
-                            // TODO show refresh button
+                            this.checkedInRoom = "HS P1 PHEG024C";
+                            // TODO check checkin at this room, show timestamp, and roomnumber, give a checkout button
+
 
                             send({
                                 "summary": i18n.t('check-in.already-checkin-title'),
@@ -278,7 +281,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
         let body = {
             "location": '/check_in_places/' + this.locationHash,
-            "seatNumber": this.seatNr,
+            "seatNumber": parseInt(this.seatNr),
         };
 
         const options = {
@@ -291,7 +294,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         };
 
         response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
-        console.log('response: ', response);
+        // console.log('response: ', response);
 
         return response;
     }
