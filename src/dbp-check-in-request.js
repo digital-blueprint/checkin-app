@@ -31,6 +31,9 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.searchHashString = "tugrazcheckin: -";
         this.wrongHash = [];
         this.wrongQR = [];
+        this.isRoomSelected = false;
+        this.roomCapacity = 0;
+        this.isManuallySet = false;
     }
 
     static get scopedElements() {
@@ -54,6 +57,9 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             showManuallyContainer: { type: Boolean, attribute: false},
             showQrContainer: { type: Boolean, attribute: false},
             showBorder: { type: Boolean, attribute: false},
+            isRoomSelected: {type: Boolean, attribute: false},
+            roomCapacity: {type: Number, attribute: false},
+            isManuallySet: {type: Boolean, attribute: false}
         };
     }
 
@@ -73,8 +79,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         });
     }
 
-    async httpGetAsync(url, options)
-    {
+    async httpGetAsync(url, options) {
         let response = await fetch(url, options).then(result => {
             if (!result.ok) throw result;
             return result.json();
@@ -92,11 +97,16 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
     
     async doCheckIn(event) {
-        let data = event.detail;
-        event.stopPropagation();
+        
+        let check = false;
 
-        let check = await this.decodeUrl(data);
-        if (check) {
+        if (!this.isManuallySet) {
+            let data = event.detail;
+            event.stopPropagation();
+
+            check = await this.decodeUrl(data);
+        }
+        if (this.isManuallySet || check) {
 
             // TODO logout button should be 'fancier' + You are checked in at "ROOMXX" in frontend
 
@@ -340,6 +350,25 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.showQrContainer = false;
     }
 
+    showAvailablePlaces(event) {
+        this.isRoomSelected = true;
+        this.roomCapacity = event.detail.capacity;
+
+        console.log('event detail: ', event.detail);
+        // this.locationHash = event.detail.room; //TODO fix this
+        let splitted = event.detail.value.split('/');
+        splitted.length === 3 ? this.locationHash = splitted[2] : console.log('error: invalid location id'); //TODO fix above and delete this
+
+        console.log('room capacity: ', this.roomCapacity);
+        console.log('location hash: ', this.locationHash); //TODO check if id and location hash are the same values
+    }
+
+    setSeatNumber(event) {
+        this.seatNr = event.data;
+        console.log('seat num: ', this.seatNr);
+        this.isManuallySet = true;
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -381,7 +410,9 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 flex-flow: column;
             }
             
-            
+            #select-seat {
+                margin-bottom: 0.75rem;
+            }
 
             @media only screen
             and (orientation: portrait)
@@ -439,16 +470,18 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                         <div class="field">
                             <label class="label">${i18n.t('check-in.manually-place')}</label>
                             <div class="control">
-                                <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}"></dbp-location-select>
+                                <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.showAvailablePlaces(event);}}"></dbp-location-select>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field ${classMap({hidden: !this.isRoomSelected})}">
+                            <link rel="stylesheet" href="${select2CSS}">
                             <label class="label">${i18n.t('check-in.manually-seat')}</label>
                             <div class="control">
-                                <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}"></dbp-location-select>
+                                <input type="number" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling + correct number -->
                             </div>
                         </div>
                     </form>
+                    <div class="btn"><button class="button is-primary" @click="${(event) => {this.doCheckIn(event);}}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                 </div>
                 </div>  
            </div>

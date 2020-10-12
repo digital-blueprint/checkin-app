@@ -24,7 +24,8 @@
     "invalid-input-title": "Ungültige Eingabe!",
     "invalid-input-body": "Ihre Eingabe war ungültig. Bitte probieren Sie es nocheinmal.",
     "manually-place": "Raum",
-    "manually-seat": "Sitzplatz"
+    "manually-seat": "Sitzplatz",
+    "manually-checkin-button-text": "Anmelden"
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",

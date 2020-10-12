@@ -24,7 +24,8 @@
     "invalid-input-title": "Invalid input!",
     "invalid-input-body": "Your input was invalid. Please try again.",
     "manually-place": "Room",
-    "manually-seat": "Seat Number"
+    "manually-seat": "Seat Number",
+    "manually-checkin-button-text": "Check-in"
   },
   "check-out": {
     "title": "Show all check-ins",
