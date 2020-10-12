@@ -99,13 +99,29 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
             // TODO logout button should be 'fancier' + You are checked in at "ROOMXX" in frontend
 
-
             if (!this.isCheckedIn) {
                 console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
                 if (this.locationHash.length > 0) {
                     let responseData = await this.sendCheckInRequest();
-                    if (responseData.status === 424) {
+
+                    // When you are checked in
+                    if (responseData.status === 201) {
+                        this.identifier = responseData['identifier'];
+                        this.agent = responseData['agent'];
+                        this.stopQRReader();
+                        this.isCheckedIn = true;
+                        this.checkedInRoom = "HS P1 PHEG024C"; //TODO parse response and get room name
+
+                        send({
+                            "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
+                            "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
+                            "type": "success",
+                            "timeout": 5,
+                        });
+
+                    // Error if room not exists
+                    } else if (responseData.status === 424) {
                         send({
                             "summary": i18n.t('check-in.hash-false-title'),
                             "body":  i18n.t('check-in.hash-false-body'),
@@ -114,31 +130,28 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                         });
                         console.log("error: room doesn't exists.");
                         this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-                    } else {
-                        try {
-                            this.identifier = responseData['identifier'];
-                            this.agent = responseData['agent'];
-                            this.stopQRReader();
-                            this.isCheckedIn = true;
-                            this.checkedInRoom = "HS P1 PHEG024C"; //TODO parse response and get room name
 
+                    // Error if you don't have permissions
+                    } else if (responseData.status === 403) {
+                        send({
+                            "summary": i18n.t('check-in.no-permission-title'),
+                            "body":  i18n.t('check-in.no-permission-body'),
+                            "type": "danger",
+                            "timeout": 5,
+                        });
+                        this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                            send({
-                                "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
-                                "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
-                                "type": "success",
-                                "timeout": 5,
-                            });
-                        } catch(exception) {
-                            send({
-                                "summary": i18n.t('check-in.error-title'),
-                                "body": i18n.t('check-in.error-body'),
-                                "type": "danger",
-                                "timeout": 5,
-                            });
-                            console.log("error: returned data cannot be parsed");
-                        }
+                    // Error: something else doesn't work
+                    } else{
+                        send({
+                            "summary": i18n.t('check-in.error-title'),
+                            "body": i18n.t('check-in.error-body'),
+                            "type": "danger",
+                            "timeout": 5,
+                        });
                     }
+
+                // Error: no location hash detected
                 } else {
                     send({
                         "summary": i18n.t('check-in.error-title'),
@@ -161,7 +174,6 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         } else {
             console.log('error: qr scanner is not available. Is it already stopped?');
         }
-
     }
 
     async decodeUrl(data) {
@@ -277,6 +289,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
             h2 {
                 margin-bottom: 10px;
+                margin-top: 0px;
             }
 
             #btn-container {

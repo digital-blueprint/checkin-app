@@ -12,7 +12,9 @@
     "success-checkin-title": "Checked in!",
     "success-checkin-body": "You have successfully checked into {{room}}.",
     "error-title": "Error!",
-    "error-body": "We're sorry, something went wrong."
+    "error-body": "We're sorry, something went wrong.",
+    "no-permission-title": "No permissions",
+    "no-permission-body": "You have no permissions to perform this action. Please contact the local IT support."
   },
   "check-out": {
     "title": "Show all check-ins",
