@@ -8,6 +8,7 @@ import {classMap} from 'lit-html/directives/class-map.js';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from 'dbp-qr-code-scanner';
+import {LocationSelect} from 'dbp-location-select';
 import { send } from 'dbp-common/notification';
 import select2CSSPath from 'select2/dist/css/select2.min.css';
 
@@ -39,6 +40,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
           'dbp-button': Button,
           'dbp-textswitch': TextSwitch,
           'dbp-qr-code-scanner': QrCodeScanner,
+          'dbp-location-select': LocationSelect,
         };
     }
 
@@ -369,24 +371,22 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                     <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>
                 <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
                 
-                    hab mal nur code rein kopiert vom person select
-                    <div class="select">
-                        <div class="field has-addons">
-                            <div class="select2-control control">
-                                <!-- https://select2.org-->
-                                <select id="${this.selectId}" name="person" class="select" ?disabled=${!this.active}>${!this.active ? html`<option value="" disabled selected>${ i18n.t('person-select.login-required')}</option>` : ''}</select>
+                    <div class="container">
+                    <form>
+                        <div class="field">
+                            <label class="label">${i18n.t('check-in.manually-place')}</label>
+                            <div class="control">
+                                <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}"></dbp-location-select>
                             </div>
-                            <a class="control button"
-                               id="reload-button"
-                               ?disabled=${this.object === null}
-                               @click="${this.reloadClick}"
-                               style="display: ${this.showReloadButton ? "flex" : "none"}"
-                               title="${this.reloadButtonTitle}">
-                                <dbp-icon name="reload"></dbp-icon>
-                            </a>
                         </div>
-                        <div id="person-select-dropdown"></div>
-                    </div> 
+                        <div class="field">
+                            <label class="label">${i18n.t('check-in.manually-seat')}</label>
+                            <div class="control">
+                                <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}"></dbp-location-select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 </div>  
            </div>
         `;

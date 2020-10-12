@@ -14,7 +14,9 @@
     "error-title": "Error!",
     "error-body": "We're sorry, something went wrong.",
     "no-permission-title": "No permissions",
-    "no-permission-body": "You have no permissions to perform this action. Please contact the local IT support."
+    "no-permission-body": "You have no permissions to perform this action. Please contact the local IT support.",
+    "manually-place": "Room",
+    "manually-seat": "Seat Number"
   },
   "check-out": {
     "title": "Show all check-ins",

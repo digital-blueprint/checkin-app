@@ -14,7 +14,9 @@
     "error-title": "Fehler!",
     "error-body": "Es tut uns leid, etwas ist schief gelaufen.",
     "no-permission-title": "Keine Rechte",
-    "no-permission-body": "Sie haben keine Rechte diese Aktion durchzuführen. Bitte kontaktieren Sie den lokalen IT Support."
+    "no-permission-body": "Sie haben keine Rechte diese Aktion durchzuführen. Bitte kontaktieren Sie den lokalen IT Support.",
+    "manually-place": "Raum",
+    "manually-seat": "Sitzplatz"
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",
