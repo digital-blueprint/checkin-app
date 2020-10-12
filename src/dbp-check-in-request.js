@@ -122,8 +122,20 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                             "timeout": 5,
                         });
 
+                    // Invalid Input
+                    } else if (responseData.status === 400) {
+                        send({
+                            "summary": i18n.t('check-in.invalid-input-title'),
+                            "body":  i18n.t('check-in.invalid-input-body'),
+                            "type": "danger",
+                            "timeout": 5,
+                        });
+                        console.log("error: Invalid Input.");
+                        console.log("hmmmm");
+                        //this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+
                     // Error if room not exists
-                    } else if (responseData.status === 424) {
+                    } else if (responseData.status === 404) {
                         send({
                             "summary": i18n.t('check-in.hash-false-title'),
                             "body":  i18n.t('check-in.hash-false-body'),
@@ -132,6 +144,53 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                         });
                         console.log("error: room doesn't exists.");
                         this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+
+                    // Other errors
+                    } else if (responseData.status === 424) {
+
+                        // Error: invalid seat number
+                        if( responseData.statusText === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || responseData.statusText === 'seatNumber too low!') {
+                            send({
+                                "summary": i18n.t('check-in.invalid-seatnr-title'),
+                                "body":  i18n.t('check-in.invalid-seatnr-body'),
+                                "type": "danger",
+                                "timeout": 5,
+                            });
+                            console.log("error: Invalid seat nr");
+                            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+                        }
+
+                        // Error: no seat numbers
+                        else if( responseData.statusText === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
+                            send({
+                                "summary": i18n.t('check-in.no-seatnr-title'),
+                                "body":  i18n.t('check-in.no-seatnr-body'),
+                                "type": "danger",
+                                "timeout": 5,
+                            });
+                            console.log("error: Room has no seat nr");
+                            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+                        }
+
+                        // Error: you are already checked in here
+                        else if( responseData.statusText === 'There are already check-ins at the location for the current user!' ) {
+
+                            this.identifier = responseData['identifier'];
+                            this.agent = responseData['agent'];
+                            this.stopQRReader();
+                            this.isCheckedIn = true;
+                            this.checkedInRoom = "HS P1 PHEG024C"; //TODO parse response and get room name
+                            // TODO get active checkin request
+                            // TODO show refresh button
+
+                            send({
+                                "summary": i18n.t('check-in.already-checkin-title'),
+                                "body":  i18n.t('check-in.already-checkin-body'),
+                                "type": "success",
+                                "timeout": 5,
+                            });
+                            console.log("error: Already checkin");
+                        }
 
                     // Error if you don't have permissions
                     } else if (responseData.status === 403) {
@@ -196,6 +255,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         let checkAlreadySend = await this.wrongHash.includes(locationParam);
 
         if (checkAlreadySend) {
+            console.log("schon gesendet");
             return false;
         }
         let splitted = locationParam.split('-');
@@ -208,8 +268,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 return true;
             }
         } else {
+            console.log('error: no correct QR code');
             return false;
-            //console.log('error: no correct QR code');
         }
     }
 
