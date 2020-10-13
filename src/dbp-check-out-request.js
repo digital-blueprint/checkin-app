@@ -4,7 +4,7 @@ import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
-import {Button, Icon, MiniSpinner} from 'dbp-common';
+import {Button, EventBus, Icon, MiniSpinner} from 'dbp-common';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
 
@@ -39,6 +39,12 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
+
+        this._loginStatus = '';
+        this._loginState = [];
+        this._bus = new EventBus();
+        this._updateAuth = this._updateAuth.bind(this);
+        this._bus.subscribe('auth-update', this._updateAuth);
     }
 
     update(changedProperties) {
@@ -53,6 +59,32 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         });
 
         super.update(changedProperties);
+    }
+
+    _updateAuth(e) {
+        this._loginStatus = e.status;
+        // Every time isLoggedIn()/isLoading() return something different we request a re-render
+        let newLoginState = [this.isLoggedIn(), this.isLoading()];
+        if (this._loginState.toString() !== newLoginState.toString()) {
+            this.requestUpdate();
+        }
+        this._loginState = newLoginState;
+    }
+
+    disconnectedCallback() {
+        this._bus.close();
+
+        super.disconnectedCallback();
+    }
+
+    isLoggedIn() {
+        return (window.DBPPerson !== undefined && window.DBPPerson !== null);
+    }
+
+    isLoading() {
+        if (this._loginStatus === "logged-out")
+            return false;
+        return (!this.isLoggedIn() && window.DBPAuthToken !== undefined);
     }
 
     async httpGetAsync(url, options)
@@ -193,9 +225,9 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
                 <div class="checkins">
                     ${this.activeCheckins.map(i => html`
-                    <span class="header"><strong>${i.location.name}</strong>, ${i.seatNumber}</span>
-                    <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}">${i18n.t('check-out.button-text')}</button>
-                    <button class="button">${i18n.t('check-in.refresh-button-text')}</button>`)}
+                    <span class="header"><strong>${i.location.name}</strong>, #${("0" + i.seatNumber).slice(-2)}</span>
+                    <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
+                    <button class="button" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
                 </div>
             </div>
         `;

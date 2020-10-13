@@ -1,6 +1,7 @@
 import {createI18nInstance} from './i18n.js';
 import {css, html} from 'lit-element';
-import DBPLitElement from 'dbp-common/dbp-lit-element';
+import DBPCheckInLitElement from "./dbp-check-in-lit-element";
+
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
 import {Button, Icon, MiniSpinner} from 'dbp-common';
@@ -14,7 +15,7 @@ import select2CSSPath from 'select2/dist/css/select2.min.css';
 
 const i18n = createI18nInstance();
 
-class CheckIn extends ScopedElementsMixin(DBPLitElement) {
+class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this.lang = i18n.language;
@@ -30,7 +31,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.showManuallyContainer = false;
         this.showQrContainer = false;
         this.showBorder = false;
-        this.searchHashString = "tugrazcheckin: -";
+        this.searchHashString = "tugrazcheckin: -"; //TODO auslagern
         this.wrongHash = [];
         this.wrongQR = [];
         this.isRoomSelected = false;
@@ -81,17 +82,6 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             super.update(changedProperties);
             // console.log(propName, oldValue);
         });
-    }
-
-    async httpGetAsync(url, options) {
-        let response = await fetch(url, options).then(result => {
-            if (!result.ok) throw result;
-            return result;
-        }).catch(error => {
-            return error;
-        });
-
-        return response;
     }
 
     async doCheckOut() {
@@ -431,6 +421,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     }
 
     showQrReader() {
+        console.log("huiii");
         this.showBorder = true;
         this.showQrContainer = true;
         this.showManuallyContainer = false;
