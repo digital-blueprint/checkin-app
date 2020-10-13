@@ -7,6 +7,7 @@ import * as commonUtils from 'dbp-common/utils';
 import {Button, EventBus, Icon, MiniSpinner} from 'dbp-common';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
+import {send} from "dbp-common/notification";
 
 const i18n = createI18nInstance();
 
@@ -81,72 +82,39 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         return (window.DBPPerson !== undefined && window.DBPPerson !== null);
     }
 
-    isLoading() {
+    isLoading() { //TODO while loding show spinner and when no checkins show no-checkins message
         if (this._loginStatus === "logged-out")
             return false;
         return (!this.isLoggedIn() && window.DBPAuthToken !== undefined);
     }
 
-    async httpGetAsync(url, options)
-    {
-        let response = await fetch(url, options).then(result => {
-            if (!result.ok) throw result;
-            return result.json();
-        }).catch(error => {
-            console.log("fetch error:", error);
-        });
-
-        return response;
-    }
-
-    async requestActiveCheckins() {
-        let response;
-
-        const options = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
-            },
-        };
-
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
-        
-        //console.log('response: ', response);
-        return response;
-    }
-
     async doCheckOut(event, entry) {
-        let response = await this.sendCheckOutRequest(entry);
-        console.log(response);
-
-        this.removeEntryFromArray(this.activeCheckins, entry);
-        console.log('active checks: ', this.activeCheckins);
-        this.requestUpdate(); //TODO fix
-    }
-
-    async sendCheckOutRequest(entry) {
         let locationHash = entry['location']['identifier'];
         let seatNr = entry['seatNumber'];
+        let locationName = entry['location']['name'];
         //TODO check if values are set, otherwise skip request -> error message
 
-        let body = {
-            "location": "/check_in_places/" + locationHash,
-            "seatNumber": parseInt(seatNr),
-        };
+        let response = await await this.sendCheckOutRequest(locationHash, seatNr);
+        console.log(response);
 
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
-            },
-            body: JSON.stringify(body)
-        };
-
-        let response = await this.httpGetAsync(this.entryPointUrl + '/location_check_out_actions', options);
-
-        return response;
+        if (response.status === 201) {
+            send({
+                "summary": i18n.t('check-out.checkout-success-title'),
+                "body":  i18n.t('check-out.checkout-success-body', {count: parseInt(seatNr), room: locationName}),
+                "type": "success",
+                "timeout": 5,
+            });
+            this.removeEntryFromArray(this.activeCheckins, entry);
+            console.log('active checks: ', this.activeCheckins);
+            this.requestUpdate(); //TODO fix
+        } else {
+            send({
+                "summary": i18n.t('check-out.checkout-failed-title'),
+                "body":  i18n.t('check-out.checkout-failed-body', {count: parseInt(seatNr), room: locationName}),
+                "type": "warning",
+                "timeout": 5,
+            });
+        }
     }
 
     removeEntryFromArray(array, entry) {
@@ -171,15 +139,145 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     async getListOfActiveCheckins() {
         if (this.isLoggedIn() && !this.isRequested) {
-            let response = await this.requestActiveCheckins();
+            let response = await this.getActiveCheckIns();
             console.log(response);
+            let responseBody = await response.json();
 
-            if (response !== undefined && response.status !== 403) {
-                this.activeCheckins = this.parseActiveCheckins(response);
+            if (responseBody !== undefined && responseBody.status !== 403) {
+                this.activeCheckins = this.parseActiveCheckins(responseBody);
                 console.log('active checkins: ', this.activeCheckins);
             }
             this.isRequested = true;
         }
+    }
+
+    doRefreshSession(event, entry) {
+        let locationHash = entry['location']['identifier'];
+        let seatNr = entry['seatNumber'];
+        let locationName = entry['location']['name'];
+        return this.refreshSession(locationHash, seatNr, locationName);
+    }
+
+    async refreshSession(locationHash, seatNumber, locationName) {
+        let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
+        if (responseCheckout.status === 201) {
+            this.isSessionRefreshed = true;
+            await this.doCheckIn(locationHash, seatNumber, locationName);
+            return;
+        }
+
+        send({
+            "summary": i18n.t('check-in.refresh-failed-title'),
+            "body":  i18n.t('check-in.refresh-failed-body', {room: locationName}),
+            "type": "warning",
+            "timeout": 5,
+        });
+    }
+
+    async doCheckIn(locationHash, seatNumber, locationName) {
+         let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
+        // When you are checked in
+        if (responseData.status === 201) {
+            // let responseBody = await responseData.json(); TODO show timestamp to users
+            if (this.isSessionRefreshed) {
+                this.isSessionRefreshed = false;
+                send({
+                    "summary": i18n.t('check-in.success-refresh-title', {room: locationName}),
+                    "body": i18n.t('check-in.success-refresh-body', {room: locationName}),
+                    "type": "success",
+                    "timeout": 5,
+                });
+            } else {
+                send({
+                    "summary": i18n.t('check-in.success-checkin-title', {room: locationName}),
+                    "body": i18n.t('check-in.success-checkin-body', {room: locationName}),
+                    "type": "success",
+                    "timeout": 5,
+                });
+            }
+
+        // Invalid Input
+        } else if (responseData.status === 400) {
+            send({
+                "summary": i18n.t('check-in.invalid-input-title'),
+                "body":  i18n.t('check-in.invalid-input-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+            console.log("error: Invalid Input.");
+
+        // Error if room not exists
+        } else if (responseData.status === 404) {
+            send({
+                "summary": i18n.t('check-in.hash-false-title'),
+                "body":  i18n.t('check-in.hash-false-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+
+        // Other errors
+        } else if (responseData.status === 424) {
+            let errorBody = await responseData.json();
+            let errorDescription = errorBody["hydra:description"];
+            console.log("err: ", errorDescription);
+            console.log("err: ", errorBody);
+
+            // Error: invalid seat number
+            if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
+                send({
+                    "summary": i18n.t('check-in.invalid-seatnr-title'),
+                    "body":  i18n.t('check-in.invalid-seatnr-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+                console.log("error: Invalid seat nr");
+            }
+
+            // Error: no seat numbers
+            else if( errorDescription === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
+                send({
+                    "summary": i18n.t('check-in.no-seatnr-title'),
+                    "body":  i18n.t('check-in.no-seatnr-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+                console.log("error: Room has no seat nr");
+            }
+
+
+            else {
+                send({
+                    "summary": i18n.t('check-in.error-title'),
+                    "body": i18n.t('check-in.error-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            }
+
+        }
+        // Error if you don't have permissions
+        else if (responseData.status === 403) {
+            send({
+                "summary": i18n.t('check-in.no-permission-title'),
+                "body":  i18n.t('check-in.no-permission-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+
+        // Error: something else doesn't work
+        } else{
+            send({
+                "summary": i18n.t('check-in.error-title'),
+                "body": i18n.t('check-in.error-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+        }
+    }
+
+    getReadableDate(date) {
+        let newDate = new Date(date);
+        return newDate.getDay() + "." + newDate.getMonth() + "." + newDate.getFullYear() + " " + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2);
     }
 
     static get styles() {
@@ -229,9 +327,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <div class="checkins">
                     ${this.activeCheckins.map(i => html`
 
-                    <span class="header"><strong>${i.location.name}</strong>Sitzplatz: ${i.seatNumber}</span>
-                    <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}">${i18n.t('check-out.button-text')}</button>
-                    <button class="button">${i18n.t('check-in.refresh-button-text')}</button>`)} <!-- //TODO -->
+                    <span class="header"><strong>${i.location.name}</strong>Sitzplatz: ${i.seatNumber}<br>
+                    Angemeldet seit: ${this.getReadableDate(i.startTime)}</span> 
+                    <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
+                    <button class="button" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)} <!-- //TODO -->
 
                 </div>
             </div>

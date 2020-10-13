@@ -1,7 +1,6 @@
 import {createI18nInstance} from './i18n.js';
 import {css, html} from 'lit-element';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
-
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
 import {Button, Icon, MiniSpinner} from 'dbp-common';
@@ -37,7 +36,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.isRoomSelected = false;
         this.roomCapacity = 0;
         this.isManuallySet = false;
-        this.refreshSession = false;
     }
 
     static get scopedElements() {
@@ -85,7 +83,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     async doCheckOut() {
-        let responseData = await this.sendCheckOutRequest();
+        let responseData = await this.sendCheckOutRequest(this.locationHash, this.seatNr);
         if (responseData.status === 201) {
             send({
                 "summary": i18n.t('check-out.checkout-success-title'),
@@ -128,7 +126,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
         if (this.locationHash.length > 0) {
-            let responseData = await this.sendCheckInRequest();
+            let responseData = await this.sendCheckInRequest(this.locationHash, this.seatNr);
             // When you are checked in
             if (responseData.status === 201) {
                 let responseBody = await responseData.json();
@@ -143,8 +141,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this._("#text-switch")._active = "";
 
 
-                if (this.refreshSession) {
-                    this.refreshSession = false;
+                if (this.isSessionRefreshed) {
+                    this.isSessionRefreshed = false;
                     send({
                         "summary": i18n.t('check-in.success-refresh-title', {room: this.checkedInRoom}),
                         "body": i18n.t('check-in.success-refresh-body', {room: this.checkedInRoom}),
@@ -339,87 +337,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
-    async sendCheckInRequest() {
-        let response;
-
-        let body = {
-            "location": '/check_in_places/' + this.locationHash,
-            "seatNumber": parseInt(this.seatNr),
-        };
-
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
-            },
-            body: JSON.stringify(body)
-        };
-
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
-        // console.log('response: ', response);
-
-        return response;
-    }
-
-    async sendCheckOutRequest() {
-        let response;
-
-        let body = {
-            "location": "/check_in_places/" + this.locationHash,
-            "seatNumber": parseInt(this.seatNr),
-        };
-
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
-            },
-            body: JSON.stringify(body)
-        };
-
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_out_actions', options);
-
-        //console.log('response: ', response);
-
-        return response;
-    }
-
-    async getActiveCheckIns() {
-        let response;
-
-        const options = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
-            },
-        };
-
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
-
-        return response;
-    }
-
-    async doRefreshSession() {
-        let responseCheckout = await this.sendCheckOutRequest();
-        if (responseCheckout.status === 201) {
-            this.refreshSession = true;
-           await this.doCheckIn();
-           return;
-        }
-
-        send({
-            "summary": i18n.t('check-in.refresh-failed-title'),
-            "body":  i18n.t('check-in.refresh-failed-body', {room: this.checkedInRoom}),
-            "type": "warning",
-            "timeout": 5,
-        });
-        return;
-
-    }
-
     showQrReader() {
         console.log("huiii");
         this.showBorder = true;
@@ -468,6 +385,26 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     getReadableDate(date) {
         let newDate = new Date(date);
         return newDate.getDay() + "." + newDate.getMonth() + "." + newDate.getFullYear() + " " + i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)});
+    }
+
+    doRefreshSession() {
+        return this.refreshSession(this.locationHash, this.seatNr, this.checkedInRoom);
+    }
+
+    async refreshSession(locationHash, seatNumber, locationName) {
+        let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
+        if (responseCheckout.status === 201) {
+            this.isSessionRefreshed = true;
+            await this.doCheckIn();
+            return;
+        }
+
+        send({
+            "summary": i18n.t('check-in.refresh-failed-title'),
+            "body":  i18n.t('check-in.refresh-failed-body', {room: locationName}),
+            "type": "warning",
+            "timeout": 5,
+        });
     }
 
     static get styles() {
