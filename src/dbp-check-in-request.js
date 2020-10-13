@@ -23,6 +23,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.seatNr = '';
         this.isCheckedIn = false;
         this.checkedInRoom = '';
+        this.checkedInSeat = null;
+        this.checkedInStartTime = '';
         this.identifier = '';
         this.agent = '';
         this.showManuallyContainer = false;
@@ -34,6 +36,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.isRoomSelected = false;
         this.roomCapacity = 0;
         this.isManuallySet = false;
+        this.refreshSession = false;
     }
 
     static get scopedElements() {
@@ -59,7 +62,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             showBorder: { type: Boolean, attribute: false},
             isRoomSelected: {type: Boolean, attribute: false},
             roomCapacity: {type: Number, attribute: false},
-            isManuallySet: {type: Boolean, attribute: false}
+            isManuallySet: {type: Boolean, attribute: false},
+            checkedInStartTime: {type: String, attribute: false}
         };
     }
 
@@ -82,7 +86,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
     async httpGetAsync(url, options) {
         let response = await fetch(url, options).then(result => {
             if (!result.ok) throw result;
-            return result.json();
+            return result;
         }).catch(error => {
             return error;
         });
@@ -92,126 +96,154 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
     async doCheckOut() {
         let responseData = await this.sendCheckOutRequest();
-
+        if (responseData.status === 201) {
+            send({
+                "summary": i18n.t('check-out.checkout-success-title'),
+                "body":  i18n.t('check-out.checkout-success-body', {count: parseInt(this.seatNr), room: this.checkedInRoom}),
+                "type": "success",
+                "timeout": 5,
+            });
+            this.isCheckedIn = false;
+            this.locationHash = "";
+            this.seatNr = "";
+            this.checkedInRoom = "";
+            this.checkedInSeat = "";
+            this.checkedInStartTime = "";
+        } else {
+            send({
+                "summary": i18n.t('check-out.checkout-failed-title'),
+                "body":  i18n.t('check-out.checkout-failed-body', {count: parseInt(this.seatNr), room: this.checkedInRoom}),
+                "type": "warning",
+                "timeout": 5,
+            });
+        }
         return responseData;
     }
     
-    async doCheckIn(event) {
+    async doCheckInWithQR(event) {
         let data = event.detail;
         event.stopPropagation();
 
         let check = await this.decodeUrl(data);
         if (check) {
+            await this.doCheckIn();
+        }
+    }
 
-            // TODO logout button should be 'fancier' + You are checked in at "ROOMXX" in frontend
+    async doCheckIn() {
+        // TODO logout button should be 'fancier' + You are checked in at "ROOMXX" in frontend
 
-            if (!this.isCheckedIn) {
-                console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
+        console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
-                if (this.locationHash.length > 0) {
-                    let responseData = await this.sendCheckInRequest();
+        if (this.locationHash.length > 0) {
+            let responseData = await this.sendCheckInRequest();
+            // When you are checked in
+            if (responseData.status === 201) {
+                let responseBody = await responseData.json();
+                this.checkedInRoom = responseBody.location.name;
+                this.checkedInSeat = responseBody.seatNumber;
+                this.checkedInStartTime = responseBody.startTime; //TODO make time readable
+                this.identifier = responseBody['identifier'];
+                this.agent = responseBody['agent'];
+                this.stopQRReader();
+                this.isCheckedIn = true;
 
-                    // When you are checked in
-                    if (responseData.status === 201) {
-                        this.identifier = responseData['identifier'];
-                        this.agent = responseData['agent'];
-                        this.stopQRReader();
-                        this.isCheckedIn = true;
-                        this.checkedInRoom = "HS P1 PHEG024C"; //TODO parse response and get room name
+                if (this.refreshSession) {
+                    this.refreshSession = false;
+                    send({
+                        "summary": i18n.t('check-in.success-refresh-title', {room: this.checkedInRoom}),
+                        "body": i18n.t('check-in.success-refresh-body', {room: this.checkedInRoom}),
+                        "type": "success",
+                        "timeout": 5,
+                    });
+                } else {
+                    send({
+                        "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
+                        "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
+                        "type": "success",
+                        "timeout": 5,
+                    });
+                }
 
-                        send({
-                            "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
-                            "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
-                            "type": "success",
-                            "timeout": 5,
-                        });
+            // Invalid Input
+            } else if (responseData.status === 400) {
+                send({
+                    "summary": i18n.t('check-in.invalid-input-title'),
+                    "body":  i18n.t('check-in.invalid-input-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+                console.log("error: Invalid Input.");
+                //this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                    // Invalid Input
-                    } else if (responseData.status === 400) {
-                        send({
-                            "summary": i18n.t('check-in.invalid-input-title'),
-                            "body":  i18n.t('check-in.invalid-input-body'),
-                            "type": "danger",
-                            "timeout": 5,
-                        });
-                        console.log("error: Invalid Input.");
-                        console.log("hmmmm");
-                        //this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+                // Error if room not exists
+            } else if (responseData.status === 404) {
+                send({
+                    "summary": i18n.t('check-in.hash-false-title'),
+                    "body":  i18n.t('check-in.hash-false-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+                console.log("error: room doesn't exists.");
+                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                    // Error if room not exists
-                    } else if (responseData.status === 404) {
-                        send({
-                            "summary": i18n.t('check-in.hash-false-title'),
-                            "body":  i18n.t('check-in.hash-false-body'),
-                            "type": "danger",
-                            "timeout": 5,
-                        });
-                        console.log("error: room doesn't exists.");
-                        this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+                // Other errors
+            } else if (responseData.status === 424) {
+                let errorBody = await responseData.json();
+                let errorDescription = errorBody["hydra:description"];
+                console.log("err: ", errorDescription);
+                console.log("err: ", errorBody);
 
-                    // Other errors
-                    } else if (responseData.status === 424) {
-                        let errorBody = await responseData.json();
-                        let errorDescription = errorBody["hydra:description"];
-                        console.log("err: ", errorDescription);
-                        console.log("err: ", errorBody);
+                // Error: invalid seat number
+                if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
+                    send({
+                        "summary": i18n.t('check-in.invalid-seatnr-title'),
+                        "body":  i18n.t('check-in.invalid-seatnr-body'),
+                        "type": "danger",
+                        "timeout": 5,
+                    });
+                    console.log("error: Invalid seat nr");
+                    this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+                }
 
-                        // Error: invalid seat number
-                        if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
-                            send({
-                                "summary": i18n.t('check-in.invalid-seatnr-title'),
-                                "body":  i18n.t('check-in.invalid-seatnr-body'),
-                                "type": "danger",
-                                "timeout": 5,
-                            });
-                            console.log("error: Invalid seat nr");
-                            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-                        }
+                // Error: no seat numbers
+                else if( errorDescription === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
+                    send({
+                        "summary": i18n.t('check-in.no-seatnr-title'),
+                        "body":  i18n.t('check-in.no-seatnr-body'),
+                        "type": "danger",
+                        "timeout": 5,
+                    });
+                    console.log("error: Room has no seat nr");
+                    this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+                }
 
-                        // Error: no seat numbers
-                        else if( errorDescription === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
-                            send({
-                                "summary": i18n.t('check-in.no-seatnr-title'),
-                                "body":  i18n.t('check-in.no-seatnr-body'),
-                                "type": "danger",
-                                "timeout": 5,
-                            });
-                            console.log("error: Room has no seat nr");
-                            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-                        }
+                // Error: you are already checked in here
+                else if( errorDescription === 'There are already check-ins at the location with provided seat for the current user!' ) {
 
-                        // Error: you are already checked in here
-                        else if( errorDescription === 'There are already check-ins at the location with provided seat for the current user!' ) {
+                    let getActiveCheckInsResponse = await this.getActiveCheckIns();
+                    if ( getActiveCheckInsResponse.status === 200) {
+                        let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
+                        let checkInsArray = getActiveCheckInsBody["hydra:member"];
 
-                            this.identifier = responseData['identifier'];
-                            this.agent = responseData['agent'];
+                        let atActualRoomCheckIn = checkInsArray.filter(x => (x.location.identifier === this.locationHash && x.seatNumber === parseInt(this.seatNr)));
+
+                        if (atActualRoomCheckIn.length === 1) {
+                            this.checkedInRoom = atActualRoomCheckIn[0].location.name;
+                            this.checkedInStartTime = atActualRoomCheckIn[0].startTime;
+                            this.checkedInSeat = atActualRoomCheckIn[0].seatNumber;
                             this.stopQRReader();
                             this.isCheckedIn = true;
-                            this.checkedInRoom = "HS P1 PHEG024C";
-                            // TODO check checkin at this room, show timestamp, and roomnumber, give a checkout button
-
-
+                        } else {
                             send({
-                                "summary": i18n.t('check-in.already-checkin-title'),
-                                "body":  i18n.t('check-in.already-checkin-body'),
-                                "type": "success",
+                                "summary": i18n.t('check-in.error-title'),
+                                "body": i18n.t('check-in.error-body'),
+                                "type": "danger",
                                 "timeout": 5,
                             });
-                            console.log("error: Already checkin");
                         }
-
-                    // Error if you don't have permissions
-                    } else if (responseData.status === 403) {
-                        send({
-                            "summary": i18n.t('check-in.no-permission-title'),
-                            "body":  i18n.t('check-in.no-permission-body'),
-                            "type": "danger",
-                            "timeout": 5,
-                        });
-                        this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-
-                    // Error: something else doesn't work
-                    } else{
+                    }
+                    else {
                         send({
                             "summary": i18n.t('check-in.error-title'),
                             "body": i18n.t('check-in.error-body'),
@@ -219,19 +251,54 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                             "timeout": 5,
                         });
                     }
+                    this.identifier = responseData['identifier'];
+                    this.agent = responseData['agent'];
+                    this.stopQRReader();
+                    this.isCheckedIn = true;
+                    this.checkedInRoom = "HS P1 PHEG024C";
+                    // TODO check checkin at this room, show timestamp, and roomnumber, give a checkout button
 
-                // Error: no location hash detected
-                } else {
+
                     send({
-                        "summary": i18n.t('check-in.error-title'),
-                        "body": i18n.t('check-in.error-body'),
-                        "type": "danger",
+                        "summary": i18n.t('check-in.already-checkin-title'),
+                        "body":  i18n.t('check-in.already-checkin-body'),
+                        "type": "success",
                         "timeout": 5,
                     });
-                    console.log('error: location hash is empty');
+                    console.log("error: Already checkin");
                 }
+
+                // Error if you don't have permissions
+            } else if (responseData.status === 403) {
+                send({
+                    "summary": i18n.t('check-in.no-permission-title'),
+                    "body":  i18n.t('check-in.no-permission-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+
+                // Error: something else doesn't work
+            } else{
+                send({
+                    "summary": i18n.t('check-in.error-title'),
+                    "body": i18n.t('check-in.error-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
             }
+
+            // Error: no location hash detected
+        } else {
+            send({
+                "summary": i18n.t('check-in.error-title'),
+                "body": i18n.t('check-in.error-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+            console.log('error: location hash is empty');
         }
+
     }
 
     stopQRReader() {
@@ -308,9 +375,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         let response;
 
         let body = {
-            "identifier": this.identifier,
-            "agent": this.agent,
-            "location": this.locationHash,
+            "location": "/check_in_places/" + this.locationHash,
+            "seatNumber": parseInt(this.seatNr),
         };
 
         const options = {
@@ -322,13 +388,45 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             body: JSON.stringify(body)
         };
 
-
-
         response = await this.httpGetAsync(this.entryPointUrl + '/location_check_out_actions', options);
 
-        console.log('response: ', response);
+        //console.log('response: ', response);
 
         return response;
+    }
+
+    async getActiveCheckIns() {
+        let response;
+
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/ld+json',
+                Authorization: "Bearer " + window.DBPAuthToken
+            },
+        };
+
+        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
+
+        return response;
+    }
+
+    async doRefreshSession() {
+        let responseCheckout = await this.sendCheckOutRequest();
+        if (responseCheckout.status === 201) {
+            this.refreshSession = true;
+           await this.doCheckIn();
+           return;
+        }
+
+        send({
+            "summary": i18n.t('check-in.refresh-failed-title'),
+            "body":  i18n.t('check-in.refresh-failed-body', {room: this.checkedInRoom}),
+            "type": "warning",
+            "timeout": 5,
+        });
+        return;
+
     }
 
     showQrReader() {
@@ -442,22 +540,25 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             <p class="">${i18n.t('check-in.description')}</p>
             
             <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
-                <h2> ${this.checkedInRoom} </h2> <!-- //TODO Übersetzen -->
-                <p class="${classMap({hidden: !this.isCheckedIn})}">${i18n.t('check-in.checked-in-description', {room: this.checkedInRoom})}</p>
+                <h2> ${this.checkedInRoom} </h2> 
+                <p class="${classMap({hidden: !this.isCheckedIn})}">
+                    ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.checkedInStartTime, room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.checkedInStartTime, room: this.checkedInRoom}) }
+                </p>
                 <div>
-                    <button class="logout button is-primary " @click="${this.doCheckOut}">${i18n.t('check-out.button-text')}</button>
+                    <button class="logout button is-primary " @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
+                    <button class="logout button" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>
                 </div>
             </div>
             
             <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
-                <div class="btn"><button class="button ${classMap({'is-primary': !this.showManuallyContainer})}" @click="${this.showQrReader}">${i18n.t('check-in.qr-button-text')}</button></div>
-                <div class="btn"><button class="button ${classMap({'is-primary': this.showManuallyContainer})}" @click="${this.showRoomSelector}">${i18n.t('check-in.manually-button-text')}</button></div>
+                <div class="btn"><button class="button ${classMap({'is-primary': !this.showManuallyContainer})}" @click="${this.showQrReader}" title="${i18n.t('check-in.qr-button-text')}">${i18n.t('check-in.qr-button-text')}</button></div>
+                <div class="btn"><button class="button ${classMap({'is-primary': this.showManuallyContainer})}" @click="${this.showRoomSelector}" title="${i18n.t('check-in.manually-button-text')}">${i18n.t('check-in.manually-button-text')}</button></div>
             </div>
             
             
             <div class="border ${classMap({hidden: !this.showBorder})}">
                 <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
-                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckIn(event);}}"></dbp-qr-code-scanner></div>
+                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner></div>
                 <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
                 
                     <div class="container">
@@ -476,7 +577,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                             </div>
                         </div>
                     </form>
-                    <div class="btn"><button class="button is-primary" @click="${(event) => {this.doCheckIn(event);}}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
+                    <div class="btn"><button class="button is-primary" @click="${(event) => {this.doCheckIn(event);}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                 </div>
                 </div>  
            </div>

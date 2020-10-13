@@ -4,7 +4,8 @@
     "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
     "qr-button-text": "Mit QR Code anmelden",
     "manually-button-text": "Ort manuell auswählen",
-    "checked-in-description": "Sie sind in {{room}} angemeldet.",
+    "checked-in-description": "Sie sind seit {{time}} im {{room}} angemeldet.",
+    "checked-in-with-seat-description": "Sie sind seit {{time}} im {{room}} am Sitzplatz {{seat}} angemeldet.",
     "hash-false-title": "Raum existiert nicht!",
     "hash-false-body": "Der gescannte Raum existiert nicht, bitte wenden Sie sich an einen Mitarbeiter der Gebäudetechnik.",
     "qr-false-title": "Falscher QR-Code!",
@@ -12,7 +13,7 @@
     "success-checkin-title": "Erfolgreich angemeldet!",
     "success-checkin-body": "Sie haben sich erfolgreich im {{room}} angemeldet.",
     "error-title": "Fehler!",
-    "error-body": "Es tut uns leid, etwas ist schief gelaufen.",
+    "error-body": "Es tut uns leid, Etwas ist schief gelaufen.",
     "no-permission-title": "Keine Rechte",
     "no-permission-body": "Sie haben keine Rechte diese Aktion durchzuführen. Bitte kontaktieren Sie den lokalen IT Support.",
     "already-checkin-title": "Bereits angemeldet!",
@@ -25,11 +26,20 @@
     "invalid-input-body": "Ihre Eingabe war ungültig. Bitte probieren Sie es nocheinmal.",
     "manually-place": "Raum",
     "manually-seat": "Sitzplatz",
-    "manually-checkin-button-text": "Anmelden"
+    "manually-checkin-button-text": "Anmelden",
+    "refresh-button-text": "Sitzung verlängern",
+    "success-refresh-title": "Sitzung erfolgreich verlängert!",
+    "success-refresh-body": "Sie haben Ihre Sitzung im {{room}} erfolgreich verlängert.",
+    "refresh-failed-title": "Sitzung verlängern fehlgeschlagen!",
+    "refresh-failed-body": "Das Erneuern Ihrer Sitzung ist fehlgeschlagen. Bitte versuchen Sie es nochmal."
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",
     "description": "Mit dieser Applikation können Sie sich von ihren angemeldeten Orten wieder abmelden.",
-    "button-text": "Abmelden"
+    "button-text": "Abmelden",
+    "checkout-success-title": "Erfolgreich abgemeldet!",
+    "checkout-success-body": "Sie haben sich erfolgreich vom {{room}} abgemeldet.",
+    "checkout-failed-title": "Abmeldung fehlgeschlagen!",
+    "checkout-failed-body": "Ihre Abmeldung bei {{room}} schlug fehl. Es tut uns leid, etwas ist schief gelaufen."
   }
 }

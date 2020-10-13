@@ -5,6 +5,7 @@
     "qr-button-text": "Check-in with QR Code",
     "manually-button-text": "Select location manually",
     "checked-in-description": "You are already registered at a location.",
+    "checked-in-with-seat-description": "You have been registered in the {{room}} at seat {{seat}} since {{time}}.",
     "hash-false-title": "Room doesn't exist!",
     "hash-false-body": "The scanned room does not exist, please contact a TU Graz employee.",
     "qr-false-title": "Wrong QR-Code!",
@@ -25,11 +26,20 @@
     "invalid-input-body": "Your input was invalid. Please try again.",
     "manually-place": "Room",
     "manually-seat": "Seat Number",
-    "manually-checkin-button-text": "Check-in"
+    "manually-checkin-button-text": "Check-in",
+    "refresh-button-text": "Refresh session",
+    "success-refresh-title": "Session extended successfully!",
+    "success-refresh-body": "You have successfully extended your session in the {{room}}.",
+    "refresh-failed-title": "Refresh session failed!",
+    "refresh-failed-body": "Refreshing your session failed. Please try again."
   },
   "check-out": {
     "title": "Show all check-ins",
     "description": "With this application you can check-out from your registered locations.",
-    "button-text": "Check-out"
+    "button-text": "Check-out",
+    "checkout-success-title": "Successfully checked out!",
+    "checkout-success-body": "You have successfully checked out of the {{room}}.",
+    "checkout-failed-title": "Checkout failed!",
+    "checkout-failed-body": "Your checkout from {{room}} failed. We're sorry, something went wrong."
   }
 }
