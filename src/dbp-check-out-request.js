@@ -273,7 +273,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
         }
-    }
+    } //TODO save new timestamp! in map
 
     getReadableDate(date) {
         let newDate = new Date(date);
