@@ -140,6 +140,7 @@ export default {
       'src/' + pkg.name + '.js',
       'src/dbp-check-in-request.js',
       'src/dbp-check-out-request.js',
+      'src/dbp-guest-check-in.js',
     ] : glob.sync('test/**/*.js'),
     output: {
       dir: 'dist',
