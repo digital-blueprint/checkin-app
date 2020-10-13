@@ -52,13 +52,10 @@
     "dbp-language-select": "^1.0.0",
     "dbp-notification": "^1.0.0",
     "dbp-person-profile": "^1.0.0",
-    "fabric": "^4.2.0",
     "i18next": "^19.5.1",
-    "jszip": "^3.5.0",
     "lit-element": "^2.3.1",
     "lit-html": "^1.2.1",
-    "source-sans-pro": "^2.45.0",
-    "universal-router": "^9.0.1"
+    "source-sans-pro": "^2.45.0"
   },
   "scripts": {
     "build-dev": "rollup -c --environment BUILD:development",
