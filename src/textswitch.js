@@ -26,7 +26,7 @@ export class TextSwitch extends LitElement {
         this.name2 = "";
         this.name = "";
         this.disabled = false;
-        this._active = BUTTON1;
+        this._active = "";
     }
 
     static get properties() {
@@ -53,7 +53,7 @@ export class TextSwitch extends LitElement {
             }
 
             #button1 {
-                border-right-width: 0;
+                border-right: 0px;
             }
 
             .active {
@@ -67,6 +67,28 @@ export class TextSwitch extends LitElement {
 
             .button:hover {
                 background-color: var(--dbp-secondary-bg-color) !important;
+            }
+            
+             @media only screen
+            and (orientation: portrait)
+            and (max-device-width: 765px) {  
+                div{
+                    display: block;
+                    white-space: inherit;
+                } 
+                #button1 {
+                    width: 100%;
+                    margin-bottom: 0px;
+                    border-right: 1px solid;
+                    border-bottom: 0px;
+                    min-height: 40px;
+                }
+                #button2 {
+                    width: 100%;
+                    margin-top: 0px;
+                    min-height: 40px;
+                }
+            
             }
         `;
     }

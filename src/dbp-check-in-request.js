@@ -148,6 +148,9 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 this.stopQRReader();
                 this.isCheckedIn = true;
 
+                this._("#text-switch")._active = "";
+
+
                 if (this.refreshSession) {
                     this.refreshSession = false;
                     send({
@@ -234,6 +237,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                             this.checkedInSeat = atActualRoomCheckIn[0].seatNumber;
                             this.stopQRReader();
                             this.isCheckedIn = true;
+                            this._("#text-switch")._active = "";
                         } else {
                             send({
                                 "summary": i18n.t('check-in.error-title'),
@@ -255,6 +259,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                     this.agent = responseData['agent'];
                     this.stopQRReader();
                     this.isCheckedIn = true;
+                    this._("#text-switch")._active = "";
                     this.checkedInRoom = "HS P1 PHEG024C";
                     // TODO check checkin at this room, show timestamp, and roomnumber, give a checkout button
 
@@ -433,7 +438,9 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.showBorder = true;
         this.showQrContainer = true;
         this.showManuallyContainer = false;
-        this._('#qr-scanner').stopScan = false;
+        if( this._('#qr-scanner') ) {
+            this._('#qr-scanner').stopScan = false;
+        }
     }
 
     showRoomSelector() {
@@ -460,6 +467,14 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.seatNr = event.data;
         console.log('seat num: ', this.seatNr);
         this.isManuallySet = true;
+    }
+
+    checkinSwitch(name) {
+        if (name === "manual") {
+            this.showRoomSelector();
+        } else {
+            this.showQrReader();
+        }
     }
 
     static get styles() {
@@ -506,6 +521,11 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             #select-seat {
                 margin-bottom: 0.75rem;
             }
+            
+            #text-switch {
+                display: block;
+                width: 50%;
+            }
 
             @media only screen
             and (orientation: portrait)
@@ -524,6 +544,11 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                     width: 100%;
                     box-sizing: border-box;
                 }
+                
+                #text-switch {
+                    display: block;
+                    width: 100%;
+                }
             }
         `;
     }
@@ -539,6 +564,16 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
             <p class="">${i18n.t('check-in.description')}</p>
             
+            <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
+                <dbp-textswitch id="text-switch" name1="qr-reader"
+                    name2="manual"
+                    name="${i18n.t('check-in.qr-button-text')} || ${i18n.t('check-in.manually-button-text')}"
+                    class="switch"
+                    value1="${i18n.t('check-in.qr-button-text')}"
+                    value2="${i18n.t('check-in.manually-button-text')}"
+                    @change=${ (e) => this.checkinSwitch(e.target.name) }></dbp-textswitch>
+            </div>
+            
             <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
                 <h2> ${this.checkedInRoom} </h2> 
                 <p class="${classMap({hidden: !this.isCheckedIn})}">
@@ -549,16 +584,11 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                     <button class="logout button" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>
                 </div>
             </div>
-            
-            <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
-                <div class="btn"><button class="button ${classMap({'is-primary': !this.showManuallyContainer})}" @click="${this.showQrReader}" title="${i18n.t('check-in.qr-button-text')}">${i18n.t('check-in.qr-button-text')}</button></div>
-                <div class="btn"><button class="button ${classMap({'is-primary': this.showManuallyContainer})}" @click="${this.showRoomSelector}" title="${i18n.t('check-in.manually-button-text')}">${i18n.t('check-in.manually-button-text')}</button></div>
-            </div>
-            
-            
+           
             <div class="border ${classMap({hidden: !this.showBorder})}">
                 <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
-                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner></div>
+                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
+                </div>
                 <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
                 
                     <div class="container">
