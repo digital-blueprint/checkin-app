@@ -117,8 +117,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     async doCheckOut(event, entry) {
-        this.shadowRoot.getElementById('btn-' + entry['location']['identifier']).setAttribute('disabled', '');
-
         let response = await this.sendCheckOutRequest(entry);
         console.log(response);
 
@@ -209,6 +207,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 margin-top: 2em;
                 margin-bottom: 2em;
             }
+
+            .header {
+                display: grid;
+                align-items: center;
+            }
         `;
     }
 
@@ -225,9 +228,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
                 <div class="checkins">
                     ${this.activeCheckins.map(i => html`
-                    <span class="header"><strong>${i.location.name}</strong>, #${("0" + i.seatNumber).slice(-2)}</span>
-                    <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
-                    <button class="button" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
+
+                    <span class="header"><strong>${i.location.name}</strong>Sitzplatz: ${i.seatNumber}</span>
+                    <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}">${i18n.t('check-out.button-text')}</button>
+                    <button class="button">${i18n.t('check-in.refresh-button-text')}</button>`)} <!-- //TODO -->
+
                 </div>
             </div>
         `;

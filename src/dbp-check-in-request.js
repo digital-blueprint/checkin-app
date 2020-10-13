@@ -511,13 +511,19 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 flex-flow: column;
             }
             
-            #select-seat {
-                margin-bottom: 0.75rem;
-            }
-            
             #text-switch {
                 display: block;
                 width: 50%;
+            }
+
+            #select-seat {
+                padding-left: 8px;
+                font-weight: 300;
+                color: inherit;
+                border: 1px solid #aaa;
+                line-height: 100%;
+                margin-bottom: 0.75rem;
+                height: 26px;
             }
 
             @media only screen
@@ -596,7 +602,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             <link rel="stylesheet" href="${select2CSS}">
                             <label class="label">${i18n.t('check-in.manually-seat')}</label>
                             <div class="control">
-                                <input type="number" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" pattern="[0-9]{1}" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling + correct number -->
+                                <input type="number" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" pattern="\d*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling + correct number -->
                             </div>
                         </div>
                     </form>
