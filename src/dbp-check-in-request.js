@@ -135,8 +135,6 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
 
 
     async doCheckIn() {
-        // TODO logout button should be 'fancier' + You are checked in at "ROOMXX" in frontend
-
         console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
         if (this.locationHash.length > 0) {
@@ -146,7 +144,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                 let responseBody = await responseData.json();
                 this.checkedInRoom = responseBody.location.name;
                 this.checkedInSeat = responseBody.seatNumber;
-                this.checkedInStartTime = responseBody.startTime; //TODO make time readable
+                this.checkedInStartTime = responseBody.startTime;
                 this.identifier = responseBody['identifier'];
                 this.agent = responseBody['agent'];
                 this.stopQRReader();
@@ -249,6 +247,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                                 "type": "danger",
                                 "timeout": 5,
                             });
+                            return;
                         }
                     }
                     else {
@@ -258,15 +257,8 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                             "type": "danger",
                             "timeout": 5,
                         });
+                        return;
                     }
-                    this.identifier = responseData['identifier'];
-                    this.agent = responseData['agent'];
-                    this.stopQRReader();
-                    this.isCheckedIn = true;
-                    this._("#text-switch")._active = "";
-                    this.checkedInRoom = "HS P1 PHEG024C";
-                    // TODO check checkin at this room, show timestamp, and roomnumber, give a checkout button
-
 
                     send({
                         "summary": i18n.t('check-in.already-checkin-title'),
@@ -482,6 +474,11 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
+    getReadableDate(date) {
+        let newDate = new Date(date);
+        return newDate.getDay() + "." + newDate.getMonth() + "." + newDate.getFullYear() + " " + i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)});
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -588,7 +585,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
                 <h2> ${this.checkedInRoom} </h2> 
                 <p class="${classMap({hidden: !this.isCheckedIn})}">
-                    ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.checkedInStartTime, room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.checkedInStartTime, room: this.checkedInRoom}) }
+                    ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.getReadableDate(this.checkedInStartTime), room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.getReadableDate(this.checkedInStartTime), room: this.checkedInRoom}) }
                 </p>
                 <div>
                     <button class="logout button is-primary " @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
