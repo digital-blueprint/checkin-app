@@ -3,12 +3,12 @@
   "module_src": "dbp-check-out-request.js",
   "routing_name": "check-out-request",
   "name": {
-    "de": "Zeige alle Anmeldungen",
-    "en": "Show all check-ins"
+    "de": "Von Orten abmelden",
+    "en": "Check-out from places"
   },
   "short_name": {
-    "de": "Zeige alle Anmeldungen",
-    "en": "Show all check-ins"
+    "de": "Von Orten abmelden",
+    "en": "Check-out from places"
   },
   "description": {
     "de": "Zeigt alle angemeldeten Orte.",
