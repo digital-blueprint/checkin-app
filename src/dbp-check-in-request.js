@@ -129,6 +129,10 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
             await this.doCheckIn();
         }
     }
+//TODO check if needed
+        // let check = !this.isManuallySet ? await this.decodeUrl(data) : false;
+        // if (this.isManuallySet || check) {
+
 
     async doCheckIn() {
         // TODO logout button should be 'fancier' + You are checked in at "ROOMXX" in frontend
@@ -460,6 +464,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
         this.seatNr = event.data;
         console.log('seat num: ', this.seatNr);
         this.isManuallySet = true;
+        console.log('isManuallySet: ', this.isManuallySet);
     }
 
     static get styles() {
@@ -573,7 +578,7 @@ class CheckIn extends ScopedElementsMixin(DBPLitElement) {
                             <link rel="stylesheet" href="${select2CSS}">
                             <label class="label">${i18n.t('check-in.manually-seat')}</label>
                             <div class="control">
-                                <input type="number" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling + correct number -->
+                                <input type="number" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" pattern="[0-9]{1}" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling + correct number -->
                             </div>
                         </div>
                     </form>

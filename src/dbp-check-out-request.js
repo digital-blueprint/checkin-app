@@ -1,5 +1,7 @@
 import {createI18nInstance} from './i18n.js';
 import {css, html, LitElement} from 'lit-element';
+import DBPCheckInLitElement from "./dbp-check-in-lit-element";
+import {classMap} from 'lit-html/directives/class-map.js';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
 import {Button, Icon, MiniSpinner} from 'dbp-common';
@@ -8,11 +10,13 @@ import {TextSwitch} from './textswitch.js';
 
 const i18n = createI18nInstance();
 
-class CheckOut extends ScopedElementsMixin(LitElement) {
+class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this.lang = i18n.language;
         this.entryPointUrl = commonUtils.getAPiUrl();
+        this.activeCheckins = [];
+        this.isRequested = false;
     }
 
     static get scopedElements() {
@@ -28,6 +32,8 @@ class CheckOut extends ScopedElementsMixin(LitElement) {
         return {
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
+            activeCheckins: { type: Array, attribute: false },
+            isRequested: { type: Boolean, attribute: false },
         };
     }
 
@@ -42,9 +48,11 @@ class CheckOut extends ScopedElementsMixin(LitElement) {
                     i18n.changeLanguage(this.lang);
                     break;
             }
-            super.update(changedProperties);
+           
             // console.log(propName, oldValue);
         });
+
+        super.update(changedProperties);
     }
 
     async httpGetAsync(url, options)
@@ -70,19 +78,31 @@ class CheckOut extends ScopedElementsMixin(LitElement) {
             },
         };
 
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_places', options); //TODO change to correct entrypoint
+        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
         
-        console.log('response: ', response);
+        //console.log('response: ', response);
         return response;
     }
 
-    async sendCheckOutRequest() {
-        let response;
+    async doCheckOut(event, entry) {
+        this.shadowRoot.getElementById('btn-' + entry['location']['identifier']).setAttribute('disabled', '');
+
+        let response = await this.sendCheckOutRequest(entry);
+        console.log(response);
+
+        this.removeEntryFromArray(this.activeCheckins, entry);
+        console.log('active checks: ', this.activeCheckins);
+        this.requestUpdate(); //TODO fix
+    }
+
+    async sendCheckOutRequest(entry) {
+        let locationHash = entry['location']['identifier'];
+        let seatNr = entry['seatNumber'];
+        //TODO check if values are set, otherwise skip request -> error message
 
         let body = {
-            "identifier": this.identifier,
-            "agent": this.agent,
-            "location": this.locationHash,
+            "location": "/check_in_places/" + locationHash,
+            "seatNumber": parseInt(seatNr),
         };
 
         const options = {
@@ -94,21 +114,42 @@ class CheckOut extends ScopedElementsMixin(LitElement) {
             body: JSON.stringify(body)
         };
 
-        this.isCheckedIn = false;
+        let response = await this.httpGetAsync(this.entryPointUrl + '/location_check_out_actions', options);
 
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_out_actions', options);
-        
-        console.log('response: ', response);
         return response;
     }
 
-    getListOfActiveCheckins() {
+    removeEntryFromArray(array, entry) {
+        let index = array.indexOf(entry);
+        return array.splice(index, 1);
+    }
+
+    parseActiveCheckins(response) {
         let list = [];
-        
-        let response = this.requestActiveCheckins();
-        console.log(response); //TODO parse response
+
+        let numTypes = parseInt(response['hydra:totalItems']);
+        if (isNaN(numTypes)) {
+            numTypes = 0;
+        }
+
+        for (let i = 0; i < numTypes; i++ ) {
+            list[i] = response['hydra:member'][i];
+        }
 
         return list;
+    }
+
+    async getListOfActiveCheckins() {
+        if (this.isLoggedIn() && !this.isRequested) {
+            let response = await this.requestActiveCheckins();
+            console.log(response);
+
+            if (response !== undefined && response.status !== 403) {
+                this.activeCheckins = this.parseActiveCheckins(response);
+                console.log('active checkins: ', this.activeCheckins);
+            }
+            this.isRequested = true;
+        }
     }
 
     static get styles() {
@@ -126,15 +167,37 @@ class CheckOut extends ScopedElementsMixin(LitElement) {
             h2 {
                 margin-bottom: 10px;
             }
+
+            .checkins {
+                display: grid;
+                grid-template-columns: repeat(3, max-content);
+                column-gap: 15px;
+                row-gap: 1.5em;
+                align-items: center;
+                margin-top: 2em;
+                margin-bottom: 2em;
+            }
         `;
     }
 
     render() {
+
+        if (this.isLoggedIn() && !this.isLoading()) {
+            this.getListOfActiveCheckins(); 
+        }
+        
         return html`
             <h2>${i18n.t('check-out.title')}</h2>
             <p>${i18n.t('check-out.description')}</p>
-            ${this.getListOfActiveCheckins().map(i => html`<span class="header"><strong>${i}</strong></span>
-                <button id="btn-${i}" class="button is-primary" @click="${this.sendCheckOutRequest}">${i18n.t('check-out.button-text')}</button>`)}
+
+            <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+                <div class="checkins">
+                    ${this.activeCheckins.map(i => html`
+                    <span class="header"><strong>${i.location.name}</strong>, ${i.seatNumber}</span>
+                    <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}">${i18n.t('check-out.button-text')}</button>
+                    <button class="button">${i18n.t('check-in.refresh-button-text')}</button>`)}
+                </div>
+            </div>
         `;
     }
 }
