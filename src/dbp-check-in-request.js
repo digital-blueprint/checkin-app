@@ -414,7 +414,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * TODO
+     * Check if input seatnumber is a valid number from 0-this.roomCapacity
      *
      * @param e
      */
