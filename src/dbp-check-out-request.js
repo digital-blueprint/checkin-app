@@ -392,6 +392,19 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             .no-checkins {
                 margin-top: -1em;
             }
+
+
+            @media only screen
+            and (orientation: portrait)
+            and (max-device-width: 765px) {   
+
+                .checkins {
+                    display: flex;
+                    flex-direction: column;
+                    margin-bottom: 0.5rem;
+                    align-items: stretch
+                }
+            }
         `;
     }
 
@@ -409,7 +422,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                     <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}` : ``}<br>
                     Angemeldet seit: ${this.getReadableDate(i.startTime)}</span> 
-                    <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
+                    <button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
                     <button class="button" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
                     
                     <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
