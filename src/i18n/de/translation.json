@@ -44,5 +44,9 @@
     "checkout-failed-body": "Ihre Abmeldung bei {{room}} schlug fehl. Es tut uns leid, etwas ist schief gelaufen.",
     "no-checkins-message": "Sie sind derzeit an keinem Ort angemeldet.",
     "loading-message": "Lädt..."
+  },
+  "guest-check-in": {
+    "title": "Gast an Ort anmelden",
+    "description": "Mit dieser Applikation können Sie einen Gast an einem Ort anmelden."
   }
 }

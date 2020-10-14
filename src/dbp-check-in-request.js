@@ -318,6 +318,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.showManuallyContainer = false;
             this.showQrContainer = false;
             this.showBorder = false;
+           /* const that = this;
+            this._('#select-seat').addEventListener('keydown', function (e) {
+                if (e.keyCode === 13) {
+                    console.log("huiii");
+                    that.doManuallyCheckin();
+                }
+            });*/
         } else {
             console.log('error: qr scanner is not available. Is it already stopped?');
         }
@@ -607,7 +614,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 </div>
                 <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
                 
-                    <div class="container">
+                    <div class="container" id="manual-select">
                     <form>
                         <div class="field">
                             <label class="label">${i18n.t('check-in.manually-place')}</label>
@@ -619,11 +626,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             <link rel="stylesheet" href="${select2CSS}">
                             <label class="label">${i18n.t('check-in.manually-seat')}</label>
                             <div class="control">
-                                <input class="input" type="text" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
+                                <input class="input" type="text" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}">
                             </div>
                         </div>
                     </form>
-                    <div class="btn"><button class="button is-primary" @click="${(event) => {this.doManuallyCheckin();}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
+                    <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${(event) => {this.doManuallyCheckin();}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                 </div>
                 </div>  
            </div>

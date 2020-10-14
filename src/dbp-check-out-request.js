@@ -390,7 +390,13 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             }
 
             .no-checkins {
-                margin-top: -1em;
+
+            }
+            
+            .border {
+                margin-top: 2rem;
+                padding-top: 2rem;
+                border-top: 1px solid black;
             }
 
 
@@ -417,7 +423,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         return html`
             <h2>${i18n.t('check-out.title')}</h2>
             <p>${i18n.t('check-out.description')}</p>
-            <div class="checkins ${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+            <div class="border checkins ${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
                 ${this.activeCheckins.map(i => html`
 
                     <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}<br>` : ``}
@@ -428,8 +434,9 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
                         <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
                     </span>
+                    
+                   <div class="no-checkins ${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
             </div>
-            <div class="no-checkins ${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
             
         `;
     }
