@@ -35,7 +35,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.wrongQR = [];
         this.isRoomSelected = false;
         this.roomCapacity = 0;
-        this.isManuallySet = false;
     }
 
     static get scopedElements() {
@@ -61,7 +60,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             showBorder: { type: Boolean, attribute: false},
             isRoomSelected: {type: Boolean, attribute: false},
             roomCapacity: {type: Number, attribute: false},
-            isManuallySet: {type: Boolean, attribute: false},
             checkedInStartTime: {type: String, attribute: false}
         };
     }
@@ -117,10 +115,17 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             await this.doCheckIn();
         }
     }
-//TODO check if needed
-        // let check = !this.isManuallySet ? await this.decodeUrl(data) : false;
-        // if (this.isManuallySet || check) {
 
+    doManuallyCheckin() {
+        let value = this._("#select-seat").value;
+        if (value !== undefined) {
+            this.seatNr = value;
+        } else {
+            this.seatNr = -1;
+        }
+        this.doCheckIn();
+
+    }
 
     async doCheckIn() {
         console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
@@ -370,8 +375,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     setSeatNumber(event) {
         this.seatNr = event.data;
         console.log('seat num: ', this.seatNr);
-        this.isManuallySet = true;
-        console.log('isManuallySet: ', this.isManuallySet);
     }
 
     checkinSwitch(name) {
@@ -535,15 +538,15 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.showAvailablePlaces(event);}}"></dbp-location-select>
                             </div>
                         </div>
-                        <div class="field ${classMap({hidden: !this.isRoomSelected})}">
+                        <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
                             <link rel="stylesheet" href="${select2CSS}">
                             <label class="label">${i18n.t('check-in.manually-seat')}</label>
                             <div class="control">
-                                <input type="number" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" pattern="\d*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling + correct number -->
+                                <input type="number" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" pattern="\d*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
                             </div>
                         </div>
                     </form>
-                    <div class="btn"><button class="button is-primary" @click="${(event) => {this.doCheckIn(event);}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
+                    <div class="btn"><button class="button is-primary" @click="${(event) => {this.doManuallyCheckin();}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                 </div>
                 </div>  
            </div>
