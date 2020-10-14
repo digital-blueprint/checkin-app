@@ -41,6 +41,8 @@
     "checkout-success-title": "Erfolgreich abgemeldet!",
     "checkout-success-body": "Sie haben sich erfolgreich vom {{room}} abgemeldet.",
     "checkout-failed-title": "Abmeldung fehlgeschlagen!",
-    "checkout-failed-body": "Ihre Abmeldung bei {{room}} schlug fehl. Es tut uns leid, etwas ist schief gelaufen."
+    "checkout-failed-body": "Ihre Abmeldung bei {{room}} schlug fehl. Es tut uns leid, etwas ist schief gelaufen.",
+    "no-checkins-message": "Sie sind derzeit an keinem Ort angemeldet.",
+    "loading-message": "Lädt..."
   }
 }
