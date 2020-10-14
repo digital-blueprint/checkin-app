@@ -130,7 +130,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
         } else {
-            let response = await await this.sendCheckOutRequest(locationHash, seatNr);
+            let response = await this.sendCheckOutRequest(locationHash, seatNr);
             console.log(response);
 
             if (response.status === 201) {
