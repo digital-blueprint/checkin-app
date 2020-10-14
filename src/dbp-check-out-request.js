@@ -64,13 +64,13 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * TODO
+     *  Request a re-render every time isLoggedIn()/isLoading() changes
      *
      * @param e
      */
     _updateAuth(e) {
         this._loginStatus = e.status;
-        // Every time isLoggedIn()/isLoading() return something different we request a re-render
+
         let newLoginState = [this.isLoggedIn(), this.isLoading()];
         if (this._loginState.toString() !== newLoginState.toString()) {
             this.requestUpdate();
@@ -85,7 +85,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * TODO
+     * Returns if a person is set in or not
      *
      * @returns {boolean} true or false
      */
@@ -94,11 +94,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * TODO
+     * Returns true if a person has successfully logged in
      *
      * @returns {boolean} true or false
      */
-    isLoading() { //TODO while loding show spinner and when no checkins show no-checkins message
+    isLoading() {
         if (this._loginStatus === "logged-out")
             return false;
         return (!this.isLoggedIn() && window.DBPAuthToken !== undefined);
@@ -205,6 +205,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         let locationHash = entry['location']['identifier'];
         let seatNr = entry['seatNumber'];
         let locationName = entry['location']['name'];
+        
         return this.refreshSession(locationHash, seatNr, locationName);
     }
 
@@ -222,6 +223,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         if (responseCheckout.status === 201) {
             this.isSessionRefreshed = true;
             await this.doCheckIn(locationHash, seatNumber, locationName);
+            this.isRequested = false;
             return;
         }
         send({
@@ -342,7 +344,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
         }
-    } //TODO save new timestamp! in map
+    }
 
     /**
      * Parse a incoming date to a readable date
@@ -379,13 +381,15 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 column-gap: 15px;
                 row-gap: 1.5em;
                 align-items: center;
-                margin-top: 2em;
-                margin-bottom: 2em;
             }
 
             .header {
                 display: grid;
                 align-items: center;
+            }
+
+            p {
+                margin-bottom: 2em;
             }
         `;
     }
@@ -399,21 +403,20 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         return html`
             <h2>${i18n.t('check-out.title')}</h2>
             <p>${i18n.t('check-out.description')}</p>
-
-            <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
-                <div class="checkins">
-                    ${this.activeCheckins.map(i => html`
+            <div class="checkins ${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+                ${this.activeCheckins.map(i => html`
 
                     <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}` : ``}<br>
                     Angemeldet seit: ${this.getReadableDate(i.startTime)}</span> 
                     <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
-                    <button class="button" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)} <!-- //TODO -->
-
-                </div>
+                    <button class="button" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
+                    
+                    <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
+                        <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                    </span>
             </div>
-            <div class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
-                <dbp-mini-spinner text="Loading..."></dbp-mini-spinner>
-            </div>
+            <div class="${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
+            
         `;
     }
 }

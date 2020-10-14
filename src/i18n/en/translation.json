@@ -41,6 +41,8 @@
     "checkout-success-title": "Successfully checked out!",
     "checkout-success-body": "You have successfully checked out of the {{room}}.",
     "checkout-failed-title": "Checkout failed!",
-    "checkout-failed-body": "Your checkout from {{room}} failed. We're sorry, something went wrong."
+    "checkout-failed-body": "Your checkout from {{room}} failed. We're sorry, something went wrong.",
+    "no-checkins-message": "You are currently not checked-in at any location..",
+    "loading-message": "Loading..."
   }
 }
