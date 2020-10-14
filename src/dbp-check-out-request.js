@@ -1,5 +1,5 @@
 import {createI18nInstance} from './i18n.js';
-import {css, html, LitElement} from 'lit-element';
+import {css, html} from 'lit-element';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
@@ -35,6 +35,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             activeCheckins: { type: Array, attribute: false },
             isRequested: { type: Boolean, attribute: false },
+            isRequestLoading: { type: Boolean, attribute: false },
         };
     }
 
@@ -89,37 +90,47 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     async doCheckOut(event, entry) {
-        let locationHash = entry['location']['identifier'];
-        let seatNr = entry['seatNumber'];
-        let locationName = entry['location']['name'];
-        //TODO check if values are set, otherwise skip request -> error message
+        let locationHash = '';
+        let seatNr = '';
+        let locationName = '';
 
-        let response = await await this.sendCheckOutRequest(locationHash, seatNr);
-        console.log(response);
-
-        if (response.status === 201) {
-            send({
-                "summary": i18n.t('check-out.checkout-success-title'),
-                "body":  i18n.t('check-out.checkout-success-body', {count: parseInt(seatNr), room: locationName}),
-                "type": "success",
-                "timeout": 5,
-            });
-            this.removeEntryFromArray(this.activeCheckins, entry);
-            console.log('active checks: ', this.activeCheckins);
-            this.requestUpdate(); //TODO fix
-        } else {
+        if( entry !== undefined) { 
+            locationHash = entry['location'] ? entry['location']['identifier'] : '';
+            seatNr = entry['seatNumber'];
+            locationName = entry['location'] ? entry['location']['name'] : '';
+        }
+        console.log('location hash: ', locationHash, ', seatnr: ', seatNr, ', location name: ', locationName);
+    
+        if (locationHash.length === 0) {
             send({
                 "summary": i18n.t('check-out.checkout-failed-title'),
                 "body":  i18n.t('check-out.checkout-failed-body', {count: parseInt(seatNr), room: locationName}),
                 "type": "warning",
                 "timeout": 5,
             });
-        }
-    }
+        } else {
+            let response = await await this.sendCheckOutRequest(locationHash, seatNr);
+            console.log(response);
 
-    removeEntryFromArray(array, entry) {
-        let index = array.indexOf(entry);
-        return array.splice(index, 1);
+            if (response.status === 201) {
+                send({
+                    "summary": i18n.t('check-out.checkout-success-title'),
+                    "body":  i18n.t('check-out.checkout-success-body', {count: parseInt(seatNr), room: locationName}),
+                    "type": "success",
+                    "timeout": 5,
+                });
+
+                this.isRequested = false;
+
+            } else {
+                send({
+                    "summary": i18n.t('check-out.checkout-failed-title'),
+                    "body":  i18n.t('check-out.checkout-failed-body', {count: parseInt(seatNr), room: locationName}),
+                    "type": "warning",
+                    "timeout": 5,
+                });
+            }
+        }
     }
 
     parseActiveCheckins(response) {
@@ -139,6 +150,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     async getListOfActiveCheckins() {
         if (this.isLoggedIn() && !this.isRequested) {
+            this.isRequestLoading = true;
             let response = await this.getActiveCheckIns();
             console.log(response);
             let responseBody = await response.json();
@@ -148,6 +160,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 console.log('active checkins: ', this.activeCheckins);
             }
             this.isRequested = true;
+            this.isRequestLoading = false;
         }
     }
 
@@ -316,7 +329,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     render() {
 
         if (this.isLoggedIn() && !this.isLoading()) {
-            this.getListOfActiveCheckins(); 
+            this.getListOfActiveCheckins();
         }
         
         return html`
@@ -327,12 +340,15 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <div class="checkins">
                     ${this.activeCheckins.map(i => html`
 
-                    <span class="header"><strong>${i.location.name}</strong>Sitzplatz: ${i.seatNumber}<br>
+                    <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}` : ``}<br>
                     Angemeldet seit: ${this.getReadableDate(i.startTime)}</span> 
                     <button id="btn-${i.location.identifier}" class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
                     <button class="button" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)} <!-- //TODO -->
 
                 </div>
+            </div>
+            <div class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
+                <dbp-mini-spinner text="Loading..."></dbp-mini-spinner>
             </div>
         `;
     }
