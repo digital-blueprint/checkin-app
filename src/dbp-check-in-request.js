@@ -131,7 +131,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     doManuallyCheckin() {
         let value = this._("#select-seat").value;
-        if (value !== undefined) {
+        if (value !== undefined && value !== 0) {
             this.seatNr = value;
         } else {
             this.seatNr = -1;
@@ -416,11 +416,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     /**
      * TODO
      *
-     * @param event
+     * @param e
      */
-    setSeatNumber(event) {
-        this.seatNr = event.data;
-        console.log('seat num: ', this.seatNr);
+    setSeatNumber(e) {
+        let val = parseInt( e.explicitOriginalTarget.value );
+        val = isNaN(val) ? "" : val;
+        val = val > this.roomCapacity ? this.roomCapacity : val;
+        this._("#select-seat").value = val;
     }
 
     /**
@@ -560,6 +562,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     display: block;
                     width: 100%;
                 }
+                #select-seat{
+                    width: 100%;
+                }
             }
         `;
     }
@@ -614,7 +619,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             <link rel="stylesheet" href="${select2CSS}">
                             <label class="label">${i18n.t('check-in.manually-seat')}</label>
                             <div class="control">
-                                <input type="number" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" pattern="\d*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
+                                <input class="input" type="text" id="select-seat" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
                             </div>
                         </div>
                     </form>
