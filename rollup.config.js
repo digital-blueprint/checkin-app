@@ -42,6 +42,7 @@ let matomoSiteId = 131;
 let useTerser = buildFull;
 let useBabel = buildFull;
 let checkLicenses = buildFull;
+let searchQRString = 'tugrazcheckin: -';
 
 switch (build) {
   case 'local':
@@ -177,6 +178,7 @@ export default {
         }),
         consts({
           environment: build,
+          searchQRString: searchQRString,
           buildinfo: getBuildInfo(),
         }),
         emitEJS({

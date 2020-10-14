@@ -62,6 +62,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         super.update(changedProperties);
     }
 
+    /**
+     * TODO
+     *
+     * @param e
+     */
     _updateAuth(e) {
         this._loginStatus = e.status;
         // Every time isLoggedIn()/isLoading() return something different we request a re-render
@@ -78,16 +83,32 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         super.disconnectedCallback();
     }
 
+    /**
+     * TODO
+     *
+     * @returns {boolean} true or false
+     */
     isLoggedIn() {
         return (window.DBPPerson !== undefined && window.DBPPerson !== null);
     }
 
+    /**
+     * TODO
+     *
+     * @returns {boolean} true or false
+     */
     isLoading() { //TODO while loding show spinner and when no checkins show no-checkins message
         if (this._loginStatus === "logged-out")
             return false;
         return (!this.isLoggedIn() && window.DBPAuthToken !== undefined);
     }
 
+    /**
+     * Init a checkout request at a specific location and send notification if it worked or not
+     *
+     * @param event
+     * @param entry
+     */
     async doCheckOut(event, entry) {
         let locationHash = entry['location']['identifier'];
         let seatNr = entry['seatNumber'];
@@ -117,11 +138,26 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
+    /**
+     * Removes location entry from array
+     *
+     * @param array
+     * @param entry
+     *
+     * @returns {} TODO
+     */
     removeEntryFromArray(array, entry) {
         let index = array.indexOf(entry);
         return array.splice(index, 1);
     }
 
+    /**
+     * Parses the active checkins respons
+     *
+     * @param response
+     *
+     * @returns {Array} list
+     */
     parseActiveCheckins(response) {
         let list = [];
 
@@ -129,14 +165,17 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         if (isNaN(numTypes)) {
             numTypes = 0;
         }
-
         for (let i = 0; i < numTypes; i++ ) {
             list[i] = response['hydra:member'][i];
         }
-
         return list;
     }
 
+    /**
+     * Get a list of active checkins
+     *
+     * @returns {Array} list
+     */
     async getListOfActiveCheckins() {
         if (this.isLoggedIn() && !this.isRequested) {
             let response = await this.getActiveCheckIns();
@@ -151,6 +190,12 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
+    /**
+     * Init a session refresh
+     *
+     * @param event
+     * @param entry
+     */
     doRefreshSession(event, entry) {
         let locationHash = entry['location']['identifier'];
         let seatNr = entry['seatNumber'];
@@ -158,6 +203,15 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         return this.refreshSession(locationHash, seatNr, locationName);
     }
 
+    /**
+     * Do a refresh: sends a checkout request, if this is successfully init a checkin
+     * sends an error notification if something wen wrong
+     *
+     * @param locationHash
+     * @param seatNumber
+     * @param locationName
+     *
+     */
     async refreshSession(locationHash, seatNumber, locationName) {
         let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
         if (responseCheckout.status === 201) {
@@ -165,7 +219,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             await this.doCheckIn(locationHash, seatNumber, locationName);
             return;
         }
-
         send({
             "summary": i18n.t('check-in.refresh-failed-title'),
             "body":  i18n.t('check-in.refresh-failed-body', {room: locationName}),
@@ -174,11 +227,22 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         });
     }
 
+    /**
+     * Sends a Checkin request and do error handling and parsing
+     * Include message for user when it worked or not
+     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
+     *
+     * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
+     *                  no seat number, already checkedin, no permissions, any other errors, location hash empty
+     *
+     * @param locationHash
+     * @param seatNumber
+     * @param locationName
+     */
     async doCheckIn(locationHash, seatNumber, locationName) {
          let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
         // When you are checked in
         if (responseData.status === 201) {
-            // let responseBody = await responseData.json(); TODO show timestamp to users
             if (this.isSessionRefreshed) {
                 this.isSessionRefreshed = false;
                 send({
@@ -275,6 +339,14 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     } //TODO save new timestamp! in map
 
+    /**
+     * Parse a incoming date to a readable date
+     *
+     * @param date
+     *
+     * @returns {string} readable date
+     *
+     */
     getReadableDate(date) {
         let newDate = new Date(date);
         return newDate.getDay() + "." + newDate.getMonth() + "." + newDate.getFullYear() + " " + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2);

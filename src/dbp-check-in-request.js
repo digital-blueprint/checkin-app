@@ -11,6 +11,7 @@ import {QrCodeScanner} from 'dbp-qr-code-scanner';
 import {LocationSelect} from 'dbp-location-select';
 import { send } from 'dbp-common/notification';
 import select2CSSPath from 'select2/dist/css/select2.min.css';
+import searchQRString from 'consts:searchQRString';
 
 const i18n = createI18nInstance();
 
@@ -30,7 +31,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.showManuallyContainer = false;
         this.showQrContainer = false;
         this.showBorder = false;
-        this.searchHashString = "tugrazcheckin: -"; //TODO auslagern
+        this.searchHashString = searchQRString;
         this.wrongHash = [];
         this.wrongQR = [];
         this.isRoomSelected = false;
@@ -76,10 +77,14 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     break;
             }
             super.update(changedProperties);
-            // console.log(propName, oldValue);
         });
     }
 
+    /**
+     * Init a checkout and Check if it was successfull
+     *
+     *  @returns {object} responseData
+     */
     async doCheckOut() {
         let responseData = await this.sendCheckOutRequest(this.locationHash, this.seatNr);
         if (responseData.status === 201) {
@@ -105,17 +110,25 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
         return responseData;
     }
-    
+
+    /**
+     * Init a checkin from a QR code scan event
+     *
+     * @param event
+     */
     async doCheckInWithQR(event) {
         let data = event.detail;
         event.stopPropagation();
-
         let check = await this.decodeUrl(data);
         if (check) {
             await this.doCheckIn();
         }
     }
 
+    /**
+     * Init a checkin manuall checkin from select2 option
+     *
+     */
     doManuallyCheckin() {
         let value = this._("#select-seat").value;
         if (value !== undefined) {
@@ -124,14 +137,23 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.seatNr = -1;
         }
         this.doCheckIn();
-
     }
 
+    /**
+     * Sends a Checkin request and do error handling and parsing
+     * Include message for user when it worked or not
+     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
+     *
+     * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
+     *                  no seat number, already checkedin, no permissions, any other errors, location hash empty
+     *
+     */
     async doCheckIn() {
         console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
         if (this.locationHash.length > 0) {
             let responseData = await this.sendCheckInRequest(this.locationHash, this.seatNr);
+
             // When you are checked in
             if (responseData.status === 201) {
                 let responseBody = await responseData.json();
@@ -142,9 +164,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.agent = responseBody['agent'];
                 this.stopQRReader();
                 this.isCheckedIn = true;
-
                 this._("#text-switch")._active = "";
-
 
                 if (this.isSessionRefreshed) {
                     this.isSessionRefreshed = false;
@@ -171,10 +191,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "danger",
                     "timeout": 5,
                 });
-                console.log("error: Invalid Input.");
-                //this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                // Error if room not exists
+            // Error if room not exists
             } else if (responseData.status === 404) {
                 send({
                     "summary": i18n.t('check-in.hash-false-title'),
@@ -182,10 +200,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "danger",
                     "timeout": 5,
                 });
-                console.log("error: room doesn't exists.");
                 this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                // Other errors
+            // Other errors
             } else if (responseData.status === 424) {
                 let errorBody = await responseData.json();
                 let errorDescription = errorBody["hydra:description"];
@@ -223,7 +240,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     if ( getActiveCheckInsResponse.status === 200) {
                         let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
                         let checkInsArray = getActiveCheckInsBody["hydra:member"];
-
                         let atActualRoomCheckIn = checkInsArray.filter(x => (x.location.identifier === this.locationHash && x.seatNumber === parseInt(this.seatNr)));
 
                         if (atActualRoomCheckIn.length === 1) {
@@ -242,8 +258,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             });
                             return;
                         }
-                    }
-                    else {
+                    } else {
                         send({
                             "summary": i18n.t('check-in.error-title'),
                             "body": i18n.t('check-in.error-body'),
@@ -259,10 +274,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         "type": "success",
                         "timeout": 5,
                     });
-                    console.log("error: Already checkin");
                 }
 
-                // Error if you don't have permissions
+            // Error if you don't have permissions
             } else if (responseData.status === 403) {
                 send({
                     "summary": i18n.t('check-in.no-permission-title'),
@@ -272,7 +286,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 });
                 this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                // Error: something else doesn't work
+            // Error: something else doesn't work
             } else{
                 send({
                     "summary": i18n.t('check-in.error-title'),
@@ -282,7 +296,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 });
             }
 
-            // Error: no location hash detected
+        // Error: no location hash detected
         } else {
             send({
                 "summary": i18n.t('check-in.error-title'),
@@ -290,11 +304,14 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "danger",
                 "timeout": 5,
             });
-            console.log('error: location hash is empty');
         }
 
     }
 
+    /**
+     * Stop QR code reader and hide container
+     *
+     */
     stopQRReader() {
         if (this._("#qr-scanner")) {
             this._("#qr-scanner").stopScan = true;
@@ -306,6 +323,18 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
+    /**
+     * Decode data from QR code
+     * Check if it is a valid string for this application with this.searchHashString
+     * Saves invalid QR codes, so we don't have to process than more than once
+     * Check if input QR code is already a invalid QR code
+     *
+     * @param data
+     *
+     * @returns {boolean} true if data is valid not yet send QR code data
+     * @returns {boolean} false if data is invalid QR code data
+     *
+     */
     async decodeUrl(data) {
         let index = data.search(this.searchHashString);
         if (index === -1) {
@@ -322,9 +351,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
         let locationParam = data.substring(index + this.searchHashString.length);
         let checkAlreadySend = await this.wrongHash.includes(locationParam);
-
         if (checkAlreadySend) {
-            console.log("schon gesendet");
             return false;
         }
         let splitted = locationParam.split('-');
@@ -342,8 +369,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
+    /**
+     * Start QR code reader and show container
+     *
+     */
     showQrReader() {
-        console.log("huiii");
         this.showBorder = true;
         this.showQrContainer = true;
         this.showManuallyContainer = false;
@@ -352,6 +382,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
+    /**
+     * Show manually room selector container
+     * and stop QR code scanner
+     *
+     */
     showRoomSelector() {
         this._("#qr-scanner").stopScan = true;
         this.showBorder = true;
@@ -359,6 +394,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.showQrContainer = false;
     }
 
+    /**
+     * TODO
+     *
+     * @param event
+     *
+     */
     showAvailablePlaces(event) {
         this.isRoomSelected = true;
         this.roomCapacity = event.detail.capacity;
@@ -372,11 +413,22 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         console.log('location hash: ', this.locationHash); //TODO check if id and location hash are the same values
     }
 
+    /**
+     * TODO
+     *
+     * @param event
+     */
     setSeatNumber(event) {
         this.seatNr = event.data;
         console.log('seat num: ', this.seatNr);
     }
 
+    /**
+     * Uses textswitch, switches container (manually room select or QR room select
+     *
+     * @param name
+     *
+     */
     checkinSwitch(name) {
         if (name === "manual") {
             this.showRoomSelector();
@@ -385,15 +437,36 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
+    /**
+     * Parse a incoming date to a readable date
+     *
+     * @param date
+     *
+     * @returns {string} readable date
+     *
+     */
     getReadableDate(date) {
         let newDate = new Date(date);
         return newDate.getDay() + "." + newDate.getMonth() + "." + newDate.getFullYear() + " " + i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)});
     }
 
+    /**
+     * Init a session refresh
+     *
+     */
     doRefreshSession() {
         return this.refreshSession(this.locationHash, this.seatNr, this.checkedInRoom);
     }
 
+    /**
+     * Do a refresh: sends a checkout request, if this is successfully init a checkin
+     * sends an error notification if something wen wrong
+     *
+     * @param locationHash
+     * @param seatNumber
+     * @param locationName
+     *
+     */
     async refreshSession(locationHash, seatNumber, locationName) {
         let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
         if (responseCheckout.status === 201) {
@@ -401,7 +474,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             await this.doCheckIn();
             return;
         }
-
         send({
             "summary": i18n.t('check-in.refresh-failed-title'),
             "body":  i18n.t('check-in.refresh-failed-body', {room: locationName}),
