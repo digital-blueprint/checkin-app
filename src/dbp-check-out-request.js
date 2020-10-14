@@ -381,6 +381,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 column-gap: 15px;
                 row-gap: 1.5em;
                 align-items: center;
+                margin-top: 2em;
             }
 
             .header {
@@ -388,8 +389,8 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 align-items: center;
             }
 
-            p {
-                margin-bottom: 2em;
+            .no-checkins {
+                margin-top: -1em;
             }
         `;
     }
@@ -415,7 +416,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
                     </span>
             </div>
-            <div class="${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
+            <div class="no-checkins ${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
             
         `;
     }
