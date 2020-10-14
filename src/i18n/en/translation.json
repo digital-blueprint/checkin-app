@@ -44,5 +44,9 @@
     "checkout-failed-body": "Your checkout from {{room}} failed. We're sorry, something went wrong.",
     "no-checkins-message": "You are currently not checked-in at any location..",
     "loading-message": "Loading..."
+  },
+  "guest-check-in": {
+    "title": "Guest registration",
+    "description": "With this application you can register a guest at a location."
   }
 }
