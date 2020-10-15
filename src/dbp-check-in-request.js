@@ -126,7 +126,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * Init a checkin manuall checkin from select2 option
+     * Init a checkin manual checkin from select2 option
      *
      */
     doManuallyCheckin() {
