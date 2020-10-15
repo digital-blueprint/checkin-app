@@ -81,7 +81,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * Init a checkout and Check if it was successfull
+     * Init a checkout and Check if it was successful
      *
      *  @returns {object} responseData
      */
