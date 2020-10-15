@@ -126,20 +126,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * Init a checkin manual checkin from select2 option
-     *
-     */
-    doManuallyCheckin() {
-        if (this._('#select-seat')) {
-            let value = this._("#select-seat").value;
-            if (value !== undefined && value !== 0) {
-                this.seatNr = value;
-            }
-        }
-        this.doCheckIn();
-    }
-
-    /**
      * Sends a Checkin request and do error handling and parsing
      * Include message for user when it worked or not
      * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
@@ -426,10 +412,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param e
      */
     setSeatNumber(e) {
-        let val = parseInt( e.explicitOriginalTarget.value );
+        let val = parseInt(e.explicitOriginalTarget.value);
         val = isNaN(val) ? "" : val;
-        val = val > this.roomCapacity ? this.roomCapacity : val;
-        this._("#select-seat").value = val;
+        this.seatNr = Math.min(this.roomCapacity, val);
     }
 
     /**
@@ -623,14 +608,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             </div>
                         </div>
                         <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
-                            <link rel="stylesheet" href="${select2CSS}">
                             <label class="label">${i18n.t('check-in.manually-seat')}</label>
                             <div class="control">
-                                <input class="input" type="text" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}">
+                                <input class="input" type="text" .value="${this.seatNr}" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}">
                             </div>
                         </div>
                     </form>
-                    <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${(event) => {this.doManuallyCheckin();}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
+                    <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckIn}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                 </div>
                 </div>  
            </div>
