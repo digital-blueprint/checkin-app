@@ -130,11 +130,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     doManuallyCheckin() {
-        let value = this._("#select-seat").value;
-        if (value !== undefined && value !== 0) {
-            this.seatNr = value;
-        } else {
-            this.seatNr = -1;
+        if (this._('#select-seat')) {
+            let value = this._("#select-seat").value;
+            if (value !== undefined && value !== 0) {
+                this.seatNr = value;
+            }
         }
         this.doCheckIn();
     }
