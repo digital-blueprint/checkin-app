@@ -411,11 +411,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 }
 
                 .header {
-                    text-align: center;
+                    margin-bottom: 0.5rem;
                 }
 
                 #refresh-btn {
-                    margin-bottom: 1rem;
+                    margin-bottom: 1.5rem;
                 }
             }
         `;
