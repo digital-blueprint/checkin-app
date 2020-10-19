@@ -388,22 +388,17 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * TODO
+     * Processes the event from location-select 
+     * and stores the information into the 
+     * correct values.
      *
      * @param event
      *
      */
-    showAvailablePlaces(event) {
+    processSelectedPlaceInformation(event) {
         this.isRoomSelected = true;
         this.roomCapacity = event.detail.capacity;
-
-        console.log('event detail: ', event.detail);
-        // this.locationHash = event.detail.room; //TODO fix this
-        let splitted = event.detail.value.split('/');
-        splitted.length === 3 ? this.locationHash = splitted[2] : console.log('error: invalid location id'); //TODO fix above and delete this
-
-        console.log('room capacity: ', this.roomCapacity);
-        console.log('location hash: ', this.locationHash); //TODO check if id and location hash are the same values
+        this.locationHash = event.detail.room;
     }
 
     /**
@@ -604,7 +599,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <div class="field">
                             <label class="label">${i18n.t('check-in.manually-place')}</label>
                             <div class="control">
-                                <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.showAvailablePlaces(event);}}"></dbp-location-select>
+                                <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-location-select>
                             </div>
                         </div>
                         <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
