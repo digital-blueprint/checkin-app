@@ -407,8 +407,15 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 .checkins {
                     display: flex;
                     flex-direction: column;
-                    margin-bottom: 0.5rem;
                     align-items: stretch
+                }
+
+                .header {
+                    text-align: center;
+                }
+
+                #refresh-btn {
+                    margin-bottom: 1rem;
                 }
             }
         `;
@@ -429,13 +436,13 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}<br>` : ``}
                     Angemeldet seit: ${this.getReadableDate(i.startTime)}</span> 
                     <button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
-                    <button class="button" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
+                    <button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
                     
-                    <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
-                        <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
-                    </span>
+                <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
+                    <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                </span>
                     
-                   <div class="no-checkins ${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
+                <div class="no-checkins ${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
             </div>
             
         `;
