@@ -10,7 +10,6 @@ import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from 'dbp-qr-code-scanner';
 import {LocationSelect} from 'dbp-location-select';
 import { send } from 'dbp-common/notification';
-import select2CSSPath from 'select2/dist/css/select2.min.css';
 import searchQRString from 'consts:searchQRString';
 
 const i18n = createI18nInstance();
@@ -76,8 +75,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     i18n.changeLanguage(this.lang);
                     break;
             }
-            super.update(changedProperties);
         });
+
+        super.update(changedProperties);
     }
 
     /**
@@ -557,62 +557,70 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     render() {
-        const select2CSS = commonUtils.getAssetURL(select2CSSPath);
         return html`
-            <link rel="stylesheet" href="${select2CSS}">
-            <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
-            <h2>${i18n.t('check-in.title')}</h2>
-            
-            
 
-            <p class="">${i18n.t('check-in.description')}</p>
-            
-            <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
-                <dbp-textswitch id="text-switch" name1="qr-reader"
-                    name2="manual"
-                    name="${i18n.t('check-in.qr-button-text')} || ${i18n.t('check-in.manually-button-text')}"
-                    class="switch"
-                    value1="${i18n.t('check-in.qr-button-text')}"
-                    value2="${i18n.t('check-in.manually-button-text')}"
-                    @change=${ (e) => this.checkinSwitch(e.target.name) }></dbp-textswitch>
+            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
+                ${i18n.t('error-login-message')}
+                ${console.log(this.isLoggedIn())}
             </div>
+
+            <span class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
+                <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+            </span>
+
+            <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+
+                <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
+                <h2>${i18n.t('check-in.title')}</h2>
+                <p class="">${i18n.t('check-in.description')}</p>
             
-            <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
-                <h2> ${this.checkedInRoom} </h2> 
-                <p class="${classMap({hidden: !this.isCheckedIn})}">
-                    ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.getReadableDate(this.checkedInStartTime), room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.getReadableDate(this.checkedInStartTime), room: this.checkedInRoom}) }
-                </p>
-                <div>
-                    <button class="logout button is-primary " @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
-                    <button class="logout button" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>
+                <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
+                    <dbp-textswitch id="text-switch" name1="qr-reader"
+                        name2="manual"
+                        name="${i18n.t('check-in.qr-button-text')} || ${i18n.t('check-in.manually-button-text')}"
+                        class="switch"
+                        value1="${i18n.t('check-in.qr-button-text')}"
+                        value2="${i18n.t('check-in.manually-button-text')}"
+                        @change=${ (e) => this.checkinSwitch(e.target.name) }></dbp-textswitch>
                 </div>
-            </div>
+            
+                <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
+                    <h2> ${this.checkedInRoom} </h2> 
+                    <p class="${classMap({hidden: !this.isCheckedIn})}">
+                        ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.getReadableDate(this.checkedInStartTime), room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.getReadableDate(this.checkedInStartTime), room: this.checkedInRoom}) }
+                    </p>
+                    <div>
+                        <button class="logout button is-primary " @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
+                        <button class="logout button" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>
+                    </div>
+                </div>
            
-            <div class="border ${classMap({hidden: !this.showBorder})}">
-                <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
-                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
-                </div>
-                <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
+                <div class="border ${classMap({hidden: !this.showBorder})}">
+                    <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
+                        <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
+                    </div>
+                    <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
                 
-                    <div class="container" id="manual-select">
-                    <form>
-                        <div class="field">
-                            <label class="label">${i18n.t('check-in.manually-place')}</label>
-                            <div class="control">
-                                <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-location-select>
-                            </div>
+                        <div class="container" id="manual-select">
+                            <form>
+                                <div class="field">
+                                    <label class="label">${i18n.t('check-in.manually-place')}</label>
+                                    <div class="control">
+                                        <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-location-select>
+                                    </div>
+                                </div>
+                                <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
+                                    <label class="label">${i18n.t('check-in.manually-seat')}</label>
+                                    <div class="control">
+                                        <input class="input" id="select-seat" type="number" .value="${this.seatNr}" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}">
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckIn}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                         </div>
-                        <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
-                            <label class="label">${i18n.t('check-in.manually-seat')}</label>
-                            <div class="control">
-                                <input class="input" type="number" .value="${this.seatNr}" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}">
-                            </div>
-                        </div>
-                    </form>
-                    <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckIn}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button></div>
+                    </div>  
                 </div>
-                </div>  
-           </div>
+            </div>
         `;
     }
 }

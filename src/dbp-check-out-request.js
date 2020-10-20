@@ -4,7 +4,7 @@ import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
-import {Button, EventBus, Icon, MiniSpinner} from 'dbp-common';
+import {Button, Icon, MiniSpinner} from 'dbp-common';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
 import {send} from "dbp-common/notification";
@@ -41,12 +41,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
-
-        this._loginStatus = '';
-        this._loginState = [];
-        this._bus = new EventBus();
-        this._updateAuth = this._updateAuth.bind(this);
-        this._bus.subscribe('auth-update', this._updateAuth);
     }
 
     update(changedProperties) {
@@ -61,47 +55,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         });
 
         super.update(changedProperties);
-    }
-
-    /**
-     *  Request a re-render every time isLoggedIn()/isLoading() changes
-     *
-     * @param e
-     */
-    _updateAuth(e) {
-        this._loginStatus = e.status;
-
-        let newLoginState = [this.isLoggedIn(), this.isLoading()];
-        if (this._loginState.toString() !== newLoginState.toString()) {
-            this.requestUpdate();
-        }
-        this._loginState = newLoginState;
-    }
-
-    disconnectedCallback() {
-        this._bus.close();
-
-        super.disconnectedCallback();
-    }
-
-    /**
-     * Returns if a person is set in or not
-     *
-     * @returns {boolean} true or false
-     */
-    isLoggedIn() {
-        return (window.DBPPerson !== undefined && window.DBPPerson !== null);
-    }
-
-    /**
-     * Returns true if a person has successfully logged in
-     *
-     * @returns {boolean} true or false
-     */
-    isLoading() {
-        if (this._loginStatus === "logged-out")
-            return false;
-        return (!this.isLoggedIn() && window.DBPAuthToken !== undefined);
     }
 
     /**
@@ -428,23 +381,34 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
         
         return html`
-            <h2>${i18n.t('check-out.title')}</h2>
-            <p>${i18n.t('check-out.description')}</p>
-            <div class="border checkins ${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
-                ${this.activeCheckins.map(i => html`
-
-                    <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}<br>` : ``}
-                    Angemeldet seit: ${this.getReadableDate(i.startTime)}</span> 
-                    <button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
-                    <button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
-                    
-                <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
-                    <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
-                </span>
-                    
-                <div class="no-checkins ${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
+            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
+                ${i18n.t('error-login-message')}
             </div>
-            
+
+            <span class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
+                <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+            </span>
+
+            <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+
+                <h2>${i18n.t('check-out.title')}</h2>
+                <p>${i18n.t('check-out.description')}</p>
+                <div class="border checkins ${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+                    ${this.activeCheckins.map(i => html`
+
+                        <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}<br>` : ``}
+                        Angemeldet seit: ${this.getReadableDate(i.startTime)}</span> 
+                        <button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
+                        <button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
+                    
+                    <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
+                        <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                    </span>
+                    
+                    <div class="no-checkins ${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
+                </div>
+
+            </div>
         `;
     }
 }

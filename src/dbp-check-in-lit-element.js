@@ -1,10 +1,63 @@
 import DBPLitElement from 'dbp-common/dbp-lit-element';
+import {EventBus} from 'dbp-common';
 
 export default class DBPCheckInLitElement extends DBPLitElement {
     constructor() {
         super();
         this.isSessionRefreshed = false;
     }
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        this._loginStatus = '';
+        this._loginState = [];
+        this._bus = new EventBus();
+        this._updateAuth = this._updateAuth.bind(this);
+        this._bus.subscribe('auth-update', this._updateAuth);
+    }
+
+    /**
+     *  Request a re-render every time isLoggedIn()/isLoading() changes
+     *
+     * @param e
+     */
+    _updateAuth(e) {
+        this._loginStatus = e.status;
+
+        let newLoginState = [this.isLoggedIn(), this.isLoading()];
+        if (this._loginState.toString() !== newLoginState.toString()) {
+            this.requestUpdate();
+        }
+        this._loginState = newLoginState;
+    }
+
+    disconnectedCallback() {
+        this._bus.close();
+
+        super.disconnectedCallback();
+    }
+
+    /**
+     * Returns if a person is set in or not
+     *
+     * @returns {boolean} true or false
+     */
+    isLoggedIn() {
+        return (window.DBPPerson !== undefined && window.DBPPerson !== null);
+    }
+
+    /**
+     * Returns true if a person has successfully logged in
+     *
+     * @returns {boolean} true or false
+     */
+    isLoading() {
+        if (this._loginStatus === "logged-out")
+            return false;
+        return (!this.isLoggedIn() && window.DBPAuthToken !== undefined);
+    }
+
 
     /**
      * Send a fetch to given url with given options

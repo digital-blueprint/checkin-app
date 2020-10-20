@@ -1,4 +1,3 @@
-import DBPLitElement from 'dbp-common/dbp-lit-element';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import {css, html} from 'lit-element';
 import * as commonUtils from 'dbp-common/utils';
@@ -48,8 +47,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     i18n.changeLanguage(this.lang);
                     break;
             }
-            super.update(changedProperties);
         });
+        super.update(changedProperties);
     }
 
     static get styles() {
@@ -66,43 +65,54 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     render() {
         const select2CSS = commonUtils.getAssetURL(select2CSSPath);
         return html`
-            <link rel="stylesheet" href="${select2CSS}">
-            <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
-            <h2>${i18n.t('guest-check-in.title')}</h2>
+            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
+                ${i18n.t('error-login-message')}
+                ${console.log(this.isLoggedIn())}
+            </div>
 
-            <p class="">${i18n.t('guest-check-in.description')}</p>
-            
-           
-            <div class="border hidden">
-                <div class="element">
+            <span class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
+                <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+            </span>
+
+            <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+
+                <link rel="stylesheet" href="${select2CSS}">
+                <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
+                <h2>${i18n.t('guest-check-in.title')}</h2>
+
+                <p class="">${i18n.t('guest-check-in.description')}</p>
                 
-                    <div class="container" id="select">
-                        <form>
-                            <div class="field">
-                                <label class="label">${i18n.t('guest-check-in.email')}</label>
-                                <div class="control">
-                                    <input type="text" class="input" placeholder="mail@email.at" name="email">
+                <div class="border hidden">
+                    <div class="element">
+                    
+                        <div class="container" id="select">
+                            <form>
+                                <div class="field">
+                                    <label class="label">${i18n.t('guest-check-in.email')}</label>
+                                    <div class="control">
+                                        <input type="text" class="input" placeholder="mail@email.at" name="email">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">${i18n.t('check-in.manually-place')}</label>
-                                <div class="control">
-                                    <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.showAvailablePlaces(event);}}"></dbp-location-select>
+                                <div class="field">
+                                    <label class="label">${i18n.t('check-in.manually-place')}</label>
+                                    <div class="control">
+                                        <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.showAvailablePlaces(event);}}"></dbp-location-select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
-                                <link rel="stylesheet" href="${select2CSS}">
-                                <label class="label">${i18n.t('check-in.manually-seat')}</label>
-                                <div class="control">
-                                    <input class="input" type="text" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
+                                <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
+                                    <link rel="stylesheet" href="${select2CSS}">
+                                    <label class="label">${i18n.t('check-in.manually-seat')}</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
+                                    </div>
                                 </div>
+                            </form>
+                            <div class="btn">
+                                <button id="do-manually-checkin" class="button is-primary" @click="${(event) => {this.doManuallyCheckin();}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button>
                             </div>
-                        </form>
-                        <div class="btn">
-                            <button id="do-manually-checkin" class="button is-primary" @click="${(event) => {this.doManuallyCheckin();}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button>
                         </div>
-                    </div>
-                </div>  
+                    </div>  
+            </div>
            </div>
         `;
     }
