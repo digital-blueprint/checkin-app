@@ -590,7 +590,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
            
             <div class="border ${classMap({hidden: !this.showBorder})}">
                 <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
-                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan @dbp-qr-code-scanner-data="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
+                    <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan clip-mask @dbp-qr-code-scanner-data="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
                 </div>
                 <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
                 
