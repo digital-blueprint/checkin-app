@@ -28,11 +28,11 @@
     "manually-place": "Room",
     "manually-seat": "Seat Number",
     "manually-checkin-button-text": "Check-in",
-    "refresh-button-text": "Refresh session",
-    "success-refresh-title": "Session extended successfully!",
-    "success-refresh-body": "You have successfully extended your session in the {{room}}.",
-    "refresh-failed-title": "Refresh session failed!",
-    "refresh-failed-body": "Refreshing your session failed. Please try again."
+    "refresh-button-text": "Refresh check-in",
+    "success-refresh-title": "Check-in extended successfully!",
+    "success-refresh-body": "You have successfully extended your check-in in the {{room}}.",
+    "refresh-failed-title": "Refresh check-in failed!",
+    "refresh-failed-body": "Refreshing your check-in failed. Please try again."
   },
   "check-out": {
     "title": "Show all check-ins",

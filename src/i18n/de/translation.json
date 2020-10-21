@@ -28,11 +28,11 @@
     "manually-place": "Raum",
     "manually-seat": "Sitzplatz",
     "manually-checkin-button-text": "Anmelden",
-    "refresh-button-text": "Sitzung verlängern",
-    "success-refresh-title": "Sitzung erfolgreich verlängert!",
-    "success-refresh-body": "Sie haben Ihre Sitzung im {{room}} erfolgreich verlängert.",
-    "refresh-failed-title": "Sitzung verlängern fehlgeschlagen!",
-    "refresh-failed-body": "Das Erneuern Ihrer Sitzung ist fehlgeschlagen. Bitte versuchen Sie es nochmal."
+    "refresh-button-text": "Anmeldung verlängern",
+    "success-refresh-title": "Anmeldung erfolgreich verlängert!",
+    "success-refresh-body": "Sie haben Ihre Anmeldung in {{room}} erfolgreich verlängert.",
+    "refresh-failed-title": "Anmeldung verlängern fehlgeschlagen!",
+    "refresh-failed-body": "Das Erneuern Ihrer Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es nochmal."
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",
