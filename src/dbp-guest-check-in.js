@@ -51,6 +51,14 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         super.update(changedProperties);
     }
 
+    showAvailablePlaces(event) {
+        //TODO
+    }
+
+    doCheckin(event) {
+        //TODO
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -58,6 +66,42 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getButtonCSS()}
             ${commonStyles.getNotificationCSS()}
+
+            h2:first-child {
+                margin-top: 0;
+            }
+
+            h2 {
+                margin-bottom: 10px;
+                margin-top: 0px;
+            }
+
+            .border {
+                margin-top: 2rem;
+                border-top: 1px solid black;
+            }
+
+            .container {
+                margin-top: 2rem;
+            }
+
+            .field {
+                margin-bottom: 1rem!important;
+            }
+
+            #email-field {
+                padding-left: 8px;
+                font-weight: 300;
+                color: inherit;
+                border: 1px solid #aaa;
+                line-height: 100%;
+                height: 28px;
+            }
+
+            ::placeholder { 
+                color: inherit;
+                opacity: 1; 
+            }
         `;
     }
 
@@ -82,15 +126,14 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 <p class="">${i18n.t('guest-check-in.description')}</p>
                 
-                <div class="border hidden">
-                    <div class="element">
-                    
-                        <div class="container" id="select">
+                <div class="border">
+  
+                        <div class="container">
                             <form>
                                 <div class="field">
                                     <label class="label">${i18n.t('guest-check-in.email')}</label>
                                     <div class="control">
-                                        <input type="text" class="input" placeholder="mail@email.at" name="email">
+                                        <input type="text" class="input" id="email-field" placeholder="mail@email.at" name="email">
                                     </div>
                                 </div>
                                 <div class="field">
@@ -108,10 +151,10 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 </div>
                             </form>
                             <div class="btn">
-                                <button id="do-manually-checkin" class="button is-primary" @click="${(event) => {this.doManuallyCheckin();}}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button>
+                                <button id="do-manually-checkin" class="button is-primary" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button>
                             </div>
                         </div>
-                    </div>  
+                    
             </div>
            </div>
         `;

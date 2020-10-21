@@ -47,7 +47,8 @@
   },
   "guest-check-in": {
     "title": "Gast an Ort anmelden",
-    "description": "Mit dieser Applikation können Sie einen Gast an einem Ort anmelden."
+    "description": "Mit dieser Applikation können Sie einen Gast an einem Ort anmelden.",
+    "email": "E-Mail"
   },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
 }

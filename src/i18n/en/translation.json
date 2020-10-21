@@ -47,7 +47,8 @@
   },
   "guest-check-in": {
     "title": "Guest registration",
-    "description": "With this application you can register a guest at a location."
+    "description": "With this application you can register a guest at a location.",
+    "email": "E-Mail"
   },
   "error-login-message": "You need to be logged in to use this function!"
 }
