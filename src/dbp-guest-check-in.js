@@ -17,6 +17,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         super();
         this.lang = i18n.language;
         this.entryPointUrl = commonUtils.getAPiUrl();
+        this.isRoomSelected = false;
+        this.roomCapacity = '';
+        this.locationHash = '';
     }
 
     static get scopedElements() {
@@ -33,6 +36,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         return {
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
+            isRoomSelected: { type: Boolean, attribute: false },
         };
     }
 
@@ -51,9 +55,31 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         super.update(changedProperties);
     }
 
-    showAvailablePlaces(event) {
-        //TODO
+    /**
+     * Processes the event from location-select 
+     * and stores the information into the 
+     * correct values.
+     *
+     * @param event
+     *
+     */
+    processSelectedPlaceInformation(event) {
+        this.isRoomSelected = true;
+        this.roomCapacity = event.detail.capacity;
+        this.locationHash = event.detail.room;
     }
+
+       /**
+     * Check if input seatnumber is a valid number from 0-this.roomCapacity
+     *
+     * @param e
+     */
+    setSeatNumber(e) {
+        let val = parseInt(this._('#select-seat').value);
+        val = isNaN(val) ? "" : val;
+        this.seatNr = Math.min(this.roomCapacity, val);
+    }
+
 
     doCheckin(event) {
         //TODO
@@ -96,11 +122,21 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 border: 1px solid #aaa;
                 line-height: 100%;
                 height: 28px;
+                width: 100%;
             }
 
             ::placeholder { 
                 color: inherit;
                 opacity: 1; 
+            }
+
+            #select-seat {
+                padding-left: 8px;
+                font-weight: 300;
+                color: inherit;
+                border: 1px solid #aaa;
+                line-height: 100%;
+                height: 28px;
             }
         `;
     }
@@ -139,14 +175,14 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 <div class="field">
                                     <label class="label">${i18n.t('check-in.manually-place')}</label>
                                     <div class="control">
-                                        <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.showAvailablePlaces(event);}}"></dbp-location-select>
+                                        <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-location-select>
                                     </div>
                                 </div>
                                 <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
                                     <link rel="stylesheet" href="${select2CSS}">
                                     <label class="label">${i18n.t('check-in.manually-seat')}</label>
                                     <div class="control">
-                                        <input class="input" type="text" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
+                                        <input class="input" type="text" name="seat-number" id="select-seat" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
                                     </div>
                                 </div>
                             </form>

@@ -533,7 +533,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 border: 1px solid #aaa;
                 line-height: 100%;
                 margin-bottom: 0.75rem;
-                height: 26px;
+                height: 28px;
             }
 
             @media only screen
