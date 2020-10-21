@@ -35,6 +35,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.wrongQR = [];
         this.isRoomSelected = false;
         this.roomCapacity = 0;
+        this._checkInInProgress = false;
     }
 
     static get scopedElements() {
@@ -119,9 +120,17 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     async doCheckInWithQR(event) {
         let data = event.detail;
         event.stopPropagation();
-        let check = await this.decodeUrl(data);
-        if (check) {
-            await this.doCheckIn();
+
+        if (this._checkInInProgress)
+            return;
+        this._checkInInProgress = true;
+        try {
+            let check = await this.decodeUrl(data);
+            if (check) {
+                await this.doCheckIn();
+            }
+        } finally {
+            this._checkInInProgress = false;
         }
     }
 
