@@ -368,6 +368,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 }
 
                 #refresh-btn {
+                    margin-top: 0.5rem;
                     margin-bottom: 1.5rem;
                 }
             }

@@ -407,7 +407,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param e
      */
     setSeatNumber(e) {
-        let val = parseInt(e.explicitOriginalTarget.value);
+        let val = parseInt(this._('#select-seat').value);
         val = isNaN(val) ? "" : val;
         this.seatNr = Math.min(this.roomCapacity, val);
     }
