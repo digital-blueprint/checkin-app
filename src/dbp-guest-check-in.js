@@ -8,6 +8,7 @@ import {createI18nInstance} from "./i18n";
 import * as commonStyles from "dbp-common/styles";
 import {classMap} from "lit-html/directives/class-map";
 import select2CSSPath from 'select2/dist/css/select2.min.css';
+import { send } from 'dbp-common/notification';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 
 const i18n = createI18nInstance();
@@ -20,6 +21,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.isRoomSelected = false;
         this.roomCapacity = '';
         this.locationHash = '';
+        this.guestEmail = '';
+        this.seatNr = '';
+        this.endTime;
     }
 
     static get scopedElements() {
@@ -80,9 +84,157 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.seatNr = Math.min(this.roomCapacity, val);
     }
 
+    /**
+     * Checkin a guest at a specific location for a specific time frame
+     *
+     * @param guestEmail
+     * @param locationHash
+     * @param seatNumber (optional)
+     * @param endTime
+     *
+     * @returns {object} response
+     *
+     */
+    async sendGuestCheckInRequest(guestEmail, locationHash, seatNumber, endTime) {
+        let response;
 
-    doCheckin(event) {
-        //TODO
+        let body = {
+            "location": '/check_in_places/' + locationHash,
+            "seatNumber": parseInt(seatNumber),
+            "email": guestEmail,
+            "endTime": endTime
+        };
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/ld+json',
+                Authorization: "Bearer " + window.DBPAuthToken
+            },
+            body: JSON.stringify(body)
+        };
+
+        response = await this.httpGetAsync(this.entryPointUrl + '/location_guest_check_in_actions', options);
+
+        return response;
+    }
+
+    /**
+     * Sends a guest checkin request and do error handling and parsing
+     * Include message for user when it worked or not
+     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
+     *
+     * Possible paths: guest checkin, invalid input, roomhash wrong, invalid seat number
+     *                  no seat number, already checkedin, no permissions, any other errors, location hash empty
+     *
+     */
+    async doCheckIn() {
+        this.guestEmail = this._('#email-field').value; //TODO email address evaluation
+        this.endTime = this._('#end-time').value; //TODO time field + correct parsing
+
+        console.log('email: ', this.guestEmail, 'loc: ', this.locationHash, ', seat: ', this.seatNr, 'endTime: ', this.endTime);
+
+        if (this.locationHash.length > 0) {
+            let responseData = await this.sendGuestCheckInRequest(this.guestEmail, this.locationHash, this.seatNr, this.endTime);
+
+            // When you are checked in
+            if (responseData.status === 201) {
+                this.isCheckedIn = true;
+                
+                send({
+                        "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
+                        "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
+                        "type": "success",
+                        "timeout": 5,
+                });
+
+            // Invalid Input
+            } else if (responseData.status === 400) {
+                send({
+                    "summary": i18n.t('check-in.invalid-input-title'),
+                    "body":  i18n.t('check-in.invalid-input-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+
+            // Error if room not exists
+            } else if (responseData.status === 404) {
+                send({
+                    "summary": i18n.t('check-in.hash-false-title'),
+                    "body":  i18n.t('check-in.hash-false-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+
+            // Other errors
+            } else if (responseData.status === 424) {
+                let errorBody = await responseData.json();
+                let errorDescription = errorBody["hydra:description"];
+                console.log("err: ", errorDescription);
+                console.log("err: ", errorBody);
+
+                // Error: invalid seat number
+                if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
+                    send({
+                        "summary": i18n.t('check-in.invalid-seatnr-title'),
+                        "body":  i18n.t('check-in.invalid-seatnr-body'),
+                        "type": "danger",
+                        "timeout": 5,
+                    });
+                    console.log("error: Invalid seat nr");
+                    this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+                }
+
+                // Error: no seat numbers
+                else if( errorDescription === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
+                    send({
+                        "summary": i18n.t('check-in.no-seatnr-title'),
+                        "body":  i18n.t('check-in.no-seatnr-body'),
+                        "type": "danger",
+                        "timeout": 5,
+                    });
+                    console.log("error: Room has no seat nr");
+                }
+
+                // Error: you are already checked in here
+                else if( errorDescription === 'There are already check-ins at the location with provided seat for the given email address!' ) {
+                    send({
+                        "summary": i18n.t('check-in.already-checkin-title'),
+                        "body":  i18n.t('check-in.already-checkin-body'),
+                        "type": "warning",
+                        "timeout": 5,
+                    });
+                }
+
+            // Error if you don't have permissions
+            } else if (responseData.status === 403) {
+                send({
+                    "summary": i18n.t('check-in.no-permission-title'),
+                    "body":  i18n.t('check-in.no-permission-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+
+            // Error: something else doesn't work
+            } else{
+                send({
+                    "summary": i18n.t('check-in.error-title'),
+                    "body": i18n.t('check-in.error-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            }
+
+        // Error: no location hash detected
+        } else {
+            send({
+                "summary": i18n.t('check-in.error-title'),
+                "body": i18n.t('check-in.error-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+        }
+
     }
 
     static get styles() {
@@ -101,7 +253,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 margin-bottom: 10px;
                 margin-top: 0px;
             }
-
+        
             .border {
                 margin-top: 2rem;
                 border-top: 1px solid black;
@@ -137,6 +289,34 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 border: 1px solid #aaa;
                 line-height: 100%;
                 height: 28px;
+            }
+
+            #end-time {
+                padding-left: 8px;
+                font-weight: 300;
+                color: inherit;
+                border: 1px solid #aaa;
+                line-height: 100%;
+            }
+
+            @media only screen
+            and (orientation: portrait)
+            and (max-device-width: 765px) {   
+                .inline-block{    
+                    width: 100%;
+                }
+
+                .btn {
+                    display: flex;
+                    flex-direction: column;
+                    text-align: center;
+                    margin-bottom: 0.5rem;
+                }
+
+                #select-seat{
+                    width: 100%;
+                }
+
             }
         `;
     }
@@ -185,9 +365,15 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                         <input class="input" type="text" name="seat-number" id="select-seat" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
                                     </div>
                                 </div>
+                                <div class="field">
+                                    <label class="label">${i18n.t('guest-check-in.end-time')}</label>
+                                    <div class="control">
+                                        <input type="time" class="input" id="end-time" name="endTime">
+                                    </div>
+                                </div>
                             </form>
                             <div class="btn">
-                                <button id="do-manually-checkin" class="button is-primary" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button>
+                                <button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckIn}" title="${i18n.t('check-in.manually-checkin-button-text')}">${i18n.t('check-in.manually-checkin-button-text')}</button>
                             </div>
                         </div>
                     
