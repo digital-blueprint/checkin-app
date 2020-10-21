@@ -257,7 +257,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     send({
                         "summary": i18n.t('check-in.already-checkin-title'),
                         "body":  i18n.t('check-in.already-checkin-body'),
-                        "type": "success",
+                        "type": "warning",
                         "timeout": 5,
                     });
                 }
