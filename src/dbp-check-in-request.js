@@ -552,6 +552,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 #select-seat{
                     width: 100%;
                 }
+
+                #refresh-btn {
+                    margin-top: 0.5rem;
+                }
             }
         `;
     }
@@ -591,7 +595,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     </p>
                     <div>
                         <button class="logout button is-primary " @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
-                        <button class="logout button" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>
+                        <button class="logout button" id="refresh-btn" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>
                     </div>
                 </div>
            

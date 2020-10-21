@@ -4,7 +4,7 @@
     "description": "With this application you can check-in at a place.",
     "qr-button-text": "Check-in with QR Code",
     "manually-button-text": "Select location manually",
-    "checked-in-description": "You are already registered at a location.",
+    "checked-in-description": "You have been registered in the {{room}} since {{time}}.",
     "checked-in-with-seat-description": "You have been registered in the {{room}} at seat {{seat}} since {{time}}.",
     "checked-in-at": "at {{clock}}",
     "hash-false-title": "Room doesn't exist!",
