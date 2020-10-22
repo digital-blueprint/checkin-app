@@ -570,7 +570,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     _onScanStarted(e) {
-        this._("#qr-scanner").scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // We want to scroll after the next re-layout
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                this._("#qr-scanner").scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 0);
+        });
     }
 
     render() {
