@@ -569,6 +569,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         `;
     }
 
+    _onScanStarted(e) {
+        this._("#qr-scanner").scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     render() {
         return html`
 
@@ -610,7 +614,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
            
                 <div class="border ${classMap({hidden: !this.showBorder})}">
                     <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
-                        <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex=".*tugrazcheckin.*" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
+                        <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex=".*tugrazcheckin.*" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
                     </div>
                     <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
                 
