@@ -58,7 +58,11 @@
     "invalid-email-address-body": "Die eingegebene E-Mail-Adresse entspricht keinem gültigen Format. Bitte prüfen Sie Ihre Eingabe und versuchen es erneut.",
     "error-permission-message": "Sie müssen einen Bediensteten Account besitzen, um diese Funktion nutzen zu können!",
     "success-checkin-title": "Gast erfolgreich angemeldet!",
-    "success-checkin-body": "Sie haben {{email}} erfolgreich angemeldet."
+    "success-checkin-body": "Sie haben {{email}} erfolgreich angemeldet.",
+    "no-time-title": "Zeitangabe fehlt!",
+    "no-time-body": "Bitte geben Sie eine Zeit für die Abmeldung an.",
+    "past-time-title": "Zeitangabe in der Vergangenheit!",
+    "past-time-body": "Bitte geben Sie für die Abmeldung eine Zeitpunkt in der Zukunft ein."
   },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
 }

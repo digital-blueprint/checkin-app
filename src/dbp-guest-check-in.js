@@ -90,8 +90,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         console.log("---" + this.roomCapacity + " " + this.seatNr + " " +  this.isRoomSelected);
     }
 
-    validateEmail(inputText)
-    {
+    validateEmail(inputText) {  // TODO email comma sepperated support
         const mailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         return inputText.match(mailFormat) ? true : false;
     }
@@ -110,6 +109,10 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.endTime.setHours(splitted[0]);
             this.endTime.setMinutes(splitted[1]);
 
+            var now = new Date();
+            if (this.endTime < now) {
+                return 'dateIsPast';
+            }
             return true;
         } else {
             return false;
@@ -176,7 +179,24 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             return;
         }
 
-        if (!this.parseTime()) { // TODO check time if its in future!
+        if (!this.parseTime()) { //TODO check max time??? was passiert wenn given endtime > maxtime from server
+            send({
+                "summary": i18n.t('guest-check-in.no-time-title'),
+                "body":  i18n.t('guest-check-in.no-time-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+            return;
+        }
+
+        if (this.parseTime() === 'dateIsPast')
+        {
+            send({
+                "summary": i18n.t('guest-check-in.past-time-title'),
+                "body":  i18n.t('guest-check-in.past-time-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
             return;
         }
 

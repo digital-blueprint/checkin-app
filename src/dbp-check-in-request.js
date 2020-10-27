@@ -469,7 +469,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     getReadableDate(date) {
         let newDate = new Date(date);
-        return newDate.getDay() + "." + newDate.getMonth() + "." + newDate.getFullYear() + " " + i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)});
+        let month =  newDate.getMonth() + 1;
+        let readable = newDate.getDate() + "." + month + "." + newDate.getFullYear() + " " + i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)});
+        return readable;
     }
 
     /**

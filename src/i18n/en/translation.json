@@ -58,7 +58,11 @@
     "invalid-email-address-body": "The e-mail address you entered does not correspond to a valid format. Please check your input and try again.",
     "error-permission-message": "You need to have a staff account to use this function!",
     "success-checkin-title": "Guest checked in!",
-    "success-checkin-body": "You have successfully checked in {{email}}."
+    "success-checkin-body": "You have successfully checked in {{email}}.",
+    "no-time-title": "Missing time!",
+    "no-time-body": "Please enter a time for checkout.",
+    "past-time-title": "Time in the past!",
+    "past-time-body": "Please enter a time in the future for checkout."
   },
   "error-login-message": "You need to be logged in to use this function!"
 }
