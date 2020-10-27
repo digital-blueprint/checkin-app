@@ -409,6 +409,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.showManuallyContainer = true;
         this.showQrContainer = false;
 
+        this._("#roomselectorwrapper").scrollIntoView({ behavior: 'smooth', block: 'start' });
         const that = this;
         this._('#manual-select').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
@@ -711,7 +712,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <a href="check-out-request" title="" target="_self" class="int-link-internal"> <span>${i18n.t('check-in.show-other-checkins')}</span></a>
                     </div>
                 </div>
-           
+                <div id="roomselectorwrapper"></div>
                 <div class="border ${classMap({hidden: !this.showBorder})}">
                     <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
                         <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex=".*tugrazcheckin.*" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
