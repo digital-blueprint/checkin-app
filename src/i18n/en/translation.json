@@ -32,7 +32,10 @@
     "success-refresh-title": "Check-in extended successfully!",
     "success-refresh-body": "You have successfully extended your check-in in the {{room}}.",
     "refresh-failed-title": "Refresh check-in failed!",
-    "refresh-failed-body": "Refreshing your check-in failed. Please try again."
+    "refresh-failed-body": "Refreshing your check-in failed. Please try again.",
+    "show-other-checkins": "Show all checkins",
+    "other-checkins": "You have one more checkin.",
+    "other-checkins_plural": "You have {{count}} more checkins."
   },
   "check-out": {
     "title": "Show all check-ins",

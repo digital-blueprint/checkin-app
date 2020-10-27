@@ -32,7 +32,10 @@
     "success-refresh-title": "Anmeldung erfolgreich verlängert!",
     "success-refresh-body": "Sie haben Ihre Anmeldung in {{room}} erfolgreich verlängert.",
     "refresh-failed-title": "Anmeldung verlängern fehlgeschlagen!",
-    "refresh-failed-body": "Das Erneuern Ihrer Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es nochmal."
+    "refresh-failed-body": "Das Erneuern Ihrer Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es nochmal.",
+    "show-other-checkins": "Zeige alle Anmeldungen",
+    "other-checkins": "Sie haben eine weitere Anmeldungen.",
+    "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen."
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",

@@ -371,6 +371,13 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 padding-top: 2rem;
                 border-top: 1px solid black;
             }
+            
+            .loading{
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                padding: 30px;
+            }
 
 
             @media only screen
@@ -412,9 +419,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 ${i18n.t('error-login-message')}
             </div>
 
-            <span class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
-                <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
-            </span>
+            <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
+                <span class="loading">
+                    <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                </span>
+            </div>
 
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
 
