@@ -52,7 +52,9 @@
     "title": "Gast an Ort anmelden",
     "description": "Mit dieser Applikation können Sie einen Gast an einem Ort anmelden.",
     "email": "E-Mail",
-    "end-time": "Angemeldet bis"
+    "end-time": "Angemeldet bis",
+    "invalid-email-address-title": "Ungültige E-Mail-Adresse!",
+    "invalid-email-address-body": "Die eingegebene E-Mail-Adresse entspricht keinem gültigen Format. Bitte prüfen Sie Ihre Eingabe und versuchen es erneut."
   },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
 }

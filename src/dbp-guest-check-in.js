@@ -73,7 +73,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.locationHash = event.detail.room;
     }
 
-       /**
+    /**
      * Check if input seatnumber is a valid number from 0-this.roomCapacity
      *
      * @param e
@@ -82,6 +82,32 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         let val = parseInt(this._('#select-seat').value);
         val = isNaN(val) ? "" : val;
         this.seatNr = Math.min(this.roomCapacity, val);
+    }
+
+    validateEmail(inputText)
+    {
+        const mailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        return inputText.match(mailFormat) ? true : false;
+    }
+
+    /**
+     * Check if input time is valid and set a valid endTime
+     */
+    parseTime() {
+        let value = this._('#end-time').value;
+        console.log(value);
+
+        let splitted = value.split(':');
+
+        if (splitted.length == 2) {
+            this.endTime = new Date();
+            this.endTime.setHours(splitted[0]);
+            this.endTime.setMinutes(splitted[1]);
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -129,8 +155,23 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     async doCheckIn() {
-        this.guestEmail = this._('#email-field').value; //TODO email address evaluation
-        this.endTime = this._('#end-time').value; //TODO time field + correct parsing
+        let email = this._('#email-field').value;
+        if (this.validateEmail(email)) {
+            this.guestEmail = email;
+        }
+        else {
+            send({
+                "summary": i18n.t('guest-check-in.invalid-email-address-title'),
+                "body":  i18n.t('guest-check-in.invalid-email-address-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+            return;
+        }
+
+        if (!this.parseTime()) {
+            return;
+        }
 
         console.log('email: ', this.guestEmail, 'loc: ', this.locationHash, ', seat: ', this.seatNr, 'endTime: ', this.endTime);
 
