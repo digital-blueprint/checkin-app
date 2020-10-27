@@ -194,8 +194,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.isCheckedIn = true;
                 
                 send({
-                        "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
-                        "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
+                        "summary": i18n.t('guest-check-in.success-checkin-title', {email: this.guestEmail}),
+                        "body": i18n.t('guest-check-in.success-checkin-body', {email: this.guestEmail}),
                         "type": "success",
                         "timeout": 5,
                 });
@@ -294,6 +294,10 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             });
         }
 
+    }
+
+    hasPermissions() {
+        return (window.DBPPerson && Array.isArray(window.DBPPerson.roles) && window.DBPPerson.roles.indexOf('ROLE_STAFF') !== -1);
     }
 
     static get styles() {
@@ -402,7 +406,11 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 </span>
             </div>
 
-            <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+            <div class="notification is-danger ${classMap({hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
+                ${i18n.t('guest-check-in.error-permission-message')}
+            </div>
+
+            <div class="${classMap({hidden: !this.isLoggedIn() || !this.hasPermissions() || this.isLoading()})}">
 
                 <link rel="stylesheet" href="${select2CSS}">
                 <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
