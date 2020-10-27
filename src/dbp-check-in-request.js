@@ -24,7 +24,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.isCheckedIn = false;
         this.checkedInRoom = '';
         this.checkedInSeat = null;
-        this.checkedInStartTime = '';
+        this.checkedInEndTime = '';
         this.identifier = '';
         this.agent = '';
         this.showManuallyContainer = false;
@@ -63,7 +63,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             isRoomSelected: {type: Boolean, attribute: false},
             roomCapacity: {type: Number, attribute: false},
             checkedInStartTime: {type: String, attribute: false},
-            checkinCount: { type: Number, attribute: false }
+            checkinCount: { type: Number, attribute: false },
+            checkedInEndTime: { type: String, attribute: false }
         };
     }
 
@@ -103,7 +104,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.seatNr = "";
             this.checkedInRoom = "";
             this.checkedInSeat = "";
-            this.checkedInStartTime = "";
+            this.checkedInEndTime = "";
         } else {
             send({
                 "summary": i18n.t('check-out.checkout-failed-title'),
@@ -159,9 +160,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             // When you are checked in
             if (responseData.status === 201) {
                 let responseBody = await responseData.json();
+                console.log("----------", responseBody);
                 this.checkedInRoom = responseBody.location.name;
                 this.checkedInSeat = responseBody.seatNumber;
-                this.checkedInStartTime = responseBody.startTime;
+                this.checkedInEndTime = responseBody.endTime;
                 this.identifier = responseBody['identifier'];
                 this.agent = responseBody['agent'];
                 this.stopQRReader();
@@ -243,7 +245,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 // Error: you are already checked in here
                 else if( errorDescription === 'There are already check-ins at the location with provided seat for the current user!' ) {
-
                     let getActiveCheckInsResponse = await this.getActiveCheckIns();
                     if ( getActiveCheckInsResponse.status === 200) {
                         let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
@@ -253,7 +254,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                         if (atActualRoomCheckIn.length === 1) {
                             this.checkedInRoom = atActualRoomCheckIn[0].location.name;
-                            this.checkedInStartTime = atActualRoomCheckIn[0].startTime;
+                            this.checkedInEndTime = atActualRoomCheckIn[0].endTime;
                             this.checkedInSeat = atActualRoomCheckIn[0].seatNumber;
                             this.stopQRReader();
                             this.isCheckedIn = true;
@@ -700,7 +701,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
                     <h2> ${this.checkedInRoom} </h2> 
                     <p class="${classMap({hidden: !this.isCheckedIn})}">
-                        ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.getReadableDate(this.checkedInStartTime), room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.getReadableDate(this.checkedInStartTime), room: this.checkedInRoom}) }
+                        ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.getReadableDate(this.checkedInEndTime), room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.getReadableDate(this.checkedInEndTime), room: this.checkedInRoom}) }
                     </p>
                     <div>
                         <button class="logout button is-primary " @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>

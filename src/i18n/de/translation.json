@@ -4,8 +4,8 @@
     "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
     "qr-button-text": "Mit QR Code anmelden",
     "manually-button-text": "Ort manuell auswählen",
-    "checked-in-description": "Sie haben sich am {{time}} in {{room}} angemeldet.",
-    "checked-in-with-seat-description": "Sie haben sich am {{time}} in {{room}} am Sitzplatz {{seat}} angemeldet.",
+    "checked-in-description": "Sie sind bis {{time}} am Ort {{room}} angemeldet.",
+    "checked-in-with-seat-description": "Sie sind bis {{time}} am Ort {{room}} am Sitzplatz {{seat}} angemeldet.",
     "checked-in-at": "um {{clock}} Uhr",
     "hash-false-title": "Raum existiert nicht!",
     "hash-false-body": "Der gescannte Raum existiert nicht, bitte wenden Sie sich an einen Mitarbeiter der Gebäudetechnik.",
@@ -46,7 +46,8 @@
     "checkout-failed-title": "Abmeldung fehlgeschlagen!",
     "checkout-failed-body": "Ihre Abmeldung bei {{room}} schlug fehl. Es tut uns leid, etwas ist schief gelaufen.",
     "no-checkins-message": "Sie sind derzeit an keinem Ort angemeldet.",
-    "loading-message": "Lädt..."
+    "loading-message": "Lädt...",
+    "checkin-until": "Angemeldet bis:"
   },
   "guest-check-in": {
     "title": "Gast an Ort anmelden",

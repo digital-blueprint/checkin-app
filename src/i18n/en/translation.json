@@ -4,8 +4,8 @@
     "description": "With this application you can check-in at a place.",
     "qr-button-text": "Check-in with QR Code",
     "manually-button-text": "Select location manually",
-    "checked-in-description": "You have been registered in the {{room}} since {{time}}.",
-    "checked-in-with-seat-description": "You have been registered in the {{room}} at seat {{seat}} since {{time}}.",
+    "checked-in-description": "You have been checked in the room {{room}} until {{time}}.",
+    "checked-in-with-seat-description": "You have been checked in the room {{room}} at seat {{seat}} until {{time}}.",
     "checked-in-at": "at {{clock}}",
     "hash-false-title": "Room doesn't exist!",
     "hash-false-body": "The scanned room does not exist, please contact a TU Graz employee.",
@@ -46,7 +46,8 @@
     "checkout-failed-title": "Checkout failed!",
     "checkout-failed-body": "Your checkout from {{room}} failed. We're sorry, something went wrong.",
     "no-checkins-message": "You are currently not checked-in at any location..",
-    "loading-message": "Loading..."
+    "loading-message": "Loading...",
+    "checkin-until": "Checkin until:"
   },
   "guest-check-in": {
     "title": "Guest registration",
