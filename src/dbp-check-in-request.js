@@ -67,6 +67,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
+
     }
 
     update(changedProperties) {
@@ -149,7 +150,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         if (this.roomCapacity === null && this.seatNr >= 0) {
             this.seatNr = '';
         }
-        
+
         if (this.locationHash.length > 0) {
             let responseData = await this.sendCheckInRequest(this.locationHash, this.seatNr);
 
@@ -398,6 +399,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.showBorder = true;
         this.showManuallyContainer = true;
         this.showQrContainer = false;
+
+        const that = this;
+        this._('#manual-select').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+               that.doCheckIn();
+            }
+        });
     }
 
     /**
@@ -641,20 +649,20 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
                 
                         <div class="container" id="manual-select">
-                            <form>
-                                <div class="field">
-                                    <label class="label">${i18n.t('check-in.manually-place')}</label>
-                                    <div class="control">
-                                        <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-location-select>
-                                    </div>
+                            
+                            <div class="field">
+                                <label class="label">${i18n.t('check-in.manually-place')}</label>
+                                <div class="control">
+                                    <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-location-select>
                                 </div>
-                                <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
-                                    <label class="label">${i18n.t('check-in.manually-seat')}</label>
-                                    <div class="control">
-                                        <input class="input" id="select-seat" type="number" .value="${this.seatNr}" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @keyup="${(event) => {this.setSeatNumber(event);}}">
-                                    </div>
+                            </div>
+                            <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
+                                <label class="label">${i18n.t('check-in.manually-seat')}</label>
+                                <div class="control">
+                                    <input class="input" id="select-seat" type="number" .value="${this.seatNr}" name="seat-number" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @keyup="${(event) => {this.setSeatNumber(event);}}">
                                 </div>
-                            </form>
+                            </div>
+                           
                             <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckIn}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                         </div>
                     </div>  
