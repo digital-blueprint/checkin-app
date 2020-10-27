@@ -57,21 +57,21 @@ switch (build) {
     entryPointURL = 'https://mw-dev.tugraz.at';
     keyCloakServer = 'auth-dev.tugraz.at';
     keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
-    keyCloakClientId = 'auth-dev-mw-frontend';
+    keyCloakClientId = 'checkin-dev_tugraz_at-CHECKIN';
     break;
   case 'demo':
     basePath = '/apps/checkin/';
     entryPointURL = 'https://api-demo.tugraz.at';
     keyCloakServer = 'auth-test.tugraz.at';
     keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
-    keyCloakClientId = 'checkin-demo_tugraz_at-ESIG';
+    keyCloakClientId = 'checkin-demo_tugraz_at-CHECKIN';
     break;
   case 'production':
     basePath = '/';
     entryPointURL = 'https://api.tugraz.at';
     keyCloakServer = 'auth.tugraz.at';
     keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
-    keyCloakClientId = 'checkin_tugraz_at';
+    keyCloakClientId = 'checkin_tugraz_at-CHECKIN';
     //matomoSiteId = 137;
     break;
   case 'test':
