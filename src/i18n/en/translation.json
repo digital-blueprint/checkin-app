@@ -54,7 +54,10 @@
     "email": "E-Mail",
     "end-time": "Checked in until",
     "invalid-email-address-title": "Invalid e-mail address!",
-    "invalid-email-address-body": "The e-mail address you entered does not correspond to a valid format. Please check your input and try again."
+    "invalid-email-address-body": "The e-mail address you entered does not correspond to a valid format. Please check your input and try again.",
+    "error-permission-message": "You need to have a staff account to use this function!",
+    "success-checkin-title": "Guest checked in!",
+    "success-checkin-body": "You have successfully checked in {{email}}."
   },
   "error-login-message": "You need to be logged in to use this function!"
 }

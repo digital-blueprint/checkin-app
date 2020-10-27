@@ -18,13 +18,13 @@
     "no-permission-title": "Keine Rechte",
     "no-permission-body": "Sie haben keine Rechte diese Aktion durchzuführen. Bitte kontaktieren Sie den lokalen IT Support.",
     "already-checkin-title": "Bereits angemeldet!",
-    "already-checkin-body": "Sie sind hier bereits angmeldet. Sie können Ihre aktuelle Anmeldung verlängern oder sich bei diesem Ort abmelden.",
+    "already-checkin-body": "Sie sind hier bereits angemeldet. Sie können Ihre aktuelle Anmeldung verlängern oder sich bei diesem Ort abmelden.",
     "invalid-seatnr-title": "Falsche Sitznummer!",
     "invalid-seatnr-body": "Die eingegebene Sitznummer existiert nicht. Bitte wenden Sie sich an einen Mitarbeiter der Gebäudetechnik oder geben Sie eine andere Sitznummer ein.",
     "no-seatnr-title": "Raum hat keine Sitzplätze!",
     "no-seatnr-body": "Der angegebene Raum hat keine Sitzplätze. Bitte machen Sie Ihre Anmeldung ohne Sitzplatznummer.",
     "invalid-input-title": "Ungültige Eingabe!",
-    "invalid-input-body": "Ihre Eingabe war ungültig. Bitte probieren Sie es nocheinmal.",
+    "invalid-input-body": "Ihre Eingabe war ungültig. Bitte probieren Sie es noch einmal.",
     "manually-place": "Raum",
     "manually-seat": "Sitzplatz",
     "manually-checkin-button-text": "Anmelden",
@@ -54,7 +54,10 @@
     "email": "E-Mail",
     "end-time": "Angemeldet bis",
     "invalid-email-address-title": "Ungültige E-Mail-Adresse!",
-    "invalid-email-address-body": "Die eingegebene E-Mail-Adresse entspricht keinem gültigen Format. Bitte prüfen Sie Ihre Eingabe und versuchen es erneut."
+    "invalid-email-address-body": "Die eingegebene E-Mail-Adresse entspricht keinem gültigen Format. Bitte prüfen Sie Ihre Eingabe und versuchen es erneut.",
+    "error-permission-message": "Sie müssen einen Bediensteten Account besitzen, um diese Funktion nutzen zu können!",
+    "success-checkin-title": "Gast erfolgreich angemeldet!",
+    "success-checkin-body": "Sie haben {{email}} erfolgreich angemeldet."
   },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
 }
