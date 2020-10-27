@@ -124,7 +124,27 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         for (let i = 0; i < numTypes; i++ ) {
             list[i] = response['hydra:member'][i];
         }
+        list.sort(this.compareListItems);
+
         return list;
+    }
+
+    compareListItems(a, b) {
+        if (a.location.name < b.location.name) {
+            return -1;
+        }
+        else if (a.location.name > b.location.name) {
+            return 1;
+        }
+        else {
+            if (a.seatNumber < b.seatNumber) {
+                return -1;
+            } else if (a.seatNumber > b.seatNumber) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 
     /**
