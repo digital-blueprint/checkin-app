@@ -189,6 +189,13 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         "timeout": 5,
                 });
 
+                //Refresh necessary fields and values - keep time and place because it is nice to have for the next guest
+                this._('#email-field').value = '';
+                this.guestEmail = '';
+
+                this._('#select-seat').value = '';
+                this.seatNumber = '';
+
             // Invalid Input
             } else if (responseData.status === 400) {
                 send({
