@@ -53,7 +53,9 @@
     "title": "Guest registration",
     "description": "With this application you can register a guest at a location.",
     "email": "E-Mail",
-    "end-time": "Checked in until"
+    "end-time": "Checked in until",
+    "invalid-email-address-title": "Invalid e-mail address!",
+    "invalid-email-address-body": "The e-mail address you entered does not correspond to a valid format. Please check your input and try again."
   },
   "error-login-message": "You need to be logged in to use this function!"
 }
