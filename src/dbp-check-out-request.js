@@ -433,7 +433,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     ${this.activeCheckins.map(i => html`
 
                         <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}<br>` : ``}
-                        Angemeldet seit: ${this.getReadableDate(i.startTime)}</span>
+                        ${i18n.t('check-out.checkin-until')} ${this.getReadableDate(i.endTime)}</span>
                         <div class="btn"><button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button></div>
                         <div class="btn"><button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button></div>`)}
                     
