@@ -355,12 +355,13 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             @media only screen
             and (orientation: portrait)
-            and (max-device-width: 765px) {   
+            and (max-device-width: 765px) {
+                .inline-block{    
+                    width: 100%;
+                }
 
                 .checkins {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: stretch
+                    display: block;
                 }
 
                 .header {
@@ -370,6 +371,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 #refresh-btn {
                     margin-top: 0.5rem;
                     margin-bottom: 1.5rem;
+                }
+
+                .btn {
+                    display: flex;
+                    flex-direction: column;
                 }
             }
         `;
@@ -398,9 +404,9 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     ${this.activeCheckins.map(i => html`
 
                         <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}<br>` : ``}
-                        Angemeldet seit: ${this.getReadableDate(i.startTime)}</span> 
-                        <button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
-                        <button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>`)}
+                        Angemeldet seit: ${this.getReadableDate(i.startTime)}</span>
+                        <div class="btn"><button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button></div>
+                        <div class="btn"><button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button></div>`)}
                     
                     <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
                         <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
