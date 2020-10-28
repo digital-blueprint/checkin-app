@@ -316,6 +316,14 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     }
 
+    getCurrentTime() {
+        let date = new Date();
+        let currentHours = ('0' + date.getHours()).slice(-2);
+        let currentMinutes = ('0' + (date.getMinutes() + 1)).slice(-2); 
+        //console.log(currentHours + ':' + currentMinutes);
+        return currentHours + ':' + currentMinutes;
+    }
+
     hasPermissions() {
         return (window.DBPPerson && Array.isArray(window.DBPPerson.roles) && window.DBPPerson.roles.indexOf('ROLE_STAFF') !== -1);
     }
@@ -380,6 +388,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 color: inherit;
                 border: 1px solid #aaa;
                 line-height: 100%;
+                height: 28px;
             }
             
             .loading{
@@ -407,6 +416,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     width: 100%;
                 }
 
+                #end-time {
+                    width: 100%;
+                }
             }
         `;
     }
@@ -472,7 +484,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('guest-check-in.end-time')}</label>
                                         <div class="control">
-                                            <input type="time" class="input" id="end-time" name="endTime">
+                                            <input type="time" class="input" id="end-time" name="endTime" .defaultValue="${this.getCurrentTime()}">
                                         </div>
                                     </div>
                                 <div class="btn">
@@ -480,7 +492,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 </div>
                             </div>
                         
-                </div>
+                    </div>
                </div>
             `;
         }
