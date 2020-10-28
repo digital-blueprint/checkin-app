@@ -90,8 +90,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         console.log("---" + this.roomCapacity + " " + this.seatNr + " " +  this.isRoomSelected);
     }
 
-    validateEmail(inputText) {  // TODO email comma sepperated support
-        const mailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    validateEmail(inputText) {
+        const mailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
         return inputText.match(mailFormat) ? true : false;
     }
 
