@@ -13,6 +13,7 @@
     "qr-false-body": "This code is not for this application. Please use a check-in QR code.",
     "success-checkin-title": "Checked in!",
     "success-checkin-body": "You have successfully checked into {{room}}.",
+    "success-checkin-seat-body": "You have successfully checked into {{room}} at #{{seat}}.",
     "error-title": "Error!",
     "error-body": "We're sorry, something went wrong.",
     "no-permission-title": "No permissions",
@@ -35,7 +36,9 @@
     "refresh-failed-body": "Refreshing your check-in failed. Please try again.",
     "show-other-checkins": "Show all checkins",
     "other-checkins": "You have one more checkin.",
-    "other-checkins_plural": "You have {{count}} more checkins."
+    "other-checkins_plural": "You have {{count}} more checkins.",
+    "data-protection": "By checkin, you agree to the data protection conditions of TU Graz.",
+    "how-to": "Scan the QR code on your place with the QR code reader of this application, or select your seat manually to checkin at this location. If there is a possible COVID-19 infection, you will be contacted by TU Graz by email."
   },
   "check-out": {
     "title": "Show all check-ins",
@@ -52,7 +55,7 @@
   "guest-check-in": {
     "title": "Guest registration",
     "description": "With this application you can register a guest at a location.",
-    "email": "E-Mail",
+    "email": "Email of the guest",
     "end-time": "Checked in until",
     "invalid-email-address-title": "Invalid e-mail address!",
     "invalid-email-address-body": "The e-mail address you entered does not correspond to a valid format. Please check your input and try again.",
@@ -64,7 +67,9 @@
     "past-time-title": "Time in the past!",
     "past-time-body": "Please enter a time in the future for checkout.",
     "max-time-title": "Time too high!",
-    "max-time-body": "Please enter a time not more than 3 hours in the future."
+    "max-time-body": "Please enter a time not more than 3 hours in the future.",
+    "data-protection": "Please make sure that your guest agrees to the data protection conditions of TU Graz. With the checkin we assume an approval.",
+    "how-to": "Checkin a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection."
   },
   "info": {
     "title": "Information",

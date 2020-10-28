@@ -12,7 +12,8 @@
     "qr-false-title": "Falscher QR-Code!",
     "qr-false-body": "Dieser Code ist nicht für diese Applikation. Bitte benutzen Sie einen Checkin QR-Code.",
     "success-checkin-title": "Erfolgreich angemeldet!",
-    "success-checkin-body": "Sie haben sich erfolgreich im {{room}} angemeldet.",
+    "success-checkin-body": "Sie haben sich erfolgreich am Ort {{room}} angemeldet.",
+    "success-checkin-seat-body": "Sie haben sich erfolgreich am Ort {{room}} am Sitzplatz #{{seat}} angemeldet.",
     "error-title": "Fehler!",
     "error-body": "Es tut uns leid, Etwas ist schief gelaufen.",
     "no-permission-title": "Keine Rechte",
@@ -35,7 +36,9 @@
     "refresh-failed-body": "Das Erneuern Ihrer Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es nochmal.",
     "show-other-checkins": "Zeige alle Anmeldungen",
     "other-checkins": "Sie haben eine weitere Anmeldungen.",
-    "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen."
+    "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen.",
+    "data-protection": "Mit der Anmeldung stimmen Sie den Datenschutzbedingungen der TU Graz zu.",
+    "how-to": "Scannen Sie mit dem QR Code Reader dieser Applikation den QR Code auf Ihrem Platz, oder wählen Sie Ihren Platz manuell aus um sich an diesem Ort anzumelden. Bei einer möglichen COVID-19 Infektion werden Sie von der TU Graz per E-Mail kontaktiert."
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",
@@ -52,7 +55,7 @@
   "guest-check-in": {
     "title": "Gast an Ort anmelden",
     "description": "Mit dieser Applikation können Sie einen Gast an einem Ort anmelden.",
-    "email": "E-Mail",
+    "email": "Email des Gastes",
     "end-time": "Angemeldet bis",
     "invalid-email-address-title": "Ungültige E-Mail-Adresse!",
     "invalid-email-address-body": "Die eingegebene E-Mail-Adresse entspricht keinem gültigen Format. Bitte prüfen Sie Ihre Eingabe und versuchen es erneut.",
@@ -64,7 +67,9 @@
     "past-time-title": "Zeitangabe in der Vergangenheit!",
     "past-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt in der Zukunft ein.",
     "max-time-title": "Zeitangabe zu hoch!",
-    "max-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt ein, der nicht weiter als 3 Stunden in der Zukunft liegt."
+    "max-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt ein, der nicht weiter als 3 Stunden in der Zukunft liegt.",
+    "data-protection": "Bitte stellen Sie sicher, dass Ihr Gast mit den Datenschutzbedingungen der TU Graz einverstanden ist. Mit der Anmeldung gehen wir von einer Zustimmung aus.",
+    "how-to": "Melden Sie einen Gast bei einem Ort für die Dauer des Besuchs an, damit dieser bei einer möglichen COVID-19 Infektion von der TU Graz per E-Mail kontaktiert wird."
   },
   "info": {
     "title": "Information",

@@ -181,7 +181,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 } else {
                     send({
                         "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
-                        "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
+                        "body": this.checkedInSeat !== '' ? i18n.t('check-in.success-checkin-seat-body', {room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
                         "type": "success",
                         "timeout": 5,
                     });
@@ -688,7 +688,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
                 <h2>${i18n.t('check-in.title')}</h2>
+                <div>
                 <p class="">${i18n.t('check-in.description')}</p>
+                <p> ${i18n.t('check-in.how-to')}</p>
+                <p> ${i18n.t('check-in.data-protection')} </p>
+                </div>
             
                 <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
                     <dbp-textswitch id="text-switch" name1="qr-reader"
