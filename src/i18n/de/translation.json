@@ -70,5 +70,9 @@
     "data-protection": "Bitte stellen Sie sicher, dass Ihr Gast mit den Datenschutzbedingungen der TU Graz einverstanden ist. Mit der Anmeldung gehen wir von einer Zustimmung aus.",
     "how-to": "Melden Sie einen Gast bei einem Ort für die Dauer des Besuchs an, damit dieser bei einer möglichen COVID-19 Infektion von der TU Graz per E-Mail kontaktiert wird."
   },
+  "info": {
+    "title": "Information",
+    "description": "Mit dieser Applikation erhalten Sie Informationen über checkin.tugraz.at."
+  },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
 }

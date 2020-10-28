@@ -70,5 +70,9 @@
     "data-protection": "Please make sure that your guest agrees to the data protection conditions of TU Graz. With the checkin we assume an approval.",
     "how-to": "Checkin a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection."
   },
+  "info": {
+    "title": "Information",
+    "description": "With this application you get information about checkin.tugraz.at."
+  },
   "error-login-message": "You need to be logged in to use this function!"
 }
