@@ -181,7 +181,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 } else {
                     send({
                         "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
-                        "body": i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
+                        "body": this.checkedInSeat !== '' ? i18n.t('check-in.success-checkin-seat-body', {room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom}),
                         "type": "success",
                         "timeout": 5,
                     });

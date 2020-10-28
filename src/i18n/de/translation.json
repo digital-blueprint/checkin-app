@@ -12,7 +12,8 @@
     "qr-false-title": "Falscher QR-Code!",
     "qr-false-body": "Dieser Code ist nicht für diese Applikation. Bitte benutzen Sie einen Checkin QR-Code.",
     "success-checkin-title": "Erfolgreich angemeldet!",
-    "success-checkin-body": "Sie haben sich erfolgreich im {{room}} angemeldet.",
+    "success-checkin-body": "Sie haben sich erfolgreich am Ort {{room}} angemeldet.",
+    "success-checkin-seat-body": "Sie haben sich erfolgreich am Ort {{room}} am Sitzplatz #{{seat}} angemeldet.",
     "error-title": "Fehler!",
     "error-body": "Es tut uns leid, Etwas ist schief gelaufen.",
     "no-permission-title": "Keine Rechte",
@@ -54,7 +55,7 @@
   "guest-check-in": {
     "title": "Gast an Ort anmelden",
     "description": "Mit dieser Applikation können Sie einen Gast an einem Ort anmelden.",
-    "email": "E-Mail",
+    "email": "Email des Gastes",
     "end-time": "Angemeldet bis",
     "invalid-email-address-title": "Ungültige E-Mail-Adresse!",
     "invalid-email-address-body": "Die eingegebene E-Mail-Adresse entspricht keinem gültigen Format. Bitte prüfen Sie Ihre Eingabe und versuchen es erneut.",

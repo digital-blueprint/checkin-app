@@ -13,6 +13,7 @@
     "qr-false-body": "This code is not for this application. Please use a check-in QR code.",
     "success-checkin-title": "Checked in!",
     "success-checkin-body": "You have successfully checked into {{room}}.",
+    "success-checkin-seat-body": "You have successfully checked into {{room}} at #{{seat}}.",
     "error-title": "Error!",
     "error-body": "We're sorry, something went wrong.",
     "no-permission-title": "No permissions",
@@ -54,7 +55,7 @@
   "guest-check-in": {
     "title": "Guest registration",
     "description": "With this application you can register a guest at a location.",
-    "email": "E-Mail",
+    "email": "Email of the guest",
     "end-time": "Checked in until",
     "invalid-email-address-title": "Invalid e-mail address!",
     "invalid-email-address-body": "The e-mail address you entered does not correspond to a valid format. Please check your input and try again.",
