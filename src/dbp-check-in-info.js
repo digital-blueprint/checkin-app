@@ -3,12 +3,9 @@ import {css, html} from 'lit-element';
 import * as commonUtils from 'dbp-common/utils';
 import {Button, Icon, MiniSpinner} from "dbp-common";
 import {TextSwitch} from "./textswitch";
-import {LocationSelect} from "dbp-location-select";
 import {createI18nInstance} from "./i18n";
 import * as commonStyles from "dbp-common/styles";
 import {classMap} from "lit-html/directives/class-map";
-import select2CSSPath from 'select2/dist/css/select2.min.css';
-import { send } from 'dbp-common/notification';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 
 const i18n = createI18nInstance();
