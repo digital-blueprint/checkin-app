@@ -63,6 +63,7 @@ export class TextSwitch extends LitElement {
 
             .button {
                 flex-grow: 1;
+                margin: 0px;
             }
 
             .button:hover {
