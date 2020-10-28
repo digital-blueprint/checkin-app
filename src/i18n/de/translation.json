@@ -35,7 +35,9 @@
     "refresh-failed-body": "Das Erneuern Ihrer Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es nochmal.",
     "show-other-checkins": "Zeige alle Anmeldungen",
     "other-checkins": "Sie haben eine weitere Anmeldungen.",
-    "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen."
+    "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen.",
+    "data-protection": "Mit der Anmeldung stimmen Sie den Datenschutzbedingungen der TU Graz zu.",
+    "how-to": "Scannen Sie mit dem QR Code Reader dieser Applikation den QR Code auf Ihrem Platz, oder wählen Sie Ihren Platz manuell aus um sich an diesem Ort anzumelden. Bei einer möglichen COVID-19 Infektion werden Sie von der TU Graz per E-Mail kontaktiert."
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",
@@ -64,7 +66,9 @@
     "past-time-title": "Zeitangabe in der Vergangenheit!",
     "past-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt in der Zukunft ein.",
     "max-time-title": "Zeitangabe zu hoch!",
-    "max-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt ein, der nicht weiter als 3 Stunden in der Zukunft liegt."
+    "max-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt ein, der nicht weiter als 3 Stunden in der Zukunft liegt.",
+    "data-protection": "Bitte stellen Sie sicher, dass Ihr Gast mit den Datenschutzbedingungen der TU Graz einverstanden ist. Mit der Anmeldung gehen wir von einer Zustimmung aus.",
+    "how-to": "Melden Sie einen Gast bei einem Ort für die Dauer des Besuchs an, damit dieser bei einer möglichen COVID-19 Infektion von der TU Graz per E-Mail kontaktiert wird."
   },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
 }

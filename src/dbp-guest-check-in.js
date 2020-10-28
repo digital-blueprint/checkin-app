@@ -465,6 +465,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     <h2>${i18n.t('guest-check-in.title')}</h2>
     
                     <p class="">${i18n.t('guest-check-in.description')}</p>
+                    <p> ${i18n.t('guest-check-in.how-to')}</p>
+                    <p> ${i18n.t('guest-check-in.data-protection')} </p>
                     
                     <div class="border">
       
