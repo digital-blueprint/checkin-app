@@ -472,7 +472,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('guest-check-in.email')}</label>
                                         <div class="control">
-                                            <input type="text" class="input" id="email-field" placeholder="mail@email.at" name="email">
+                                            <input type="email" class="input" id="email-field" placeholder="mail@email.at" name="email">
                                         </div>
                                     </div>
                                     <div class="field">
