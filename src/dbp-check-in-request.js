@@ -105,6 +105,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.checkedInRoom = "";
             this.checkedInSeat = "";
             this.checkedInEndTime = "";
+            this.isRoomSelected = false;
+            
+            let locationSelect = this.shadowRoot.querySelector(this.constructor.getScopedTagName('dbp-location-select'));
+            if (locationSelect !== null) {
+                locationSelect.clear();
+            }
         } else {
             send({
                 "summary": i18n.t('check-out.checkout-failed-title'),
