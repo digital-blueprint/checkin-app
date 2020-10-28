@@ -62,7 +62,9 @@
     "no-time-title": "Missing time!",
     "no-time-body": "Please enter a time for checkout.",
     "past-time-title": "Time in the past!",
-    "past-time-body": "Please enter a time in the future for checkout."
+    "past-time-body": "Please enter a time in the future for checkout.",
+    "max-time-title": "Time too high!",
+    "max-time-body": "Please enter a time not more than 3 hours in the future."
   },
   "error-login-message": "You need to be logged in to use this function!"
 }

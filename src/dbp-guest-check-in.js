@@ -110,8 +110,12 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.endTime.setMinutes(splitted[1]);
 
             var now = new Date();
+            var maxDate = new Date().setHours(now.getHours() + 3);
+
             if (this.endTime < now) {
                 return 'dateIsPast';
+            } else if (this.endTime > maxDate) {
+                return 'dateIsTooHigh';
             }
             return true;
         } else {
@@ -187,13 +191,18 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
             return;
-        }
-
-        if (this.parseTime() === 'dateIsPast')
-        {
+        } else if (this.parseTime() === 'dateIsPast') {
             send({
                 "summary": i18n.t('guest-check-in.past-time-title'),
                 "body":  i18n.t('guest-check-in.past-time-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
+            return;
+        } else if (this.parseTime() === 'dateIsTooHigh') {
+            send({
+                "summary": i18n.t('guest-check-in.max-time-title'),
+                "body":  i18n.t('guest-check-in.max-time-body'),
                 "type": "danger",
                 "timeout": 5,
             });
