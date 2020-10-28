@@ -491,7 +491,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('guest-check-in.end-time')}</label>
                                         <div class="control">
-                                            <input type="time" class="input" id="end-time" name="endTime" .defaultValue="${this.getCurrentTime()}">
+                                            <input type="time" class="input" placeholder="hh:mm" id="end-time" name="endTime" .defaultValue="${this.getCurrentTime()}">
                                         </div>
                                     </div>
                                 <div class="btn">
