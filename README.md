@@ -23,7 +23,7 @@ yarn run watch-full
 yarn test
 ```
 
-Jump to <http://localhost:8001> and you should get a Single Sign On login page.
+Jump to <https://localhost:8001> and you should get a Single Sign On login page.
 
 ## Browser versions
 
