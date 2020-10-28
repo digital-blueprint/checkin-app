@@ -327,9 +327,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     getCurrentTime() {
         let date = new Date();
-        let currentHours = ('0' + date.getHours()).slice(-2);
-        let currentMinutes = ('0' + (date.getMinutes() + 1)).slice(-2); 
-        //console.log(currentHours + ':' + currentMinutes);
+        let currentHours = ('0' + (date.getHours() + 1)).slice(-2);
+        let currentMinutes = ('0' + date.getMinutes()).slice(-2); 
+
         return currentHours + ':' + currentMinutes;
     }
 
@@ -400,7 +400,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 height: 28px;
             }
             
-            .loading{
+            .loading {
                 text-align: center;
                 display: flex;
                 justify-content: center;
@@ -435,26 +435,24 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     render() {
         const select2CSS = commonUtils.getAssetURL(select2CSSPath);
-
-        if (!this.hasPermissions()){
-            return  html` 
-                 <div class="notification is-danger ${classMap({hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
-                    ${i18n.t('guest-check-in.error-permission-message')}
-                </div>
-            `;
-        } else {
-            return html`
-                <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
+        
+        return html`
+            <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
+                <span class="loading">
+                    <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                </span>
+            </div>
+        
+            ${!this.hasPermissions ? 
+            html` 
+            <div class="notification is-danger ${classMap({hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
+                ${i18n.t('guest-check-in.error-permission-message')}
+            </div>` :
+            html`
+            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
                     ${i18n.t('error-login-message')}
                     ${console.log(this.isLoggedIn())}
                 </div>
-    
-                <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
-                    <span class="loading">
-                        <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
-                    </span>
-                </div>
-    
                 
                 <div class="notification is-danger ${classMap({hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
                     ${i18n.t('guest-check-in.error-permission-message')}
@@ -502,9 +500,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             </div>
                         
                     </div>
-               </div>
-            `;
-        }
+               </div>`
+        }`;
     }
 }
 

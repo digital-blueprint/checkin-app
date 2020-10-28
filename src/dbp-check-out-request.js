@@ -373,7 +373,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 border-top: 1px solid black;
             }
             
-            .loading{
+            .loading {
                 text-align: center;
                 display: flex;
                 justify-content: center;
@@ -398,7 +398,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 #refresh-btn {
                     margin-top: 0.5rem;
-                    margin-bottom: 1.5rem;
+                    margin-bottom: 2rem;
                 }
 
                 .btn {
@@ -438,7 +438,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <div class="btn"><button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button></div>
                         <div class="btn"><button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button></div>`)}
                     
-                    <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
+                    <span class="control loading ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
                         <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
                     </span>
                     
