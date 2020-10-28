@@ -438,8 +438,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <div class="btn"><button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button></div>
                         <div class="btn"><button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button></div>`)}
                     
-                    <span class="control loading ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
-                        <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                    <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
+                        <span class="loading">
+                            <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                        </span>
                     </span>
                     
                     <div class="no-checkins ${classMap({hidden: !this.isLoggedIn() || this.isRequestLoading || this.activeCheckins.length !== 0})}">${i18n.t('check-out.no-checkins-message')}</div>
