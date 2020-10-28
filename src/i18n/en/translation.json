@@ -66,5 +66,9 @@
     "max-time-title": "Time too high!",
     "max-time-body": "Please enter a time not more than 3 hours in the future."
   },
+  "info": {
+    "title": "Information",
+    "description": "With this application you get information about checkin.tugraz.at."
+  },
   "error-login-message": "You need to be logged in to use this function!"
 }

@@ -66,5 +66,9 @@
     "max-time-title": "Zeitangabe zu hoch!",
     "max-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt ein, der nicht weiter als 3 Stunden in der Zukunft liegt."
   },
+  "info": {
+    "title": "Information",
+    "description": "Mit dieser Applikation erhalten Sie Informationen über checkin.tugraz.at."
+  },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
 }

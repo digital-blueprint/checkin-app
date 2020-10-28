@@ -1,0 +1,17 @@
+{
+  "element": "dbp-check-in-info",
+  "module_src": "dbp-check-in-info.js",
+  "routing_name": "infos",
+  "name": {
+    "de": "Information",
+    "en": "Information"
+  },
+  "short_name": {
+    "de": "Information",
+    "en": "Information"
+  },
+  "description": {
+    "de": "Zeigt alle Informationen zu checkin.tugraz.at.",
+    "en": "Shows all information about checkin.tugraz.at."
+  }
+}
