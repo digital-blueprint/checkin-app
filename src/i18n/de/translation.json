@@ -75,5 +75,9 @@
     "title": "Information",
     "description": "Mit dieser Applikation erhalten Sie Informationen über checkin.tugraz.at."
   },
-  "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
+  "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!",
+  "loading-msg-checkin": "Anmelden ...",
+  "loading-msg-checkout": "Abmelden ...",
+  "loading-msg-refresh": "Sitzung verlängern ...",
+  "loading-msg-guest-checkin": "Gast wird angemeldet ..."
 }

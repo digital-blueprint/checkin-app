@@ -24,6 +24,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.guestEmail = '';
         this.seatNr = '';
         this.endTime;
+        this.loading = false;
+        this.loadingMsg = '';
     }
 
     static get scopedElements() {
@@ -44,6 +46,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             guestEmail: { type: String, attribute: false },
             isRoomSelected: { type: Boolean, attribute: false },
             roomCapacity: {type: Number, attribute: false},
+            loading: { type: Boolean, attribute: false },
+            loadingMsg: { type: String, attribute: false }
         };
     }
 
@@ -216,8 +220,11 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
 
         if (this.locationHash.length > 0) {
+            this.loading = true;
+            this.loadingMsg = i18n.t('loading-msg-guest-checkin');
             let responseData = await this.sendGuestCheckInRequest(this.guestEmail, this.locationHash, this.seatNr, this.endTime);
-
+            this.loading = false;
+            this.loadingMsg = "";
             // When you are checked in
             if (responseData.status === 201) {
                 this.isCheckedIn = true;
@@ -403,7 +410,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             .loading {
                 text-align: center;
                 display: flex;
-                justify-content: center;
                 padding: 30px;
             }
 
@@ -427,6 +433,10 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 #end-time {
                     width: 100%;
+                }
+                
+                .loading{
+                    justify-content: center;
                 }
             }
         `;
@@ -469,8 +479,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     <p> ${i18n.t('guest-check-in.data-protection')} </p>
                     
                     <div class="border">
-      
-                            <div class="container">  
+                            <div class="container ${classMap({hidden: this.loading})}">  
                                     <div class="field">
                                         <label class="label">${i18n.t('guest-check-in.email')}</label>
                                         <div class="control">
@@ -499,6 +508,11 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 <div class="btn">
                                     <button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckIn}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</button>
                                 </div>
+                            </div>
+                            <div class="control ${classMap({hidden: !this.loading})}">
+                                <span class="loading">
+                                    <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>
+                                </span>
                             </div>
                         
                     </div>

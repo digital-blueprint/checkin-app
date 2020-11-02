@@ -75,5 +75,9 @@
     "title": "Information",
     "description": "With this application you get information about checkin.tugraz.at."
   },
-  "error-login-message": "You need to be logged in to use this function!"
+  "error-login-message": "You need to be logged in to use this function!",
+  "loading-msg-checkin": "Checkin ...",
+  "loading-msg-checkout": "Checkout ...",
+  "loading-msg-refresh": "Refresh checkin ...",
+  "loading-msg-guest-checkin": "Checkin guest..."
 }

@@ -37,6 +37,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.roomCapacity = 0;
         this._checkInInProgress = false;
         this.checkinCount = 0;
+        this.loading = false;
+        this.loadingMsg = '';
     }
 
     static get scopedElements() {
@@ -64,7 +66,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             roomCapacity: {type: Number, attribute: false},
             checkedInStartTime: {type: String, attribute: false},
             checkinCount: { type: Number, attribute: false },
-            checkedInEndTime: { type: String, attribute: false }
+            checkedInEndTime: { type: String, attribute: false },
+            loadingMsg: { type: String, attribute: false },
+            loading: {type: Boolean, attribute: false}
         };
     }
 
@@ -91,7 +95,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *  @returns {object} responseData
      */
     async doCheckOut() {
+        this.loading = true;
+        this.loadingMsg = i18n.t('loading-msg-checkout');
         let responseData = await this.sendCheckOutRequest(this.locationHash, this.seatNr);
+        this.loading = false;
+        this.loadingMsg = "";
         if (responseData.status === 201) {
             send({
                 "summary": i18n.t('check-out.checkout-success-title'),
@@ -119,6 +127,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
         }
+        this.loading = false;
+        this.loadingMsg = "";
         return responseData;
     }
 
@@ -161,10 +171,14 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
 
         if (this.locationHash.length > 0) {
+            this.loading = true;
+            this.loadingMsg =  this.isSessionRefreshed ? this.loadingMsg : i18n.t('loading-msg-checkin');
             let responseData = await this.sendCheckInRequest(this.locationHash, this.seatNr);
 
             // When you are checked in
             if (responseData.status === 201) {
+                this.loading = false;
+                this.loadingMsg =  "";
                 let responseBody = await responseData.json();
                 console.log("----------", responseBody);
                 this.checkedInRoom = responseBody.location.name;
@@ -272,6 +286,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 "type": "danger",
                                 "timeout": 5,
                             });
+                            this.loading = false;
+                            this.loadingMsg = "";
                             return;
                         }
                     } else {
@@ -281,6 +297,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             "type": "danger",
                             "timeout": 5,
                         });
+                        this.loading = false;
+                        this.loadingMsg = "";
                         return;
                     }
 
@@ -321,6 +339,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
         }
+        this.loading = false;
+        this.loadingMsg = "";
 
     }
 
@@ -334,13 +354,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.showManuallyContainer = false;
             this.showQrContainer = false;
             this.showBorder = false;
-           /* const that = this;
-            this._('#select-seat').addEventListener('keydown', function (e) {
-                if (e.keyCode === 13) {
-                    console.log("huiii");
-                    that.doManuallyCheckin();
-                }
-            });*/
+
         } else {
             console.log('error: qr scanner is not available. Is it already stopped?');
         }
@@ -498,10 +512,14 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     async refreshSession(locationHash, seatNumber, locationName) {
+        this.loading = true;
+        this.loadingMsg = i18n.t('loading-msg-refresh');
         let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
         if (responseCheckout.status === 201) {
             this.isSessionRefreshed = true;
             await this.doCheckIn();
+            this.loading = false;
+            this.loadingMsg = "";
             return;
         }
         send({
@@ -510,6 +528,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             "type": "warning",
             "timeout": 5,
         });
+        this.loading = false;
+        this.loadingMsg = "";
     }
 
     static get styles() {
@@ -583,7 +603,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             .loading{
                 text-align: center;
                 display: flex;
-                justify-content: center;
                 padding: 30px;
             }
             
@@ -663,6 +682,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 #refresh-btn {
                     margin-top: 0.5rem;
                 }
+                
+                .loading{
+                    justify-content: center;
+                }
             }
         `;
     }
@@ -715,9 +738,14 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     <p class="${classMap({hidden: !this.isCheckedIn})}">
                         ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.getReadableDate(this.checkedInEndTime), room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.getReadableDate(this.checkedInEndTime), room: this.checkedInRoom}) }
                     </p>
-                    <div>
+                    <div class="${classMap({hidden: this.loading})}">
                         <button class="logout button is-primary " @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
                         <button class="logout button" id="refresh-btn" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>
+                    </div>
+                    <div class="control ${classMap({hidden: !this.loading})}">
+                        <span class="loading">
+                            <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>
+                        </span>
                     </div>
                     
                     <div class="border ${classMap({hidden: this.checkinCount <= 1})}">
@@ -727,10 +755,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 </div>
                 <div id="roomselectorwrapper"></div>
                 <div class="border ${classMap({hidden: !this.showBorder})}">
-                    <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showQrContainer)})}">
+                    <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showQrContainer) || this.showManuallyContainer || this.loading})}">
                         <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex=".*tugrazcheckin.*" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
                     </div>
-                    <div class="element ${classMap({hidden: !(!this.isCheckedIn && this.showManuallyContainer)})}">
+                    <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showManuallyContainer) || this.showQrContainer || this.loading })}">
                 
                         <div class="container" id="manual-select">
                             
@@ -750,7 +778,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckIn}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                         </div>
                     </div>  
+                    <div class="control ${classMap({hidden: !this.loading})}">
+                        <span class="loading">
+                            <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>
+                        </span>
+                    </div>
                 </div>
+                
             </div>
         `;
     }
