@@ -720,7 +720,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <div>
                 <p class="">${i18n.t('check-in.description')}</p>
                 <p> ${i18n.t('check-in.how-to')}</p>
-                <p> ${i18n.t('check-in.data-protection')} </p>
+                <p> 
+                    ${i18n.t('check-in.data-protection')} 
+                    <a href="/dist/local/dbp-check-in/datenschutzerklaerung-tu-graz-check-in.pdf" title="${i18n.t('check-in.data-protection-link')}" target="_blank" class="int-link-internal"> 
+                        <span>${i18n.t('check-in.data-protection-link')} </span>
+                    </a>
+                </p>
                 </div>
             
                 <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
@@ -750,7 +755,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     
                     <div class="border ${classMap({hidden: this.checkinCount <= 1})}">
                         <p>${i18n.t('check-in.other-checkins', {count: this.checkinCount - 1})}</p>
-                        <a href="check-out-request" title="" target="_self" class="int-link-internal"> <span>${i18n.t('check-in.show-other-checkins')}</span></a>
+                        <a href="check-out-request" title="${i18n.t('check-in.show-other-checkins')}" target="_self" class="int-link-internal"> <span>${i18n.t('check-in.show-other-checkins')}</span></a>
                     </div>
                 </div>
                 <div id="roomselectorwrapper"></div>
