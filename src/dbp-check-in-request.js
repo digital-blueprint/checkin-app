@@ -211,6 +211,15 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
                     let checkInsArray = getActiveCheckInsBody["hydra:member"];
                     this.checkinCount = checkInsArray.length;
+
+                    if (this.checkinCount > 1) {
+                        send({
+                            "summary": i18n.t('check-in.other-checkins-notification-title'),
+                            "body":  `<p>${i18n.t('check-in.other-checkins-notification-body', {count: this.checkinCount - 1})}</p><a href="check-out-request" title="" target="_self" class="int-link-internal"> <span>${i18n.t('check-in.show-other-checkins')}</span></a>`,
+                            "type": "warning",
+                            "timeout": 5,
+                        });
+                    }
                 }
 
             // Invalid Input
@@ -700,6 +709,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     render() {
+
+
+
         return html`
 
             <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
