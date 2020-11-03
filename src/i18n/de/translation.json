@@ -40,7 +40,8 @@
     "other-checkins-notification-body_plural": "Sie haben {{count}} weitere Anmeldungen an anderen Orten.",
     "other-checkins": "Sie haben eine weitere Anmeldung.",
     "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen.",
-    "data-protection": "Mit der Anmeldung stimmen Sie den Datenschutzbedingungen der TU Graz zu.",
+    "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz checkin \" finden sie hier:",
+    "data-protection-link": "Zur Datenschutzerklärung",
     "how-to": "Scannen Sie mit dem QR Code Reader dieser Applikation den QR Code auf Ihrem Platz, oder wählen Sie Ihren Platz manuell aus um sich an diesem Ort anzumelden. Bei einer möglichen COVID-19 Infektion werden Sie von der TU Graz per E-Mail kontaktiert."
   },
   "check-out": {
@@ -71,7 +72,7 @@
     "past-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt in der Zukunft ein.",
     "max-time-title": "Zeitangabe zu hoch!",
     "max-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt ein, der nicht weiter als 3 Stunden in der Zukunft liegt.",
-    "data-protection": "Bitte stellen Sie sicher, dass Ihr Gast mit den Datenschutzbedingungen der TU Graz einverstanden ist. Mit der Anmeldung gehen wir von einer Zustimmung aus.",
+    "data-protection": "Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App \"TU Graz check-in\" zur Kenntnis gebracht habe.",
     "how-to": "Melden Sie einen Gast bei einem Ort für die Dauer des Besuchs an, damit dieser bei einer möglichen COVID-19 Infektion von der TU Graz per E-Mail kontaktiert wird."
   },
   "info": {

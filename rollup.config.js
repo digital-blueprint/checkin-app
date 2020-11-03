@@ -252,6 +252,7 @@ Dependencies:
                 {src: 'assets/*.css', dest: 'dist/local/' + pkg.name},
                 {src: 'assets/*.ico', dest: 'dist/local/' + pkg.name},
                 {src: 'assets/*.svg', dest: 'dist/local/' + pkg.name},
+                {src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf', dest: 'dist/local/' + pkg.name},
                 {
                     src: 'node_modules/pdfjs-dist/build/pdf.worker.min.js',
                     dest: 'dist/local/' + pkg.name + '/pdfjs',

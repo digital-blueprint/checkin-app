@@ -40,7 +40,8 @@
     "other-checkins-notification-body_plural": "You have {{count}} more checkins at other locations.",
     "other-checkins": "You have one more checkin.",
     "other-checkins_plural": "You have {{count}} more checkins.",
-    "data-protection": "By checkin, you agree to the data protection conditions of TU Graz.",
+    "data-protection": "What does TU Graz do with your data? You can find the data protection declaration for the app \"TU Graz checkin \" here:",
+    "data-protection-link": "Privacy statement",
     "how-to": "Scan the QR code on your place with the QR code reader of this application, or select your seat manually to checkin at this location. If there is a possible COVID-19 infection, you will be contacted by TU Graz by email."
   },
   "check-out": {
@@ -71,7 +72,7 @@
     "past-time-body": "Please enter a time in the future for checkout.",
     "max-time-title": "Time too high!",
     "max-time-body": "Please enter a time not more than 3 hours in the future.",
-    "data-protection": "Please make sure that your guest agrees to the data protection conditions of TU Graz. With the checkin we assume an approval.",
+    "data-protection": "With the checkin I confirm that I have made the data protection declaration for the \"TU Graz check-in\" app known to the guest I have checked in.",
     "how-to": "Checkin a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection."
   },
   "info": {
