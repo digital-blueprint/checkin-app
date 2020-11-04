@@ -180,6 +180,7 @@ export default {
         consts({
           environment: build,
           searchQRString: searchQRString,
+          basePath: basePath,
           buildinfo: getBuildInfo(),
         }),
         emitEJS({
@@ -194,6 +195,7 @@ export default {
             },
             name: pkg.name,
             entryPointURL: entryPointURL,
+            basePath: basePath,
             keyCloakServer: keyCloakServer,
             keyCloakBaseURL: keyCloakBaseURL,
             keyCloakClientId: keyCloakClientId,
