@@ -10,7 +10,7 @@
     "hash-false-title": "Raum existiert nicht!",
     "hash-false-body": "Der gescannte Raum existiert nicht, bitte wenden Sie sich an einen Mitarbeiter der Gebäudetechnik.",
     "qr-false-title": "Falscher QR-Code!",
-    "qr-false-body": "Dieser Code ist nicht für diese Applikation. Bitte benutzen Sie einen Checkin QR-Code.",
+    "qr-false-body": "Dieser Code ist nicht für diese Applikation. Bitte benutzen Sie einen check-in QR-Code.",
     "success-checkin-title": "Erfolgreich angemeldet!",
     "success-checkin-body": "Sie haben sich erfolgreich am Ort {{room}} angemeldet.",
     "success-checkin-seat-body": "Sie haben sich erfolgreich am Ort {{room}} am Sitzplatz #{{seat}} angemeldet.",
@@ -40,7 +40,7 @@
     "other-checkins-notification-body_plural": "Sie haben {{count}} weitere Anmeldungen an anderen Orten.",
     "other-checkins": "Sie haben eine weitere Anmeldung.",
     "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen.",
-    "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz checkin \" finden sie hier:",
+    "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz check-in \" finden sie hier:",
     "data-protection-link": "Zur Datenschutzerklärung",
     "how-to": "Scannen Sie mit dem QR Code Reader dieser Applikation den QR Code auf Ihrem Platz, oder wählen Sie Ihren Platz manuell aus um sich an diesem Ort anzumelden. Bei einer möglichen COVID-19 Infektion werden Sie von der TU Graz per E-Mail kontaktiert."
   },

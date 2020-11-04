@@ -34,15 +34,15 @@
     "success-refresh-body": "You have successfully extended your check-in in the {{room}}.",
     "refresh-failed-title": "Refresh check-in failed!",
     "refresh-failed-body": "Refreshing your check-in failed. Please try again.",
-    "show-other-checkins": "Show all checkins",
-    "other-checkins-notification-title": "More checkins found!",
-    "other-checkins-notification-body": "You have one more checkin at another location.",
-    "other-checkins-notification-body_plural": "You have {{count}} more checkins at other locations.",
-    "other-checkins": "You have one more checkin.",
-    "other-checkins_plural": "You have {{count}} more checkins.",
-    "data-protection": "What does TU Graz do with your data? You can find the data protection declaration for the app \"TU Graz checkin \" here:",
+    "show-other-checkins": "Show all check-ins",
+    "other-checkins-notification-title": "More check-ins found!",
+    "other-checkins-notification-body": "You have one more check-in at another location.",
+    "other-checkins-notification-body_plural": "You have {{count}} more check-ins at other locations.",
+    "other-checkins": "You have one more check-in.",
+    "other-checkins_plural": "You have {{count}} more check-ins.",
+    "data-protection": "What does TU Graz do with your data? You can find the data protection declaration for the app \"TU Graz check-in \" here:",
     "data-protection-link": "Privacy statement",
-    "how-to": "Scan the QR code on your place with the QR code reader of this application, or select your seat manually to checkin at this location. If there is a possible COVID-19 infection, you will be contacted by TU Graz by email."
+    "how-to": "Scan the QR code on your place with the QR code reader of this application, or select your seat manually to check-in at this location. If there is a possible COVID-19 infection, you will be contacted by TU Graz by email."
   },
   "check-out": {
     "title": "Show all check-ins",
@@ -50,11 +50,11 @@
     "button-text": "Check-out",
     "checkout-success-title": "Successfully checked out!",
     "checkout-success-body": "You have successfully checked out of the {{room}}.",
-    "checkout-failed-title": "Checkout failed!",
-    "checkout-failed-body": "Your checkout from {{room}} failed. We're sorry, something went wrong.",
+    "checkout-failed-title": "Check-out failed!",
+    "checkout-failed-body": "Your check-out from {{room}} failed. We're sorry, something went wrong.",
     "no-checkins-message": "You are currently not checked-in at any location..",
     "loading-message": "Loading...",
-    "checkin-until": "Checkin until:"
+    "checkin-until": "Check-in until:"
   },
   "guest-check-in": {
     "title": "Guest registration",
@@ -67,21 +67,21 @@
     "success-checkin-title": "Guest checked in!",
     "success-checkin-body": "You have successfully checked in {{email}}.",
     "no-time-title": "Missing time!",
-    "no-time-body": "Please enter a time for checkout.",
+    "no-time-body": "Please enter a time for check-out.",
     "past-time-title": "Time in the past!",
-    "past-time-body": "Please enter a time in the future for checkout.",
+    "past-time-body": "Please enter a time in the future for check-out.",
     "max-time-title": "Time too high!",
     "max-time-body": "Please enter a time not more than 3 hours in the future.",
-    "data-protection": "With the checkin I confirm that I have made the data protection declaration for the \"TU Graz check-in\" app known to the guest I have checked in.",
-    "how-to": "Checkin a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection."
+    "data-protection": "With the check-in I confirm that I have made the data protection declaration for the \"TU Graz check-in\" app known to the guest I have checked in.",
+    "how-to": "Check-in a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection."
   },
   "info": {
     "title": "Information",
     "description": "With this application you get information about checkin.tugraz.at."
   },
   "error-login-message": "You need to be logged in to use this function!",
-  "loading-msg-checkin": "Checkin ...",
-  "loading-msg-checkout": "Checkout ...",
-  "loading-msg-refresh": "Refresh checkin ...",
-  "loading-msg-guest-checkin": "Checkin guest..."
+  "loading-msg-checkin": "Check-in ...",
+  "loading-msg-checkout": "Check-out ...",
+  "loading-msg-refresh": "Refresh check-in ...",
+  "loading-msg-guest-checkin": "Check-in guest..."
 }
