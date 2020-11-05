@@ -4,7 +4,7 @@ import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
-import {Button, Icon, MiniSpinner} from 'dbp-common';
+import {Icon, MiniSpinner, LoadingButton} from 'dbp-common';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
 import {send} from "dbp-common/notification";
@@ -19,15 +19,13 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.activeCheckins = [];
         this.isRequested = false;
         this.loading = false;
-        this.loadingMsg = '';
-        this.loadingBtn = '';
     }
 
     static get scopedElements() {
         return {
           'dbp-icon': Icon,
           'dbp-mini-spinner': MiniSpinner,
-          'dbp-button': Button,
+          'dbp-loading-button': LoadingButton,
           'dbp-textswitch': TextSwitch,
         };
     }
@@ -40,8 +38,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             isRequested: { type: Boolean, attribute: false },
             isRequestLoading: { type: Boolean, attribute: false },
             loading: { type: Boolean, attribute: false },
-            loadingMsg: { type: String, attribute: false },
-            loadingBtn: { type: String, attribute: false }
         };
     }
 
@@ -73,6 +69,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         let locationHash = '';
         let seatNr = '';
         let locationName = '';
+        let button = event.target;
 
         if( entry !== undefined) { 
             locationHash = entry['location'] ? entry['location']['identifier'] : '';
@@ -89,13 +86,16 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
         } else {
+            let response;
             this.loading = true;
-            this.loadingMsg = i18n.t('loading-msg-checkout');
-            this.loadingBtn = entry;
-            let response = await this.sendCheckOutRequest(locationHash, seatNr);
-            this.loading = false;
-            this.loadingMsg = "";
-            this.loadingBtn = "";
+            button.start();
+
+            try {
+                response = await this.sendCheckOutRequest(locationHash, seatNr);
+            } finally {
+                button.stop();
+                this.loading = false;
+            }
 
             if (response.status === 201) {
                 send({
@@ -185,15 +185,19 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param event
      * @param entry
      */
-    doRefreshSession(event, entry) {
-        this.loading = true;
-        this.loadingMsg = i18n.t('loading-msg-refresh');
-        this.loadingBtn = entry;
+    async doRefreshSession(event, entry) {
         let locationHash = entry['location']['identifier'];
         let seatNr = entry['seatNumber'];
         let locationName = entry['location']['name'];
-        
-        return this.refreshSession(locationHash, seatNr, locationName);
+        let button = event.target;
+        button.start();
+        this.loading = true;
+        try {
+            await this.refreshSession(locationHash, seatNr, locationName);
+        } finally {
+            button.stop();
+            this.loading = false;
+        }
     }
 
     /**
@@ -212,8 +216,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             await this.doCheckIn(locationHash, seatNumber, locationName);
             this.isRequested = false;
             this.loading = false;
-            this.loadingMsg = "";
-            this.loadingBtn = "";
             return;
         }
         send({
@@ -223,8 +225,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             "timeout": 5,
         });
         this.loading = false;
-        this.loadingMsg = "";
-        this.loadingBtn = "";
     }
 
     /**
@@ -458,16 +458,9 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                         <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}<br>` : ``}
                         ${i18n.t('check-out.checkin-until')} ${this.getReadableDate(i.endTime)}</span>
-              
-                        <div class="${classMap({hidden: (this.loadingBtn === i)})}"><div class="btn"><button class="button is-primary" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button></div></div>
-                        <div class="${classMap({hidden: (this.loadingBtn === i)})}"><div class="btn"><button class="button" id="refresh-btn" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button></div></div>
-                         
-                         <div class="control ${classMap({hidden: !(this.loadingBtn === i)})}"></div>
-                         <div class="control ${classMap({hidden: !(this.loadingBtn === i)})}">
-                            <span class="loading">
-                                <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>
-                            </span>
-                        </div>
+
+                        <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="${i18n.t('check-out.button-text')}" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
+                        <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('check-in.refresh-button-text')}" @click="${(event) => { this.doRefreshSession(event, i); }}" title="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button></div></div>
                     `)}
                     <span class="control ${classMap({hidden: this.isLoggedIn() && !this.isRequestLoading})}">
                         <span class="loading">
