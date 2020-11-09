@@ -344,7 +344,8 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     getReadableDate(date) {
         let newDate = new Date(date);
         let month = newDate.getMonth() + 1;
-        return newDate.getDate() + "." + month + "." + newDate.getFullYear() + " " + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2);
+        return newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear();
+        //return newDate.getDate() + "." + month + "." + newDate.getFullYear() + " " + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2);
     }
 
     static get styles() {

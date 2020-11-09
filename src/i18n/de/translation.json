@@ -6,7 +6,7 @@
     "manually-button-text": "Ort manuell auswählen",
     "checked-in-description": "Sie sind bis {{time}} am Ort {{room}} angemeldet.",
     "checked-in-with-seat-description": "Sie sind bis {{time}} am Ort {{room}} am Sitzplatz {{seat}} angemeldet.",
-    "checked-in-at": "um {{clock}} Uhr",
+    "checked-in-at": "{{clock}} Uhr am",
     "hash-false-title": "Raum existiert nicht!",
     "hash-false-body": "Der gescannte Raum existiert nicht, bitte wenden Sie sich an einen Mitarbeiter der Gebäudetechnik.",
     "qr-false-title": "Falscher QR-Code!",

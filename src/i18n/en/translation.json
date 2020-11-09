@@ -6,7 +6,7 @@
     "manually-button-text": "Select location manually",
     "checked-in-description": "You have been checked in the room {{room}} until {{time}}.",
     "checked-in-with-seat-description": "You have been checked in the room {{room}} at seat {{seat}} until {{time}}.",
-    "checked-in-at": "at {{clock}}",
+    "checked-in-at": "{{clock}} on ",
     "hash-false-title": "Room doesn't exist!",
     "hash-false-body": "The scanned room does not exist, please contact a TU Graz employee.",
     "qr-false-title": "Wrong QR-Code!",
