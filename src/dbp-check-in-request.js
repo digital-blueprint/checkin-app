@@ -8,7 +8,7 @@ import {classMap} from 'lit-html/directives/class-map.js';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from 'dbp-qr-code-scanner';
-import {LocationSelect} from 'dbp-location-select';
+import {CheckInPlaceSelect} from 'dbp-check-in-place-select';
 import { send } from 'dbp-common/notification';
 import searchQRString from 'consts:searchQRString';
 
@@ -50,7 +50,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
           'dbp-button': Button,
           'dbp-textswitch': TextSwitch,
           'dbp-qr-code-scanner': QrCodeScanner,
-          'dbp-location-select': LocationSelect,
+          'dbp-check-in-place-select': CheckInPlaceSelect,
         };
     }
 
@@ -117,9 +117,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.checkedInEndTime = "";
             this.isRoomSelected = false;
             
-            let locationSelect = this.shadowRoot.querySelector(this.constructor.getScopedTagName('dbp-location-select'));
-            if (locationSelect !== null) {
-                locationSelect.clear();
+            let checkInPlaceSelect = this.shadowRoot.querySelector(this.constructor.getScopedTagName('dbp-check-in-place-select'));
+            if (checkInPlaceSelect !== null) {
+                checkInPlaceSelect.clear();
             }
         } else {
             send({
@@ -451,7 +451,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * Processes the event from location-select 
+     * Processes the event from check-in-place-select 
      * and stores the information into the 
      * correct values.
      *
@@ -784,7 +784,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             <div class="field">
                                 <label class="label">${i18n.t('check-in.manually-place')}</label>
                                 <div class="control">
-                                    <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-location-select>
+                                    <dbp-check-in-place-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-check-in-place-select>
                                 </div>
                             </div>
                             <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">

@@ -3,7 +3,7 @@ import {css, html} from 'lit-element';
 import * as commonUtils from 'dbp-common/utils';
 import {Button, Icon, MiniSpinner} from "dbp-common";
 import {TextSwitch} from "./textswitch";
-import {LocationSelect} from "dbp-location-select";
+import {CheckInPlaceSelect} from 'dbp-check-in-place-select';
 import {createI18nInstance} from "./i18n";
 import * as commonStyles from "dbp-common/styles";
 import {classMap} from "lit-html/directives/class-map";
@@ -34,7 +34,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             'dbp-mini-spinner': MiniSpinner,
             'dbp-button': Button,
             'dbp-textswitch': TextSwitch,
-            'dbp-location-select': LocationSelect,
+            'dbp-check-in-place-select': CheckInPlaceSelect,
         };
     }
 
@@ -67,7 +67,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * Processes the event from location-select 
+     * Processes the event from check-in-place-select 
      * and stores the information into the 
      * correct values.
      *
@@ -489,7 +489,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('check-in.manually-place')}</label>
                                         <div class="control">
-                                            <dbp-location-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-location-select>
+                                            <dbp-check-in-place-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-check-in-place-select>
                                         </div>
                                     </div>
                                     <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
