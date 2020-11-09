@@ -634,7 +634,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 background-size: 73%;
                 background-repeat: no-repeat;
                 background-position: center center;
-                margin: 0 0 0 0.75%;
+                margin: 0 0 0 3px;
                 padding: 0 0 0.25% 0;
                 animation: 0.15s linkIconOut;
                 font-size: 103%;
@@ -646,7 +646,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 background-size: 73%;
                 background-repeat: no-repeat;
                 background-position: center center;
-                margin: 0 0 0 0.75%;
+                margin: 0 0 0 3px;
                 padding: 0 0 0.25% 0;
                 animation: 0s linkIconIn;
                 font-size: 103%;
