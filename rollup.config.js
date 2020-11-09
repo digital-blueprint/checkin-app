@@ -72,7 +72,7 @@ switch (build) {
     keyCloakServer = 'auth.tugraz.at';
     keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
     keyCloakClientId = 'checkin_tugraz_at-CHECKIN';
-    //matomoSiteId = 137;
+    matomoSiteId = 150;
     break;
   case 'test':
     basePath = '/apps/checkin/';
