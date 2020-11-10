@@ -211,7 +211,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     });
 
                     if (window._paq !== undefined) {
-                        window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInSuccess', this.checkedInRoom]);
+                        window._paq.push(['trackEvent', 'CheckInRequest', 'RefreshSuccess', this.checkedInRoom]);
                     }
                 } else {
                     send({
@@ -222,7 +222,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     });
 
                     if (window._paq !== undefined) {
-                        window._paq.push(['trackEvent', 'CheckInRequest', 'RefreshSuccess', this.checkedInRoom]);
+                        window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInSuccess', this.checkedInRoom]);
                     }
                 }
                 let getActiveCheckInsResponse = await this.getActiveCheckIns();
@@ -581,6 +581,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         });
         this.loading = false;
         this.loadingMsg = "";
+
+        if (window._paq !== undefined) {
+            window._paq.push(['trackEvent', 'CheckInRequest', 'RefreshFailed', locationName]);
+        }
     }
 
     static get styles() {

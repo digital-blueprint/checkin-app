@@ -231,6 +231,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             "type": "warning",
             "timeout": 5,
         });
+
+        if (window._paq !== undefined) {
+            window._paq.push(['trackEvent', 'CheckOutRequest', 'RefreshFailed', locationName]);
+        }
     }
 
     /**
