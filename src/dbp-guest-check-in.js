@@ -229,13 +229,17 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             // When you are checked in
             if (responseData.status === 201) {
                 this.isCheckedIn = true;
-                
+
                 send({
                         "summary": i18n.t('guest-check-in.success-checkin-title', {email: this.guestEmail}),
                         "body": i18n.t('guest-check-in.success-checkin-body', {email: this.guestEmail}),
                         "type": "success",
                         "timeout": 5,
                 });
+
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInSuccess', this.locationHash]);
+                }
 
                 //Refresh necessary fields and values - keep time and place because it is nice to have for the next guest
                 this._('#email-field').value = '';
@@ -253,6 +257,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed400', this.locationHash]);
+                }
             // Error if room not exists
             } else if (responseData.status === 404) {
                 send({
@@ -262,12 +269,19 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed404', this.locationHash]);
+                }
             // Other errors
             } else if (responseData.status === 424) {
                 let errorBody = await responseData.json();
                 let errorDescription = errorBody["hydra:description"];
                 console.log("err: ", errorDescription);
                 console.log("err: ", errorBody);
+
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed424', this.locationHash]);
+                }
 
                 // Error: invalid seat number
                 if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
@@ -311,6 +325,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed403', this.locationHash]);
+                }
             // Error: something else doesn't work
             } else{
                 send({
@@ -319,6 +336,10 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "danger",
                     "timeout": 5,
                 });
+
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed', this.locationHash]);
+                }
             }
 
         // Error: no location hash detected
@@ -329,8 +350,11 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "danger",
                 "timeout": 5,
             });
-        }
 
+            if (window._paq !== undefined) {
+                window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailedNoLocationHash', this.locationHash]);
+            }
+        }
     }
 
     getCurrentTime() {

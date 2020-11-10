@@ -84,6 +84,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "warning",
                 "timeout": 5,
             });
+
+            if (window._paq !== undefined) {
+                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckOutFailed', this.checkedInRoom]);
+            }
         } else {
             let response;
             this.loading = true;
@@ -104,6 +108,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "success",
                     "timeout": 5,
                 });
+
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckOutSuccess', this.checkedInRoom]);
+                }
             } else {
                 send({
                     "summary": i18n.t('check-out.checkout-failed-title'),
@@ -111,6 +119,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "warning",
                     "timeout": 5,
                 });
+
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckOutFailed', this.checkedInRoom]);
+                }
             }
         }
     }
@@ -245,6 +257,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "success",
                     "timeout": 5,
                 });
+
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'CheckOutRequest', 'RefreshSuccess', locationName]);
+                }
             } else {
                 send({
                     "summary": i18n.t('check-in.success-checkin-title', {room: locationName}),
@@ -252,6 +268,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "success",
                     "timeout": 5,
                 });
+
+                if (window._paq !== undefined) {
+                    window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInSuccess', locationName]);
+                }
             }
 
         // Invalid Input
@@ -264,6 +284,9 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             });
             console.log("error: Invalid Input.");
 
+            if (window._paq !== undefined) {
+                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed400', locationName]);
+            }
         // Error if room not exists
         } else if (responseData.status === 404) {
             send({
@@ -273,12 +296,19 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
+            if (window._paq !== undefined) {
+                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed404', locationName]);
+            }
         // Other errors
         } else if (responseData.status === 424) {
             let errorBody = await responseData.json();
             let errorDescription = errorBody["hydra:description"];
             console.log("err: ", errorDescription);
             console.log("err: ", errorBody);
+
+            if (window._paq !== undefined) {
+                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed424', locationName]);
+            }
 
             // Error: invalid seat number
             if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
@@ -302,7 +332,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 console.log("error: Room has no seat nr");
             }
 
-
             else {
                 send({
                     "summary": i18n.t('check-in.error-title'),
@@ -322,6 +351,9 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
+            if (window._paq !== undefined) {
+                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed403', locationName]);
+            }
         // Error: something else doesn't work
         } else{
             send({
@@ -330,6 +362,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "danger",
                 "timeout": 5,
             });
+
+            if (window._paq !== undefined) {
+                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed', locationName]);
+            }
         }
     }
 
