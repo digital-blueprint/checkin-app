@@ -97,9 +97,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     async doCheckOut() {
         this.loading = true;
         this.loadingMsg = i18n.t('loading-msg-checkout');
-        let responseData = await this.sendCheckOutRequest(this.locationHash, this.seatNr);
-        this.loading = false;
-        this.loadingMsg = "";
+        let responseData;
+        try {
+            responseData = await this.sendCheckOutRequest(this.locationHash, this.seatNr);
+        } finally {
+            this.loading = false;
+            this.loadingMsg = "";
+        }
         if (responseData.status === 201) {
             send({
                 "summary": i18n.t('check-out.checkout-success-title'),
@@ -136,8 +140,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 window._paq.push(['trackEvent', 'CheckInRequest', 'CheckOutFailed', this.checkedInRoom]);
             }
         }
-        this.loading = false;
-        this.loadingMsg = "";
+
         return responseData;
     }
 
@@ -154,12 +157,27 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             return;
         this._checkInInProgress = true;
         try {
+            this.loadingMsg = i18n.t('loading-msg-checkin');
+            this.loading = true;
             let check = await this.decodeUrl(data);
             if (check) {
                 await this.doCheckIn();
             }
         } finally {
             this._checkInInProgress = false;
+            this.loading = false;
+            this.loadingMsg = "";
+        }
+    }
+
+    async doCheckInManually(event) {
+        try {
+            this.loadingMsg = i18n.t('loading-msg-checkin');
+            this.loading = true;
+            await this.doCheckIn(true);
+        } finally {
+            this.loading = false;
+            this.loadingMsg = "";
         }
     }
 
@@ -169,10 +187,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
      *
      * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
-     *                  no seat number, already checkedin, no permissions, any other errors, location hash empty
+     * no seat number, already checkedin, no permissions, any other errors, location hash empty
      *
+     * @param isSessionRefreshed
      */
-    async doCheckIn() {
+    async doCheckIn(isSessionRefreshed=false) {
         console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
         if (this.roomCapacity === null && this.seatNr >= 0) {
@@ -180,14 +199,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
 
         if (this.locationHash.length > 0) {
-            this.loading = true;
-            this.loadingMsg =  this.isSessionRefreshed ? this.loadingMsg : i18n.t('loading-msg-checkin');
             let responseData = await this.sendCheckInRequest(this.locationHash, this.seatNr);
 
             // When you are checked in
             if (responseData.status === 201) {
-                this.loading = false;
-                this.loadingMsg =  "";
                 let responseBody = await responseData.json();
                 console.log("----------", responseBody);
                 this.checkedInRoom = responseBody.location.name;
@@ -199,8 +214,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.isCheckedIn = true;
                 this._("#text-switch")._active = "";
 
-                if (this.isSessionRefreshed) {
-                    this.isSessionRefreshed = false;
+                if (isSessionRefreshed) {
                     send({
                         "summary": i18n.t('check-in.success-refresh-title', {room: this.checkedInRoom}),
                         "body": i18n.t('check-in.success-refresh-body', {room: this.checkedInRoom}),
@@ -323,8 +337,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 "type": "danger",
                                 "timeout": 5,
                             });
-                            this.loading = false;
-                            this.loadingMsg = "";
                             return;
                         }
                     } else {
@@ -334,8 +346,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             "type": "danger",
                             "timeout": 5,
                         });
-                        this.loading = false;
-                        this.loadingMsg = "";
                         return;
                     }
 
@@ -387,9 +397,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailedNoLocationHash']);
             }
         }
-        this.loading = false;
-        this.loadingMsg = "";
-
     }
 
     /**
@@ -835,7 +842,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 </div>
                             </div>
                            
-                            <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckIn}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</button></div>
+                            <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckInManually}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</button></div>
                         </div>
                     </div>  
                     <div class="control ${classMap({hidden: !this.loading})}">
