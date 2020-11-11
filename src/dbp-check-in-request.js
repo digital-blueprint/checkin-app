@@ -257,7 +257,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 "target": '_self',
                                 "text": i18nKey('check-in.show-other-checkins')
                             }
-                        }
+                        };
                         this._("#notification-wrapper").scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
