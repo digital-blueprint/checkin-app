@@ -1,4 +1,4 @@
-import {createI18nInstance} from './i18n.js';
+import {createI18nInstance, i18nKey} from './i18n.js';
 import {css, html} from 'lit-element';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
@@ -41,6 +41,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.checkinCount = 0;
         this.loading = false;
         this.loadingMsg = '';
+        this.status = null;
     }
 
     static get scopedElements() {
@@ -70,7 +71,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             checkinCount: { type: Number, attribute: false },
             checkedInEndTime: { type: String, attribute: false },
             loadingMsg: { type: String, attribute: false },
-            loading: {type: Boolean, attribute: false}
+            loading: {type: Boolean, attribute: false},
+            status: { type: Object, attribute: false }
         };
     }
 
@@ -245,12 +247,18 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     this.checkinCount = checkInsArray.length;
 
                     if (this.checkinCount > 1) {
-                        send({
-                            "summary": i18n.t('check-in.other-checkins-notification-title'),
-                            "body":  `<p>${i18n.t('check-in.other-checkins-notification-body', {count: this.checkinCount - 1})}</p><a href="check-out-request" title="" target="_self" class="int-link-internal"> <span>${i18n.t('check-in.show-other-checkins')}</span></a>`,
+                        this.status = {
+                            "summary": i18nKey('check-in.other-checkins-notification-title'),
+                            "body": i18nKey('check-in.other-checkins-notification-body'),
                             "type": "warning",
-                            "timeout": 5,
-                        });
+                            "options": {count: this.checkinCount - 1},
+                            "link": {
+                                "href": 'check-out-request',
+                                "target": '_self',
+                                "text": i18nKey('check-in.show-other-checkins')
+                            }
+                        }
+                        this._("#notification-wrapper").scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
 
@@ -608,6 +616,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 margin-top: 0px;
             }
 
+            h4 {
+                padding: 0px;
+                margin: 0px;
+            }
+
             #btn-container {
                 margin-top: 1.5rem;
                 margin-bottom: 2rem;
@@ -798,7 +811,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         value2="${i18n.t('check-in.manually-button-text')}"
                         @change=${ (e) => this.checkinSwitch(e.target.name) }></dbp-textswitch>
                 </div>
-            
+                <div id="notification-wrapper"></div>
                 <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
                     <h2> ${this.checkedInRoom} </h2> 
                     <p class="${classMap({hidden: !this.isCheckedIn})}">
@@ -808,15 +821,18 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <dbp-loading-button class="logout" type="is-primary" @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</dbp-loading-button>
                         <dbp-loading-button class="logout" id="refresh-btn" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</dbp-loading-button>
                     </div>
+                    ${ this.status ? html`
+                        <br>
+                        <div class="notification is-${this.status.type}">
+                            <h4>${i18n.t(this.status.summary)}</h4>
+                            ${i18n.t(this.status.body, this.status.options ? this.status.options : ``)} 
+                            ${ this.status.link ? html`<a href="${this.status.link.href}" title="" target="${this.status.link.target}" class="notify-link-internal"><span>${i18n.t(this.status.link.text)}</span></a>` : ``} 
+                        </div>
+                    `: ``}
                     <div class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
                             <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>
                         </span>
-                    </div>
-                    
-                    <div class="border ${classMap({hidden: this.checkinCount <= 1})}">
-                        <p>${i18n.t('check-in.other-checkins', {count: this.checkinCount - 1})}</p>
-                        <a href="check-out-request" title="${i18n.t('check-in.show-other-checkins')}" target="_self" class="int-link-internal"> <span>${i18n.t('check-in.show-other-checkins')}</span></a>
                     </div>
                 </div>
                 <div id="roomselectorwrapper"></div>
@@ -850,7 +866,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </span>
                     </div>
                 </div>
-                
             </div>
         `;
     }
