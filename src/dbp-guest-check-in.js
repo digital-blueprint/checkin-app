@@ -11,7 +11,6 @@ import select2CSSPath from 'select2/dist/css/select2.min.css';
 import { send } from 'dbp-common/notification';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 
-import basePath from 'consts:basePath';
 const i18n = createI18nInstance();
 
 class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
@@ -515,6 +514,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     render() {
         const select2CSS = commonUtils.getAssetURL(select2CSSPath);
+        let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
         
         return html`
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
@@ -547,7 +547,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     <p class="">${i18n.t('guest-check-in.description')}</p>
                     <p> ${i18n.t('guest-check-in.how-to')}</p>
                     <p> ${i18n.t('guest-check-in.data-protection')} <br>
-                    <a href="${basePath}local/dbp-check-in/datenschutzerklaerung-tu-graz-check-in.pdf" title="${i18n.t('check-in.data-protection-link')}" target="_blank" class="int-link-internal"> 
+                    <a href="${privacyURL}" title="${i18n.t('check-in.data-protection-link')}" target="_blank" class="int-link-internal"> 
                         <span>${i18n.t('check-in.data-protection-link')} </span>
                     </a>
                     </p>

@@ -12,8 +12,6 @@ import {CheckInPlaceSelect} from 'dbp-check-in-place-select';
 import { send } from 'dbp-common/notification';
 import searchQRString from 'consts:searchQRString';
 
-import basePath from 'consts:basePath';
-
 const i18n = createI18nInstance();
 
 class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
@@ -755,8 +753,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     render() {
-
-
+        let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
 
         return html`
 
@@ -780,7 +777,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <p> ${i18n.t('check-in.how-to')}</p>
                 <p> 
                     ${i18n.t('check-in.data-protection')} 
-                    <a href="${basePath}local/dbp-check-in/datenschutzerklaerung-tu-graz-check-in.pdf" title="${i18n.t('check-in.data-protection-link')}" target="_blank" class="int-link-internal"> 
+                    <a href="${privacyURL}" title="${i18n.t('check-in.data-protection-link')}" target="_blank" class="int-link-internal"> 
                         <span>${i18n.t('check-in.data-protection-link')} </span>
                     </a>
                 </p>

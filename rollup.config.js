@@ -180,7 +180,6 @@ export default {
         consts({
           environment: build,
           searchQRString: searchQRString,
-          basePath: basePath,
           buildinfo: getBuildInfo(),
         }),
         emitEJS({
