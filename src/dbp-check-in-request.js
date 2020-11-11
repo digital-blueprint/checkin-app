@@ -11,8 +11,10 @@ import {QrCodeScanner} from 'dbp-qr-code-scanner';
 import {CheckInPlaceSelect} from 'dbp-check-in-place-select';
 import { send } from 'dbp-common/notification';
 import searchQRString from 'consts:searchQRString';
+import {parseQRCode} from './utils.js';
 
 const i18n = createI18nInstance();
+
 
 class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -427,9 +429,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     async decodeUrl(data) {
-        let index = data.search(this.searchHashString);
-        if (index === -1) {
-            if ( !this.wrongQR.includes(data) ) {
+        let location, seat;
+        try {
+            [location, seat] = parseQRCode(data, this.searchHashString);
+        } catch(error) {
+            console.log(error);
+            if (!this.wrongQR.includes(data) ) {
                 this.wrongQR.push(data);
                 send({
                     "summary": i18n.t('check-in.qr-false-title'),
@@ -440,24 +445,20 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             }
             return false;
         }
-        let locationParam = data.substring(index + this.searchHashString.length);
+
+        this.locationHash = location;
+        if (seat === null)
+            this.seatNr = '';
+        else
+            this.seatNr = seat;
+
+        let locationParam = this.locationHash + '-' + this.seatNr;
         let checkAlreadySend = await this.wrongHash.includes(locationParam);
         if (checkAlreadySend) {
             return false;
         }
-        let splitted = locationParam.split('-');
-        if (splitted.length > 1) {
-            if (splitted [0] === this.locationHash && splitted[1] === this.seatNr) {
-                return false;
-            } else {
-                this.locationHash = splitted[0];
-                this.seatNr = splitted[1];
-                return true;
-            }
-        } else {
-            console.log('error: no correct QR code');
-            return false;
-        }
+
+        return true;
     }
 
     /**

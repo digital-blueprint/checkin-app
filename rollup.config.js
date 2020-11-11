@@ -42,7 +42,7 @@ let matomoSiteId = 131;
 let useTerser = buildFull;
 let useBabel = buildFull;
 let checkLicenses = buildFull;
-let searchQRString = 'tugrazcheckin: -';
+let searchQRString = 'tugrazcheckin';
 
 switch (build) {
   case 'local':

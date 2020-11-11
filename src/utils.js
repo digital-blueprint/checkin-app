@@ -80,3 +80,30 @@ export const fabricjs2pdfasPosition = (data) => {
         p: data.currentPage
     };
 };
+
+
+export function parseQRCode(data, id) {
+    // The QR code is of the format: ".*?$id: -$hash(-$seat|-|)"
+    const searchHashString = `${id}: -`;
+    let index = data.search(searchHashString);
+    if (index === -1)
+        throw new Error('ID not found');
+    let locationParam = data.substring(index + searchHashString.length);
+    let split = locationParam.trim().split('-');
+    if (split.length === 0  || split.length > 2)
+        throw new Error('invalid list format');
+    if (split.length === 1)
+        split.push("");
+    let location = split[0];
+    let seatStr = split[1];
+    let seat = null;
+    if (location === "")
+        throw new Error('invalid location format');
+    if (seatStr === "")
+        seat = null;
+    else if (isNaN(parseInt(seatStr, 10)))
+        throw new Error('invalid seat format');
+    else
+        seat = parseInt(seatStr, 10);
+    return [location, seat];
+}
