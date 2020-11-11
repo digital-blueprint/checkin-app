@@ -3,7 +3,7 @@ import {css, html} from 'lit-element';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from 'dbp-common/utils';
-import {Button, Icon, MiniSpinner} from 'dbp-common';
+import {LoadingButton, Icon, MiniSpinner} from 'dbp-common';
 import {classMap} from 'lit-html/directives/class-map.js';
 import * as commonStyles from 'dbp-common/styles';
 import {TextSwitch} from './textswitch.js';
@@ -45,7 +45,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         return {
           'dbp-icon': Icon,
           'dbp-mini-spinner': MiniSpinner,
-          'dbp-button': Button,
+          'dbp-loading-button': LoadingButton,
           'dbp-textswitch': TextSwitch,
           'dbp-qr-code-scanner': QrCodeScanner,
           'dbp-check-in-place-select': CheckInPlaceSelect,
@@ -92,17 +92,17 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     /**
      * Init a checkout and Check if it was successful
      *
-     *  @returns {object} responseData
+     * @param event
+     * @returns {object} responseData
      */
-    async doCheckOut() {
-        this.loading = true;
-        this.loadingMsg = i18n.t('loading-msg-checkout');
+    async doCheckOut(event) {
+        let button = event.target;
         let responseData;
+        button.start();
         try {
             responseData = await this.sendCheckOutRequest(this.locationHash, this.seatNr);
         } finally {
-            this.loading = false;
-            this.loadingMsg = "";
+            button.stop();
         }
         if (responseData.status === 201) {
             send({
@@ -171,13 +171,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     async doCheckInManually(event) {
+        let button = event.target;
         try {
-            this.loadingMsg = i18n.t('loading-msg-checkin');
-            this.loading = true;
-            await this.doCheckIn(true);
+            button.start();
+            await this.doCheckIn();
         } finally {
-            this.loading = false;
-            this.loadingMsg = "";
+            button.stop();
         }
     }
 
@@ -189,9 +188,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
      * no seat number, already checkedin, no permissions, any other errors, location hash empty
      *
-     * @param isSessionRefreshed
+     * @param refresh
      */
-    async doCheckIn(isSessionRefreshed=false) {
+    async doCheckIn(refresh=false) {
         console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
         if (this.roomCapacity === null && this.seatNr >= 0) {
@@ -214,7 +213,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.isCheckedIn = true;
                 this._("#text-switch")._active = "";
 
-                if (isSessionRefreshed) {
+                if (refresh) {
                     send({
                         "summary": i18n.t('check-in.success-refresh-title', {room: this.checkedInRoom}),
                         "body": i18n.t('check-in.success-refresh-body', {room: this.checkedInRoom}),
@@ -553,9 +552,16 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     /**
      * Init a session refresh
      *
+     * @param event
      */
-    doRefreshSession() {
-        return this.refreshSession(this.locationHash, this.seatNr, this.checkedInRoom);
+    async doRefreshSession(event) {
+        let button = event.target;
+        button.start();
+        try {
+            await this.refreshSession(this.locationHash, this.seatNr, this.checkedInRoom);
+        } finally {
+            button.stop();
+        }
     }
 
     /**
@@ -568,14 +574,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     async refreshSession(locationHash, seatNumber, locationName) {
-        this.loading = true;
-        this.loadingMsg = i18n.t('loading-msg-refresh');
         let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
         if (responseCheckout.status === 201) {
-            this.isSessionRefreshed = true;
-            await this.doCheckIn();
-            this.loading = false;
-            this.loadingMsg = "";
+            await this.doCheckIn(true);
             return;
         }
         send({
@@ -584,8 +585,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             "type": "warning",
             "timeout": 5,
         });
-        this.loading = false;
-        this.loadingMsg = "";
 
         if (window._paq !== undefined) {
             window._paq.push(['trackEvent', 'CheckInRequest', 'RefreshFailed', locationName]);
@@ -597,7 +596,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         return css`
             ${commonStyles.getThemeCSS()}
             ${commonStyles.getGeneralCSS(false)}
-            ${commonStyles.getButtonCSS()}
             ${commonStyles.getNotificationCSS()}
 
             h2:first-child {
@@ -806,8 +804,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.getReadableDate(this.checkedInEndTime), room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.getReadableDate(this.checkedInEndTime), room: this.checkedInRoom}) }
                     </p>
                     <div class="${classMap({hidden: this.loading})}">
-                        <button class="logout button is-primary " @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</button>
-                        <button class="logout button" id="refresh-btn" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</button>
+                        <dbp-loading-button class="logout" type="is-primary" @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</dbp-loading-button>
+                        <dbp-loading-button class="logout" id="refresh-btn" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</dbp-loading-button>
                     </div>
                     <div class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
@@ -842,7 +840,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 </div>
                             </div>
                            
-                            <div class="btn"><button id="do-manually-checkin" class="button is-primary" @click="${this.doCheckInManually}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</button></div>
+                            <div class="btn"><dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this.doCheckInManually}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button></div>
                         </div>
                     </div>  
                     <div class="control ${classMap({hidden: !this.loading})}">
