@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Favicons -->
-    <link rel="shortcut icon" type="image/x-icon" href="<%= getPrivateUrl('icon/favicon.ico') %>">
-    <link rel="icon" type="image/svg+xml" href="<%= getPrivateUrl('icon/favicon.svg') %>" sizes="any">
-
 <% if (environment === "local") { -%>
     <!-- XXX: Disable adoptedStyleSheets so that lit-element doesn't use it and we can edit CSS in the Chrome dev tools -->
     <script>
         delete Document.prototype.adoptedStyleSheets;
     </script>
 <% } -%>
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" type="image/x-icon" href="<%= getPrivateUrl('icon/favicon.ico') %>">
+    <link rel="icon" type="image/svg+xml" href="<%= getPrivateUrl('icon/favicon.svg') %>" sizes="any">
 
     <!-- PWA manfiest file -->
     <link rel="manifest" href="<%= getUrl(name + '.manifest.json') %>">
@@ -23,10 +23,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="<%= getPrivateUrl('icon/favicon-32x32.png') %>">
     <link rel="icon" type="image/png" sizes="16x16" href="<%= getPrivateUrl('icon/favicon-16x16.png') %>">
     <link rel="mask-icon" href="<%= getPrivateUrl('icon/safari-pinned-tab.svg') %>" color="#e4154b">
-    <meta name="msapplication-config" content="<%= getPrivateUrl('icon/browserconfig.xml') %>">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="theme-color" content="#ffffff">
 
+    <!-- PWA Windows -->
+    <meta name="msapplication-config" content="<%= getUrl(name + '.browserconfig.xml') %>">
 
     <!-- Loading spinner -->
     <script type="module">

@@ -4,18 +4,17 @@
   "start_url": "./dbp-check-in.html",
   "icons": [
     {
-      "src": "local/dbp-check-in/icon-192.png",
+      "src": "local/dbp-check-in/icon/pwa-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "local/dbp-check-in/icon-512.png",
+      "src": "local/dbp-check-in/icon/pwa-256x256.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "256x256"
     }
   ],
-  "background_color": "#245B78",
+  "background_color": "#FFFFFF",
   "display": "standalone",
   "theme_color": "#E4154B"
 }
-
