@@ -458,8 +458,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         else
             this.seatNr = seat;
 
-        let locationParam = this.locationHash + '-' + this.seatNr;
-        /*let checkAlreadySend = await this.wrongHash.includes(locationParam);
+        /*let locationParam = this.locationHash + '-' + this.seatNr;
+        let checkAlreadySend = await this.wrongHash.includes(locationParam);
         if (checkAlreadySend) {
             return false;
         }*/
