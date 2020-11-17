@@ -279,7 +279,7 @@ export default (async () => {
                     {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
                     {src: 'assets/*.metadata.json', dest: 'dist'},
                     {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/local/@dbp-toolkit/common/icons'},
-                    {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/local/qr-code-scanner'},
+                    {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/local/@dbp-toolkit/qr-code-scanner'},
                 ],
             }),
             useBabel && babel({
