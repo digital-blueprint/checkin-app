@@ -72,7 +72,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             checkedInEndTime: { type: String, attribute: false },
             loadingMsg: { type: String, attribute: false },
             loading: {type: Boolean, attribute: false},
-            status: { type: Object, attribute: false }
+            status: { type: Object, attribute: false },
+            wrongQR : { type: Array, attribute: false }
         };
     }
 
@@ -441,16 +442,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         try {
             [location, seat] = parseQRCode(data, this.searchHashString);
         } catch(error) {
-            console.log(error);
-            if (!this.wrongQR.includes(data) ) {
-                this.wrongQR.push(data);
-                send({
-                    "summary": i18n.t('check-in.qr-false-title'),
-                    "body":  i18n.t('check-in.qr-false-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-            }
+            this.wrongQR.push(data);
+            send({
+                "summary": i18n.t('check-in.qr-false-title'),
+                "body":  i18n.t('check-in.qr-false-body'),
+                "type": "danger",
+                "timeout": 5,
+            });
             return false;
         }
 
@@ -461,10 +459,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.seatNr = seat;
 
         let locationParam = this.locationHash + '-' + this.seatNr;
-        let checkAlreadySend = await this.wrongHash.includes(locationParam);
+        /*let checkAlreadySend = await this.wrongHash.includes(locationParam);
         if (checkAlreadySend) {
             return false;
-        }
+        }*/
 
         return true;
     }
