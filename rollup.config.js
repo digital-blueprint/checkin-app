@@ -136,6 +136,21 @@ function getBuildInfo() {
     }
 }
 
+export async function getPackagePath(packageName, assetPath) {
+    const r = resolve();
+    const resolved = await r.resolveId(packageName);
+    let packageRoot;
+    if (resolved !== null) {
+        const id = (await r.resolveId(packageName)).id;
+        const packageInfo = r.getPackageInfoForId(id);
+        packageRoot = packageInfo.root;
+    } else {
+        // Non JS packages
+        packageRoot = path.dirname(require.resolve(packageName + '/package.json'));
+    }
+    return path.relative(process.cwd(), path.join(packageRoot, assetPath));
+}
+
 export default (async () => {
     return {
         input: (build != 'test') ? [
@@ -256,22 +271,15 @@ export default (async () => {
                     {src: 'assets/*.svg', dest: 'dist/local/' + pkg.name},
                     {src: 'assets/icon/*', dest: 'dist/local/'  + pkg.name + '/icon/'},
                     {src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf', dest: 'dist/local/' + pkg.name},
-                    {
-                        src: 'node_modules/pdfjs-dist/build/pdf.worker.min.js',
-                        dest: 'dist/local/' + pkg.name + '/pdfjs',
-                        // enable signatures in pdf preview
-                        transform: (contents) => contents.toString().replace('if("Sig"===a.fieldType){a.fieldValue=null;this.setFlags(r.AnnotationFlag.HIDDEN)}', '')
-                    },
-                    {src: 'node_modules/pdfjs-dist/cmaps/*', dest: 'dist/local/' + pkg.name + '/pdfjs'}, // do we want all map files?
-                    {src: 'node_modules/source-sans-pro/WOFF2/OTF/*', dest: 'dist/local/' + pkg.name + '/fonts'},
-                    {src: 'node_modules/@dbp-toolkit/common/src/spinner.js', dest: 'dist/local/' + pkg.name, rename: 'spinner.js'},
-                    {src: 'node_modules/@dbp-toolkit/common/misc/browser-check.js', dest: 'dist/local/' + pkg.name, rename: 'browser-check.js'},
+                    {src: await getPackagePath('source-sans-pro', 'WOFF2/OTF/*'), dest: 'dist/local/' + pkg.name + '/fonts'},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'), dest: 'dist/local/' + pkg.name, rename: 'spinner.js'},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/local/' + pkg.name, rename: 'browser-check.js'},
                     {src: 'assets/icon-*.png', dest: 'dist/local/' + pkg.name},
                     {src: 'assets/*-placeholder.png', dest: 'dist/local/' + pkg.name},
                     {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
                     {src: 'assets/*.metadata.json', dest: 'dist'},
-                    {src: 'node_modules/@dbp-toolkit/common/assets/icons/*.svg', dest: 'dist/local/dbp-common/icons'},
-                    {src: 'node_modules/qr-scanner/qr-scanner-worker.*', dest: 'dist/local/qr-code-scanner'},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/local/@dbp-toolkit/common/icons'},
+                    {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/local/qr-code-scanner'},
                 ],
             }),
             useBabel && babel({
