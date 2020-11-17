@@ -1,10 +1,10 @@
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import {css, html} from 'lit-element';
-import * as commonUtils from 'dbp-common/utils';
-import {Button, Icon, MiniSpinner} from "dbp-common";
+import * as commonUtils from '@dbp-toolkit/common/utils';
+import {Button, Icon, MiniSpinner} from "@dbp-toolkit/common";
 import {TextSwitch} from "./textswitch";
 import {createI18nInstance} from "./i18n";
-import * as commonStyles from "dbp-common/styles";
+import * as commonStyles from "@dbp-toolkit/common/styles";
 import {classMap} from "lit-html/directives/class-map";
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 

@@ -1,5 +1,5 @@
-import DBPLitElement from 'dbp-common/dbp-lit-element';
-import {EventBus} from 'dbp-common';
+import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
+import {EventBus} from '@dbp-toolkit/common';
 
 export default class DBPCheckInLitElement extends DBPLitElement {
     constructor() {
