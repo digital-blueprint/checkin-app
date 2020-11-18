@@ -84,16 +84,24 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     update(changedProperties) {
+        let that = this;
         changedProperties.forEach((oldValue, propName) => {
+            console.log("changed", propName);
             switch (propName) {
                 case "lang":
                     i18n.changeLanguage(this.lang);
                     break;
                 case "wrongQR":
-                    setTimeout(function(){ this.wrongQR = []; }, 5000);
+                    setTimeout( function () {
+                        that.wrongQR = [];
+                        console.log("after");
+                    }, 5000);
                     break;
-                case "wrongHash":
-                    setTimeout(function(){ this.wrongHash = []; }, 5000);
+                case "locationHash":
+                    setTimeout(function () {
+                        that.wrongHash = [];
+                        console.log("after");
+                    }, 5000);
                     break;
             }
         });
@@ -279,6 +287,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
+                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+
                 if (window._paq !== undefined) {
                     window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed400', this.checkedInRoom]);
                 }
@@ -354,6 +364,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 "type": "danger",
                                 "timeout": 5,
                             });
+                            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
                             return;
                         }
                     } else {
@@ -363,6 +374,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             "type": "danger",
                             "timeout": 5,
                         });
+                        this.wrongHash.push(this.locationHash + '-' + this.seatNr);
                         return;
                     }
 
@@ -396,6 +408,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
+                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+
                 if (window._paq !== undefined) {
                     window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed', this.checkedInRoom]);
                 }
@@ -409,6 +423,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "danger",
                 "timeout": 5,
             });
+
+            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
             if (window._paq !== undefined) {
                 window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailedNoLocationHash']);
