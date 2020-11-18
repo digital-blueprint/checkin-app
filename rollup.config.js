@@ -282,6 +282,7 @@ export default (async () => {
                 ],
             }),
             useBabel && getBabelOutputPlugin({
+                compact: false,
                 presets: [[
                   '@babel/preset-env', {
                     loose: true,
