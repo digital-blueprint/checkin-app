@@ -285,6 +285,7 @@ export default (async () => {
             useBabel && babel({
             include: [
                 'src/**',
+                'vendor/**',
                 'node_modules/pdfjs-dist/**', // uses Promise.allSettled
             ],
             babelHelpers: 'runtime',
