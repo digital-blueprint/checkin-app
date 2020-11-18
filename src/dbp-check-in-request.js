@@ -90,14 +90,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     i18n.changeLanguage(this.lang);
                     break;
                 case "wrongQR":
-                    if ( this.wrongQR.size > 0 ) {
-                        setTimeout(function(){ this.wrongQR = []; }, 5000);
-                    }
+                    setTimeout(function(){ this.wrongQR = []; }, 5000);
                     break;
                 case "wrongHash":
-                    if ( this.wrongHash.size > 0 ) {
-                        setTimeout(function(){ this.wrongHash = []; }, 5000);
-                    }
+                    setTimeout(function(){ this.wrongHash = []; }, 5000);
                     break;
             }
         });
