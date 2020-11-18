@@ -292,6 +292,7 @@ export default (async () => {
             presets: [[
                 '@babel/preset-env', {
                 loose: true,
+                shippedProposals: true,
                 bugfixes: true,
                 targets: {
                     esmodules: true
