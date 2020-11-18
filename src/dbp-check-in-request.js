@@ -73,7 +73,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             loadingMsg: { type: String, attribute: false },
             loading: {type: Boolean, attribute: false},
             status: { type: Object, attribute: false },
-            wrongQR : { type: Array, attribute: false }
+            wrongQR : { type: Array, attribute: false },
+            wrongHash : { type: Array, attribute: false }
         };
     }
 
@@ -87,6 +88,16 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             switch (propName) {
                 case "lang":
                     i18n.changeLanguage(this.lang);
+                    break;
+                case "wrongQR":
+                    if ( this.wrongQR.size > 0 ) {
+                        setTimeout(function(){ this.wrongQR = []; }, 5000);
+                    }
+                    break;
+                case "wrongHash":
+                    if ( this.wrongHash.size > 0 ) {
+                        setTimeout(function(){ this.wrongHash = []; }, 5000);
+                    }
                     break;
             }
         });
@@ -458,11 +469,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         else
             this.seatNr = seat;
 
-        /*let locationParam = this.locationHash + '-' + this.seatNr;
+        let locationParam = this.locationHash + '-' + this.seatNr;
         let checkAlreadySend = await this.wrongHash.includes(locationParam);
         if (checkAlreadySend) {
             return false;
-        }*/
+        }
 
         return true;
     }
