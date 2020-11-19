@@ -31,7 +31,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.agent = '';
         this.showManuallyContainer = false;
         this.showQrContainer = false;
-        this.showBorder = false;
         this.searchHashString = searchQRString;
         this.wrongHash = [];
         this.wrongQR = [];
@@ -65,7 +64,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             isCheckedIn: { type: Boolean, attribute: false},
             showManuallyContainer: { type: Boolean, attribute: false},
             showQrContainer: { type: Boolean, attribute: false},
-            showBorder: { type: Boolean, attribute: false},
             isRoomSelected: {type: Boolean, attribute: false},
             roomCapacity: {type: Number, attribute: false},
             checkedInStartTime: {type: String, attribute: false},
@@ -434,7 +432,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this._("#qr-scanner").stopScan = true;
             this.showManuallyContainer = false;
             this.showQrContainer = false;
-            this.showBorder = false;
 
         } else {
             console.log('error: qr scanner is not available. Is it already stopped?');
@@ -488,7 +485,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     showQrReader() {
-        this.showBorder = true;
         this.showQrContainer = true;
         this.showManuallyContainer = false;
         if( this._('#qr-scanner') ) {
@@ -503,7 +499,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     showRoomSelector() {
         this._("#qr-scanner").stopScan = true;
-        this.showBorder = true;
         this.showManuallyContainer = true;
         this.showQrContainer = false;
 
@@ -842,7 +837,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     </div>
                 </div>
                 <div id="roomselectorwrapper"></div>
-                <div class="border ${classMap({hidden: !this.showBorder})}">
+                <div class="border ${classMap({hidden: !(this.showQrContainer || this.showManuallyContainer)})}">
                     <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showQrContainer) || this.showManuallyContainer || this.loading})}">
                         <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex=".*tugrazcheckin.*" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
                     </div>
