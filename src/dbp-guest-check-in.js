@@ -104,17 +104,21 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
         let splitted = value.split(':');
 
-        if (splitted.length == 2) {
+        if (splitted.length === 2) {
+            const hours = splitted[0];
+            const minutes = splitted[1];
             this.endTime = new Date();
-            this.endTime.setHours(splitted[0]);
-            this.endTime.setMinutes(splitted[1]);
+            this.endTime.setHours(hours);
+            this.endTime.setMinutes(minutes);
 
             var now = new Date();
-            var maxDate = new Date().setHours(now.getHours() + 3);
+            var maxDate = new Date().setTime(now.getTime() + 3*3600*1000);
 
-            if (this.endTime < now) {
-                return 'dateIsPast';
-            } else if (this.endTime > maxDate) {
+            if (!(now.getHours()<hours || (now.getHours()===hours && now.getMinutes()<=minutes))) {
+                this.endTime.setTime(this.endTime.getTime() + 86400000); // next day
+            }
+
+            if (this.endTime > maxDate) {
                 return 'dateIsTooHigh';
             }
             return true;
@@ -193,18 +197,10 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             return;
         }
 
-        if (!this.parseTime()) { //TODO check max time??? was passiert wenn given endtime > maxtime from server
+        if (!this.parseTime()) {
             send({
                 "summary": i18n.t('guest-check-in.no-time-title'),
                 "body":  i18n.t('guest-check-in.no-time-body'),
-                "type": "danger",
-                "timeout": 5,
-            });
-            return;
-        } else if (this.parseTime() === 'dateIsPast') {
-            send({
-                "summary": i18n.t('guest-check-in.past-time-title'),
-                "body":  i18n.t('guest-check-in.past-time-body'),
                 "type": "danger",
                 "timeout": 5,
             });
@@ -247,7 +243,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.guestEmail = '';
 
                 this._('#select-seat').value = '';
-                this.seatNumber = '';
+                this.seatNr = '';
 
             // Invalid Input
             } else if (responseData.status === 400) {
@@ -257,10 +253,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "danger",
                     "timeout": 5,
                 });
-
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed400', this.locationHash]);
-                }
             // Error if room not exists
             } else if (responseData.status === 404) {
                 send({
@@ -269,20 +261,12 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "danger",
                     "timeout": 5,
                 });
-
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed404', this.locationHash]);
-                }
             // Other errors
             } else if (responseData.status === 424) {
                 let errorBody = await responseData.json();
                 let errorDescription = errorBody["hydra:description"];
                 console.log("err: ", errorDescription);
                 console.log("err: ", errorBody);
-
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed424', this.locationHash]);
-                }
 
                 // Error: invalid seat number
                 if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
@@ -293,7 +277,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         "timeout": 5,
                     });
                     console.log("error: Invalid seat nr");
-                    this.wrongHash.push(this.locationHash + '-' + this.seatNr);
                 }
 
                 // Error: no seat numbers
@@ -326,9 +309,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed403', this.locationHash]);
-                }
             // Error: something else doesn't work
             } else{
                 send({
@@ -337,10 +317,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "type": "danger",
                     "timeout": 5,
                 });
-
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailed', this.locationHash]);
-                }
             }
 
         // Error: no location hash detected
@@ -351,10 +327,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "danger",
                 "timeout": 5,
             });
-
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInFailedNoLocationHash', this.locationHash]);
-            }
         }
     }
 
@@ -572,7 +544,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                         </div>
                                     </div>
                                 <div class="btn">
-                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button>
+                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" 
+                                    ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0)}>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button>
                                 </div>
                             </div>
                     </div>
