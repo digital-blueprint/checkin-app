@@ -104,17 +104,21 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
         let splitted = value.split(':');
 
-        if (splitted.length == 2) {
+        if (splitted.length === 2) {
+            const hours = splitted[0];
+            const minutes = splitted[1];
             this.endTime = new Date();
-            this.endTime.setHours(splitted[0]);
-            this.endTime.setMinutes(splitted[1]);
+            this.endTime.setHours(hours);
+            this.endTime.setMinutes(minutes);
 
             var now = new Date();
-            var maxDate = new Date().setHours(now.getHours() + 3);
+            var maxDate = new Date().setTime(now.getTime() + 3*3600*1000);
 
-            if (this.endTime < now) {
-                return 'dateIsPast';
-            } else if (this.endTime > maxDate) {
+            if (!(now.getHours()<hours || (now.getHours()===hours && now.getMinutes()<=minutes))) {
+                this.endTime.setTime(this.endTime.getTime() + 86400000); // next day
+            }
+
+            if (this.endTime > maxDate) {
                 return 'dateIsTooHigh';
             }
             return true;
