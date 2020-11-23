@@ -24,6 +24,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.guestEmail = '';
         this.seatNr = '';
         this.endTime;
+        this.isEmailSet = false;
     }
 
     static get scopedElements() {
@@ -43,7 +44,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             seatNr: { type: Number, attribute: false },
             guestEmail: { type: String, attribute: false },
             isRoomSelected: { type: Boolean, attribute: false },
-            roomCapacity: {type: Number, attribute: false},
+            roomCapacity: { type: Number, attribute: false },
+            isEmailSet: { type: Boolean, attribute: false }
         };
     }
 
@@ -93,6 +95,16 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     validateEmail(inputText) {
         const mailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
         return inputText.match(mailFormat) ? true : false;
+    }
+
+    processEmailInput(event) {
+        if (this._('#email-field').value != '') {
+            this.guestEmail = this._('#email-field').value;
+            this.isEmailSet = true;
+        } else { 
+            this.isEmailSet = false;
+            this.guestEmail = '';
+        }
     }
 
     /**
@@ -186,11 +198,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     async doCheckIn() {
-        let email = this._('#email-field').value;
-        if (this.validateEmail(email)) {
-            this.guestEmail = email;
-        }
-        else {
+        if (!this.validateEmail(this.guestEmail)) {
             send({
                 "summary": i18n.t('guest-check-in.invalid-email-address-title'),
                 "body":  i18n.t('guest-check-in.invalid-email-address-body'),
@@ -243,6 +251,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 this._('#select-seat').value = '';
                 this.seatNr = '';
+
+                this.isEmailSet = false;
 
             // Invalid Input
             } else if (responseData.status === 400) {
@@ -531,7 +541,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('guest-check-in.email')}</label>
                                         <div class="control">
-                                            <input type="email" class="input" id="email-field" placeholder="mail@email.at" name="email">
+                                            <input type="email" class="input" id="email-field" placeholder="mail@email.at" name="email" .value="${this.guestEmail}" @input="${(event) => {this.processEmailInput(event)}}">
                                         </div>
                                     </div>
                                     <div class="field">
@@ -544,7 +554,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                         <link rel="stylesheet" href="${select2CSS}">
                                         <label class="label">${i18n.t('check-in.manually-seat')}</label>
                                         <div class="control">
-                                            <input class="input" type="text" name="seat-number" .value="${this.seatNr}" id="select-seat" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}"> <!-- //TODO Styling of arrows -->
+                                            <input class="input" type="text" name="seat-number" .value="${this.seatNr}" id="select-seat" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}">
                                         </div>
                                     </div>
                                     <div class="field">
@@ -554,8 +564,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                         </div>
                                     </div>
                                 <div class="btn">
-                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" 
-                                    ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0)}>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button>
+                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || !this.isEmailSet || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0)} value="${i18n.t('check-in.manually-checkin-button-text')}"></dbp-loading-button>
                                 </div>
                             </div>
                     </div>

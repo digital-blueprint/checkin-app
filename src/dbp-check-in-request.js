@@ -731,7 +731,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             
             @media only screen
             and (orientation: portrait)
-            and (max-device-width: 764.9) {
+            and (max-device-width: 764.9px) {
                 .inline-block{    
                     width: 100%;
                 }
@@ -822,8 +822,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         ${this.checkedInSeat ? i18n.t('check-in.checked-in-with-seat-description', {time: this.getReadableDate(this.checkedInEndTime), room: this.checkedInRoom, seat: this.checkedInSeat}) : i18n.t('check-in.checked-in-description', {time: this.getReadableDate(this.checkedInEndTime), room: this.checkedInRoom}) }
                     </p>
                     <div class="${classMap({hidden: this.loading})}">
-                        <dbp-loading-button class="logout" type="is-primary" @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</dbp-loading-button>
-                        <dbp-loading-button class="logout" id="refresh-btn" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</dbp-loading-button>
+                        <dbp-loading-button class="logout" type="is-primary" @click="${this.doCheckOut}" title="${i18n.t('check-out.button-text')}" value="${i18n.t('check-out.button-text')}"></dbp-loading-button>
+                        <dbp-loading-button class="logout" id="refresh-btn" @click="${this.doRefreshSession}" title="${i18n.t('check-in.refresh-button-text')}" value="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button>
                     </div>
                     ${ this.status ? html`
                         <br>
@@ -858,7 +858,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 </div>
                             </div>
                            
-                            <div class="btn"><dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this.doCheckInManually}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button></div>
+                            <div class="btn"><dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this.doCheckInManually}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) } value="${i18n.t('check-in.manually-checkin-button-text')}"></dbp-loading-button></div>
                         </div>
                     </div>  
                     <div class="control ${classMap({hidden: !this.loading})}">
