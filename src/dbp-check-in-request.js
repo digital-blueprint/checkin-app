@@ -31,7 +31,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.agent = '';
         this.showManuallyContainer = false;
         this.showQrContainer = false;
-        this.showBorder = false;
         this.searchHashString = searchQRString;
         this.wrongHash = [];
         this.wrongQR = [];
@@ -65,7 +64,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             isCheckedIn: { type: Boolean, attribute: false},
             showManuallyContainer: { type: Boolean, attribute: false},
             showQrContainer: { type: Boolean, attribute: false},
-            showBorder: { type: Boolean, attribute: false},
             isRoomSelected: {type: Boolean, attribute: false},
             roomCapacity: {type: Number, attribute: false},
             checkedInStartTime: {type: String, attribute: false},
@@ -94,13 +92,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 case "wrongQR":
                     setTimeout( function () {
                         that.wrongQR = [];
-                        console.log("after");
                     }, 5000);
                     break;
                 case "locationHash":
                     setTimeout(function () {
                         that.wrongHash = [];
-                        console.log("after");
                     }, 5000);
                     break;
             }
@@ -177,8 +173,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             return;
         this._checkInInProgress = true;
         try {
-            this.loadingMsg = i18n.t('loading-msg-checkin');
-            this.loading = true;
+            //this.loadingMsg = i18n.t('loading-msg-checkin');
+            //this.loading = true;
             let check = await this.decodeUrl(data);
             if (check) {
                 await this.doCheckIn();
@@ -436,7 +432,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this._("#qr-scanner").stopScan = true;
             this.showManuallyContainer = false;
             this.showQrContainer = false;
-            this.showBorder = false;
 
         } else {
             console.log('error: qr scanner is not available. Is it already stopped?');
@@ -490,7 +485,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     showQrReader() {
-        this.showBorder = true;
         this.showQrContainer = true;
         this.showManuallyContainer = false;
         if( this._('#qr-scanner') ) {
@@ -505,7 +499,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     showRoomSelector() {
         this._("#qr-scanner").stopScan = true;
-        this.showBorder = true;
         this.showManuallyContainer = true;
         this.showQrContainer = false;
 
@@ -822,7 +815,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         value2="${i18n.t('check-in.manually-button-text')}"
                         @change=${ (e) => this.checkinSwitch(e.target.name) }></dbp-textswitch>
                 </div>
-                <div id="notification-wrapper"></div>
+                
                 <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
                     <h2> ${this.checkedInRoom} </h2> 
                     <p class="${classMap({hidden: !this.isCheckedIn})}">
@@ -844,7 +837,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     </div>
                 </div>
                 <div id="roomselectorwrapper"></div>
-                <div class="border ${classMap({hidden: !this.showBorder})}">
+                <div class="border ${classMap({hidden: !(this.showQrContainer || this.showManuallyContainer)})}">
                     <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showQrContainer) || this.showManuallyContainer || this.loading})}">
                         <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex=".*tugrazcheckin.*" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
                     </div>
@@ -874,6 +867,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </span>
                     </div>
                 </div>
+                <div id="notification-wrapper"></div>
             </div>
         `;
     }
