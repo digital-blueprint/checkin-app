@@ -118,9 +118,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.endTime.setTime(this.endTime.getTime() + 86400000); // next day
             }
 
-            if (this.endTime < now) {
-                return 'dateIsPast';
-            } else if (this.endTime > maxDate) {
+            if (this.endTime > maxDate) {
                 return 'dateIsTooHigh';
             }
             return true;
