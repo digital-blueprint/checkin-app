@@ -94,13 +94,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 case "wrongQR":
                     setTimeout( function () {
                         that.wrongQR = [];
-                        console.log("after");
                     }, 5000);
                     break;
                 case "locationHash":
                     setTimeout(function () {
                         that.wrongHash = [];
-                        console.log("after");
                     }, 5000);
                     break;
             }
