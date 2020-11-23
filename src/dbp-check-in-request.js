@@ -3,7 +3,7 @@ import {css, html} from 'lit-element';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
-import {LoadingButton, Icon, MiniSpinner} from '@dbp-toolkit/common';
+import {LoadingButton, Icon, MiniSpinner, InlineNotification} from '@dbp-toolkit/common';
 import {classMap} from 'lit-html/directives/class-map.js';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {TextSwitch} from './textswitch.js';
@@ -52,6 +52,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
           'dbp-textswitch': TextSwitch,
           'dbp-qr-code-scanner': QrCodeScanner,
           'dbp-check-in-place-select': CheckInPlaceSelect,
+          'dbp-inline-notification': InlineNotification,
         };
     }
 
@@ -79,7 +80,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
-
     }
 
     update(changedProperties) {
@@ -248,17 +248,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     this.checkinCount = checkInsArray.length;
 
                     if (this.checkinCount > 1) {
-                        this.status = {
+                        this.status = ({
                             "summary": i18nKey('check-in.other-checkins-notification-title'),
                             "body": i18nKey('check-in.other-checkins-notification-body'),
                             "type": "warning",
                             "options": {count: this.checkinCount - 1},
-                            "link": {
-                                "href": 'check-out-request',
-                                "target": '_self',
-                                "text": i18nKey('check-in.show-other-checkins')
-                            }
-                        };
+                        });
                         this._("#notification-wrapper").scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
@@ -614,11 +609,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 margin-top: 0px;
             }
 
-            h4 {
-                padding: 0px;
-                margin: 0px;
-            }
-
             #btn-container {
                 margin-top: 1.5rem;
                 margin-bottom: 2rem;
@@ -725,7 +715,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             
             @media only screen
             and (orientation: portrait)
-            and (max-device-width: 765px) {   
+            and (max-device-width: 765px) {   /*TODO breakpoints?? 764.9px*/
                 .inline-block{    
                     width: 100%;
                 }
@@ -821,11 +811,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     </div>
                     ${ this.status ? html`
                         <br>
-                        <div class="notification is-${this.status.type}">
-                            <h4>${i18n.t(this.status.summary)}</h4>
-                            ${i18n.t(this.status.body, this.status.options ? this.status.options : ``)} 
-                            ${ this.status.link ? html`<a href="${this.status.link.href}" title="" target="${this.status.link.target}" class="notify-link-internal"><span>${i18n.t(this.status.link.text)}</span></a>` : ``} 
-                        </div>
+                        <dbp-inline-notification type="${this.status.type}" summary="${i18n.t(this.status.summary)}" 
+                                                 body="${i18n.t(this.status.body, this.status.options)}" ></dbp-inline-notification>
                     `: ``}
                     <div class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
