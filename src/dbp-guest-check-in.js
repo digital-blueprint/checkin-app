@@ -163,12 +163,16 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     async _onCheckInClicked(event)  {
+        let isDisabled = true;
         let button = event.target;
         button.start();
         try {
             await this.doCheckIn();
+        } catch {
+            isDisabled = false;
         } finally {
             button.stop();
+            button.disabled = isDisabled;
         }
     }
 
@@ -183,7 +187,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     async doCheckIn() {
         let email = this._('#email-field').value;
-        console.log("this.guestEmail", this.guestEmail);
         if (this.validateEmail(email)) {
             this.guestEmail = email;
         }
@@ -194,7 +197,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "danger",
                 "timeout": 5,
             });
-            return;
+            throw "invalid_email_error";
         }
 
         if (!this.parseTime()) {
@@ -233,10 +236,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         "type": "success",
                         "timeout": 5,
                 });
-
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'GuestCheckIn', 'CheckInSuccess', this.locationHash]);
-                }
 
                 //Refresh necessary fields and values - keep time and place because it is nice to have for the next guest
                 this._('#email-field').value = '';
@@ -290,11 +289,22 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     console.log("error: Room has no seat nr");
                 }
 
-                // Error: you are already checked in here
-                else if( errorDescription === 'There are already check-ins at the location with provided seat for the email address!' ) {  //TODO Change this message
+                // Error: no seat given
+                else if( errorDescription === 'Location has seats activated, you need to set a seatNumber!') {
                     send({
-                        "summary": i18n.t('check-in.already-checkin-title'),
-                        "body":  i18n.t('check-in.already-checkin-body'),
+                        "summary": i18n.t('guest-check-in.no-seatnr-title'),
+                        "body":  i18n.t('guest-check-in.no-seatnr-body'),
+                        "type": "danger",
+                        "timeout": 5,
+                    });
+                    console.log("error: Room has no seat nr");
+                }
+
+                // Error: you are already checked in here
+                else if( errorDescription === 'There are already check-ins at the location with provided seat for the email address!' ) {
+                    send({
+                        "summary": i18n.t('guest-check-in.already-checkin-title'),
+                        "body":  i18n.t('guest-check-in.already-checkin-body'),
                         "type": "warning",
                         "timeout": 5,
                     });
@@ -451,7 +461,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             @media only screen
             and (orientation: portrait)
-            and (max-device-width: 765px) {   
+            and (max-device-width: 764.9px) {   
                 .inline-block{    
                     width: 100%;
                 }

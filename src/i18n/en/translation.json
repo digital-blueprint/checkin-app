@@ -73,7 +73,11 @@
     "max-time-title": "Time too high!",
     "max-time-body": "Please enter a time not more than 3 hours in the future.",
     "data-protection": "With the check-in I confirm that I have made the data protection declaration for the \"TU Graz check-in\" app known to the guest I have checked in.",
-    "how-to": "Check-in a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection."
+    "how-to": "Check-in a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection.",
+    "no-seatnr-title": "No seat number specified!",
+    "no-seatnr-body": "No seat number was specified. Please enter a valid seat number.",
+    "already-checkin-title": "Already checked in!",
+    "already-checkin-body": "You are already registered here. You will not be able to register here again until your current registration has expired."
   },
   "info": {
     "title": "Information",
