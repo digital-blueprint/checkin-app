@@ -820,7 +820,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         value2="${i18n.t('check-in.manually-button-text')}"
                         @change=${ (e) => this.checkinSwitch(e.target.name) }></dbp-textswitch>
                 </div>
-                <div id="notification-wrapper"></div>
+                
                 <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
                     <h2> ${this.checkedInRoom} </h2> 
                     <p class="${classMap({hidden: !this.isCheckedIn})}">
@@ -872,6 +872,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </span>
                     </div>
                 </div>
+                <div id="notification-wrapper"></div>
             </div>
         `;
     }
