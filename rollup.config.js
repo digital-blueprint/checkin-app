@@ -14,7 +14,7 @@ import consts from 'rollup-plugin-consts';
 import license from 'rollup-plugin-license';
 import del from 'rollup-plugin-delete';
 import emitEJS from 'rollup-plugin-emit-ejs';
-import babel from '@rollup/plugin-babel';
+import {getBabelOutputPlugin} from '@rollup/plugin-babel';
 import selfsigned from 'selfsigned';
 
 // -------------------------------
@@ -136,177 +136,176 @@ function getBuildInfo() {
     }
 }
 
-export default {
-    input: (build != 'test') ? [
-      'src/' + pkg.name + '.js',
-      'src/dbp-check-in-request.js',
-      'src/dbp-check-out-request.js',
-      'src/dbp-guest-check-in.js',
-      'src/dbp-check-in-info.js',
-    ] : glob.sync('test/**/*.js'),
-    output: {
-      dir: 'dist',
-      entryFileNames: '[name].js',
-      chunkFileNames: 'shared/[name].[hash].[format].js',
-      format: 'esm',
-      sourcemap: true
-    },
-    preserveEntrySignatures: false,
-    // external: ['zlib', 'http', 'fs', 'https', 'url'],
-    onwarn: function (warning, warn) {
-        // ignore "suggestions" warning re "use strict"
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+export async function getPackagePath(packageName, assetPath) {
+    const r = resolve();
+    const resolved = await r.resolveId(packageName);
+    let packageRoot;
+    if (resolved !== null) {
+        const id = (await r.resolveId(packageName)).id;
+        const packageInfo = r.getPackageInfoForId(id);
+        packageRoot = packageInfo.root;
+    } else {
+        // Non JS packages
+        packageRoot = path.dirname(require.resolve(packageName + '/package.json'));
+    }
+    return path.relative(process.cwd(), path.join(packageRoot, assetPath));
+}
+
+export default (async () => {
+    return {
+        input: (build != 'test') ? [
+        'src/' + pkg.name + '.js',
+        'src/dbp-check-in-request.js',
+        'src/dbp-check-out-request.js',
+        'src/dbp-guest-check-in.js',
+        'src/dbp-check-in-info.js',
+        ] : glob.sync('test/**/*.js'),
+        output: {
+        dir: 'dist',
+        entryFileNames: '[name].js',
+        chunkFileNames: 'shared/[name].[hash].[format].js',
+        format: 'esm',
+        sourcemap: true
+        },
+        preserveEntrySignatures: false,
+        // external: ['zlib', 'http', 'fs', 'https', 'url'],
+        onwarn: function (warning, warn) {
+            // ignore "suggestions" warning re "use strict"
+            if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+                return;
+            }
+            // ignore chai warnings
+            if (warning.code === 'CIRCULAR_DEPENDENCY') {
             return;
+            }
+            // keycloak bundled code uses eval
+            if (warning.code === 'EVAL') {
+            return;
+            }
+            warn(warning);
+        },
+        watch: {
+        chokidar: {
+            usePolling: true
         }
-        // ignore chai warnings
-        if (warning.code === 'CIRCULAR_DEPENDENCY') {
-          return;
-        }
-        // keycloak bundled code uses eval
-        if (warning.code === 'EVAL') {
-          return;
-        }
-        warn(warning);
-    },
-    watch: {
-      chokidar: {
-        usePolling: true
-      }
-    },
-    plugins: [
-        del({
-          targets: 'dist/*'
-        }),
-        consts({
-          environment: build,
-          searchQRString: searchQRString,
-          buildinfo: getBuildInfo(),
-        }),
-        emitEJS({
-          src: 'assets',
-          include: ['**/*.ejs', '**/.*.ejs'],
-          data: {
-            getUrl: (p) => {
-              return url.resolve(basePath, p);
-            },
-            getPrivateUrl: (p) => {
-                return url.resolve(`${basePath}local/${pkg.name}/`, p);
-            },
-            name: pkg.name,
-            entryPointURL: entryPointURL,
-            basePath: basePath,
-            keyCloakServer: keyCloakServer,
-            keyCloakBaseURL: keyCloakBaseURL,
-            keyCloakClientId: keyCloakClientId,
+        },
+        plugins: [
+            del({
+            targets: 'dist/*'
+            }),
+            consts({
             environment: build,
-            matomoUrl: matomoUrl,
-            matomoSiteId: matomoSiteId,
-            buildInfo: getBuildInfo()
-          }
-        }),
-        resolve({
-          customResolveOptions: {
-            // ignore node_modules from vendored packages
-            moduleDirectory: path.join(process.cwd(), 'node_modules')
-          },
-          browser: true,
-          preferBuiltins: true
-        }),
-        checkLicenses && license({
-            banner: {
-                commentStyle: 'ignored',
-                content: `
-License: <%= pkg.license %>
-Dependencies:
-<% _.forEach(dependencies, function (dependency) { if (dependency.name) { %>
-<%= dependency.name %>: <%= dependency.license %><% }}) %>
-`},
-          thirdParty: {
-            allow: {
-              test: '(MIT OR BSD-3-Clause OR Apache-2.0 OR LGPL-2.1-or-later OR 0BSD)',
-              failOnUnlicensed: true,
-              failOnViolation: true,
-            },
-          },
-        }),
-        commonjs({
-            include: 'node_modules/**',
-        }),
-        json(),
-        urlPlugin({
-          limit: 0,
-          include: [
-            "node_modules/suggestions/**/*.css",
-            "node_modules/select2/**/*.css",
-          ],
-          emitFiles: true,
-          fileName: 'shared/[name].[hash][extname]'
-        }),
-        replace({
-            "process.env.BUILD": '"' + build + '"',
-        }),
-        useTerser ? terser() : false,
-        copy({
-            targets: [
-                {src: 'assets/silent-check-sso.html', dest:'dist'},
-                {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
-                {src: 'assets/*.css', dest: 'dist/local/' + pkg.name},
-                {src: 'assets/*.ico', dest: 'dist/local/' + pkg.name},
-                {src: 'assets/*.svg', dest: 'dist/local/' + pkg.name},
-                {src: 'assets/icon/*', dest: 'dist/local/'  + pkg.name + '/icon/'},
-                {src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf', dest: 'dist/local/' + pkg.name},
-                {
-                    src: 'node_modules/pdfjs-dist/build/pdf.worker.min.js',
-                    dest: 'dist/local/' + pkg.name + '/pdfjs',
-                    // enable signatures in pdf preview
-                    transform: (contents) => contents.toString().replace('if("Sig"===a.fieldType){a.fieldValue=null;this.setFlags(r.AnnotationFlag.HIDDEN)}', '')
+            searchQRString: searchQRString,
+            buildinfo: getBuildInfo(),
+            }),
+            emitEJS({
+            src: 'assets',
+            include: ['**/*.ejs', '**/.*.ejs'],
+            data: {
+                getUrl: (p) => {
+                return url.resolve(basePath, p);
                 },
-                {src: 'node_modules/pdfjs-dist/cmaps/*', dest: 'dist/local/' + pkg.name + '/pdfjs'}, // do we want all map files?
-                {src: 'node_modules/source-sans-pro/WOFF2/OTF/*', dest: 'dist/local/' + pkg.name + '/fonts'},
-                {src: 'node_modules/dbp-common/src/spinner.js', dest: 'dist/local/' + pkg.name, rename: 'spinner.js'},
-                {src: 'node_modules/dbp-common/misc/browser-check.js', dest: 'dist/local/' + pkg.name, rename: 'browser-check.js'},
-                {src: 'assets/icon-*.png', dest: 'dist/local/' + pkg.name},
-                {src: 'assets/*-placeholder.png', dest: 'dist/local/' + pkg.name},
-                {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
-                {src: 'assets/*.metadata.json', dest: 'dist'},
-                {src: 'node_modules/dbp-common/assets/icons/*.svg', dest: 'dist/local/dbp-common/icons'},
-                {src: 'node_modules/qr-scanner/qr-scanner-worker.*', dest: 'dist/local/qr-code-scanner'},
-            ],
-        }),
-        useBabel && babel({
-          include: [
-              'src/**',
-              'node_modules/pdfjs-dist/**', // uses Promise.allSettled
-          ],
-          babelHelpers: 'runtime',
-          babelrc: false,
-          presets: [[
-            '@babel/preset-env', {
-              loose: true,
-              bugfixes: true,
-              targets: {
-                esmodules: true
-              }
+                getPrivateUrl: (p) => {
+                    return url.resolve(`${basePath}local/${pkg.name}/`, p);
+                },
+                name: pkg.name,
+                entryPointURL: entryPointURL,
+                basePath: basePath,
+                keyCloakServer: keyCloakServer,
+                keyCloakBaseURL: keyCloakBaseURL,
+                keyCloakClientId: keyCloakClientId,
+                environment: build,
+                matomoUrl: matomoUrl,
+                matomoSiteId: matomoSiteId,
+                buildInfo: getBuildInfo()
             }
-          ]],
-          plugins: [[
-            '@babel/plugin-transform-runtime', {
-              corejs: 3,
-              useESModules: true
-            }
-          ],
-          '@babel/plugin-syntax-dynamic-import',
-          '@babel/plugin-syntax-import-meta']
-        }),
-        watch ? serve({
-          contentBase: '.',
-          host: '127.0.0.1',
-          port: 8001,
-          historyApiFallback: basePath + pkg.name + '.html',
-          https: USE_HTTPS ? generateTLSConfig() : false,
-            headers: {
-                'Content-Security-Policy': `default-src 'self' 'unsafe-eval' 'unsafe-inline' analytics.tugraz.at eid.egiz.gv.at ${keyCloakServer} ${entryPointURL} httpbin.org ; img-src * blob: data:`
+            }),
+            resolve({
+            customResolveOptions: {
+                // ignore node_modules from vendored packages
+                moduleDirectory: path.join(process.cwd(), 'node_modules')
             },
-        }) : false
-    ]
-};
+            browser: true,
+            preferBuiltins: true
+            }),
+            checkLicenses && license({
+                banner: {
+                    commentStyle: 'ignored',
+                    content: `
+    License: <%= pkg.license %>
+    Dependencies:
+    <% _.forEach(dependencies, function (dependency) { if (dependency.name) { %>
+    <%= dependency.name %>: <%= dependency.license %><% }}) %>
+    `},
+            thirdParty: {
+                allow: {
+                test: '(MIT OR BSD-3-Clause OR Apache-2.0 OR LGPL-2.1-or-later OR 0BSD)',
+                failOnUnlicensed: true,
+                failOnViolation: true,
+                },
+            },
+            }),
+            commonjs({
+                include: 'node_modules/**',
+            }),
+            json(),
+            urlPlugin({
+            limit: 0,
+            include: [
+                "node_modules/suggestions/**/*.css",
+                "node_modules/select2/**/*.css",
+            ],
+            emitFiles: true,
+            fileName: 'shared/[name].[hash][extname]'
+            }),
+            replace({
+                "process.env.BUILD": '"' + build + '"',
+            }),
+            copy({
+                targets: [
+                    {src: 'assets/silent-check-sso.html', dest:'dist'},
+                    {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
+                    {src: 'assets/*.css', dest: 'dist/local/' + pkg.name},
+                    {src: 'assets/*.ico', dest: 'dist/local/' + pkg.name},
+                    {src: 'assets/*.svg', dest: 'dist/local/' + pkg.name},
+                    {src: 'assets/icon/*', dest: 'dist/local/'  + pkg.name + '/icon/'},
+                    {src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf', dest: 'dist/local/' + pkg.name},
+                    {src: await getPackagePath('source-sans-pro', 'WOFF2/OTF/*'), dest: 'dist/local/' + pkg.name + '/fonts'},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'), dest: 'dist/local/' + pkg.name, rename: 'spinner.js'},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/local/' + pkg.name, rename: 'browser-check.js'},
+                    {src: 'assets/icon-*.png', dest: 'dist/local/' + pkg.name},
+                    {src: 'assets/*-placeholder.png', dest: 'dist/local/' + pkg.name},
+                    {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
+                    {src: 'assets/*.metadata.json', dest: 'dist'},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/local/@dbp-toolkit/common/icons'},
+                    {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/local/@dbp-toolkit/qr-code-scanner'},
+                ],
+            }),
+            useBabel && getBabelOutputPlugin({
+                compact: false,
+                presets: [[
+                  '@babel/preset-env', {
+                    loose: true,
+                    modules: false,
+                    shippedProposals: true,
+                    bugfixes: true,
+                    targets: {
+                      esmodules: true
+                    }
+                  }
+                ]],
+            }),
+            useTerser ? terser() : false,
+            watch ? serve({
+            contentBase: '.',
+            host: '127.0.0.1',
+            port: 8001,
+            historyApiFallback: basePath + pkg.name + '.html',
+            https: USE_HTTPS ? generateTLSConfig() : false,
+                headers: {
+                    'Content-Security-Policy': `default-src 'self' 'unsafe-eval' 'unsafe-inline' analytics.tugraz.at eid.egiz.gv.at ${keyCloakServer} ${entryPointURL} httpbin.org ; img-src * blob: data:`
+                },
+            }) : false
+        ]
+    };
+})();

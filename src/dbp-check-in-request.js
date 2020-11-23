@@ -74,7 +74,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             loadingMsg: { type: String, attribute: false },
             loading: {type: Boolean, attribute: false},
             status: { type: Object, attribute: false },
-            wrongQR : { type: Array, attribute: false }
+            wrongQR : { type: Array, attribute: false },
+            wrongHash : { type: Array, attribute: false }
         };
     }
 
@@ -83,10 +84,24 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     update(changedProperties) {
+        let that = this;
         changedProperties.forEach((oldValue, propName) => {
+            console.log("changed", propName);
             switch (propName) {
                 case "lang":
                     i18n.changeLanguage(this.lang);
+                    break;
+                case "wrongQR":
+                    setTimeout( function () {
+                        that.wrongQR = [];
+                        console.log("after");
+                    }, 5000);
+                    break;
+                case "locationHash":
+                    setTimeout(function () {
+                        that.wrongHash = [];
+                        console.log("after");
+                    }, 5000);
                     break;
             }
         });
@@ -267,6 +282,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
+                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+
                 if (window._paq !== undefined) {
                     window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed400', this.checkedInRoom]);
                 }
@@ -342,6 +359,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 "type": "danger",
                                 "timeout": 5,
                             });
+                            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
                             return;
                         }
                     } else {
@@ -351,6 +369,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             "type": "danger",
                             "timeout": 5,
                         });
+                        this.wrongHash.push(this.locationHash + '-' + this.seatNr);
                         return;
                     }
 
@@ -384,6 +403,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
+                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
+
                 if (window._paq !== undefined) {
                     window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed', this.checkedInRoom]);
                 }
@@ -397,6 +418,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "danger",
                 "timeout": 5,
             });
+
+            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
             if (window._paq !== undefined) {
                 window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailedNoLocationHash']);
@@ -453,11 +476,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         else
             this.seatNr = seat;
 
-        /*let locationParam = this.locationHash + '-' + this.seatNr;
+        let locationParam = this.locationHash + '-' + this.seatNr;
         let checkAlreadySend = await this.wrongHash.includes(locationParam);
         if (checkAlreadySend) {
             return false;
-        }*/
+        }
 
         return true;
     }
