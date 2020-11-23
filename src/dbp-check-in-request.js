@@ -73,7 +73,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             loading: {type: Boolean, attribute: false},
             status: { type: Object, attribute: false },
             wrongQR : { type: Array, attribute: false },
-            wrongHash : { type: Array, attribute: false }
+            wrongHash : { type: Array, attribute: false },
         };
     }
 
@@ -84,7 +84,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     update(changedProperties) {
         let that = this;
         changedProperties.forEach((oldValue, propName) => {
-            console.log("changed", propName);
             switch (propName) {
                 case "lang":
                     i18n.changeLanguage(this.lang);
@@ -98,6 +97,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     setTimeout(function () {
                         that.wrongHash = [];
                     }, 5000);
+                    break;
+                case "status":
+                    setTimeout(function () {
+                        that._("#notification-wrapper").scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }, 10);
                     break;
             }
         });
@@ -207,7 +211,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param refresh
      */
     async doCheckIn(refresh=false) {
-        console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
+        //console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
 
         if (this.roomCapacity === null && this.seatNr >= 0) {
             this.seatNr = '';
@@ -219,7 +223,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             // When you are checked in
             if (responseData.status === 201) {
                 let responseBody = await responseData.json();
-                console.log("----------", responseBody);
+                //console.log("----------", responseBody);
                 this.checkedInRoom = responseBody.location.name;
                 this.checkedInSeat = responseBody.seatNumber;
                 this.checkedInEndTime = responseBody.endTime;
@@ -265,7 +269,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                             "type": "warning",
                             "options": {count: this.checkinCount - 1},
                         });
-                        this._("#notification-wrapper").scrollIntoView({ behavior: 'smooth', block: 'start' });
+
                     }
                 }
 
@@ -340,6 +344,16 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         let checkInsArray = getActiveCheckInsBody["hydra:member"];
                         this.checkinCount = checkInsArray.length;
                         let atActualRoomCheckIn = checkInsArray.filter(x => (x.location.identifier === this.locationHash && x.seatNumber === (this.seatNr === '' ? null : parseInt(this.seatNr) ) ));
+
+                        if (this.checkinCount > 1) {
+                            this.status = ({
+                                "summary": i18nKey('check-in.other-checkins-notification-title'),
+                                "body": i18nKey('check-in.other-checkins-notification-body'),
+                                "type": "warning",
+                                "options": {count: this.checkinCount - 1},
+                            });
+
+                        }
 
                         if (atActualRoomCheckIn.length === 1) {
                             this.checkedInRoom = atActualRoomCheckIn[0].location.name;
@@ -782,7 +796,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
                 ${i18n.t('error-login-message')}
-                ${console.log(this.isLoggedIn())}
             </div>
 
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
@@ -830,12 +843,14 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <dbp-inline-notification type="${this.status.type}" summary="${i18n.t(this.status.summary)}" 
                                                  body="${i18n.t(this.status.body, this.status.options)}" ></dbp-inline-notification>
                     `: ``}
+                    
                     <div class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
                             <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>
                         </span>
                     </div>
                 </div>
+                <div id="notification-wrapper"></div>
                 <div id="roomselectorwrapper"></div>
                 <div class="border ${classMap({hidden: !(this.showQrContainer || this.showManuallyContainer)})}">
                     <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showQrContainer) || this.showManuallyContainer || this.loading})}">
@@ -867,7 +882,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </span>
                     </div>
                 </div>
-                <div id="notification-wrapper"></div>
             </div>
         `;
     }
