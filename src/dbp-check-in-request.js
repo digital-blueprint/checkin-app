@@ -175,8 +175,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             return;
         this._checkInInProgress = true;
         try {
-            this.loadingMsg = i18n.t('loading-msg-checkin');
-            this.loading = true;
+            //this.loadingMsg = i18n.t('loading-msg-checkin');
+            //this.loading = true;
             let check = await this.decodeUrl(data);
             if (check) {
                 await this.doCheckIn();
