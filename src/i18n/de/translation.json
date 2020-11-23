@@ -73,7 +73,11 @@
     "max-time-title": "Zeitangabe zu hoch!",
     "max-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt ein, der nicht weiter als 3 Stunden in der Zukunft liegt.",
     "data-protection": "Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App \"TU Graz check-in\" zur Kenntnis gebracht habe.",
-    "how-to": "Melden Sie einen Gast bei einem Ort für die Dauer des Besuchs an, damit dieser bei einer möglichen COVID-19 Infektion von der TU Graz per E-Mail kontaktiert wird."
+    "how-to": "Melden Sie einen Gast bei einem Ort für die Dauer des Besuchs an, damit dieser bei einer möglichen COVID-19 Infektion von der TU Graz per E-Mail kontaktiert wird.",
+    "no-seatnr-title": "Kein Sitzplatz angegeben!",
+    "no-seatnr-body": "Es wurde kein Sitzplatz angegeben. Bitte Geben Sie eine Sitzplatz-Nummer ein.",
+    "already-checkin-title": "Bereits angemeldet!",
+    "already-checkin-body": "Sie sind hier bereits angemeldet. Sie können sich hier erst wieder anmelden, wenn Ihre aktuelle Anmeldung abgelaufen ist."
   },
   "info": {
     "title": "Information",
