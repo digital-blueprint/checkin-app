@@ -71,7 +71,7 @@
     "past-time-title": "Zeitangabe in der Vergangenheit!",
     "past-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt in der Zukunft ein.",
     "max-time-title": "Zeitangabe zu hoch!",
-    "max-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt ein, der nicht weiter als 3 Stunden in der Zukunft liegt.",
+    "max-time-body": "Bitte geben Sie für die Abmeldung einen anderen Zeitpunkt ein.",
     "data-protection": "Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App \"TU Graz check-in\" zur Kenntnis gebracht habe.",
     "how-to": "Melden Sie einen Gast bei einem Ort für die Dauer des Besuchs an, damit dieser bei einer möglichen COVID-19 Infektion von der TU Graz per E-Mail kontaktiert wird.",
     "no-seatnr-title": "Kein Sitzplatz angegeben!",

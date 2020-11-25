@@ -124,14 +124,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.endTime.setMinutes(minutes);
 
             var now = new Date();
-            var maxDate = new Date().setTime(now.getTime() + 3*3600*1000);
 
             if (!(now.getHours()<hours || (now.getHours()===hours && now.getMinutes()<=minutes))) {
                 this.endTime.setTime(this.endTime.getTime() + 86400000); // next day
-            }
-
-            if (this.endTime > maxDate) {
-                return 'dateIsTooHigh';
             }
             return true;
         } else {
@@ -212,14 +207,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             send({
                 "summary": i18n.t('guest-check-in.no-time-title'),
                 "body":  i18n.t('guest-check-in.no-time-body'),
-                "type": "danger",
-                "timeout": 5,
-            });
-            return;
-        } else if (this.parseTime() === 'dateIsTooHigh') {
-            send({
-                "summary": i18n.t('guest-check-in.max-time-title'),
-                "body":  i18n.t('guest-check-in.max-time-body'),
                 "type": "danger",
                 "timeout": 5,
             });
@@ -318,6 +305,17 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         "type": "warning",
                         "timeout": 5,
                     });
+                } 
+                
+                // Error: the endTime is too high
+                else if ( errorDescription.includes('The endDate can\'t be after ') ) {
+                    send({
+                        "summary": i18n.t('guest-check-in.max-time-title'),
+                        "body":  i18n.t('guest-check-in.max-time-body'),
+                        "type": "danger",
+                        "timeout": 5,
+                    });
+                    throw "invalid_time_error";
                 }
 
             // Error if you don't have permissions

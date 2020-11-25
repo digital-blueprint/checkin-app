@@ -71,7 +71,7 @@
     "past-time-title": "Time in the past!",
     "past-time-body": "Please enter a time in the future for check-out.",
     "max-time-title": "Time too high!",
-    "max-time-body": "Please enter a time not more than 3 hours in the future.",
+    "max-time-body": "Please enter a different time for check-out.",
     "data-protection": "With the check-in I confirm that I have made the data protection declaration for the \"TU Graz check-in\" app known to the guest I have checked in.",
     "how-to": "Check-in a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection.",
     "no-seatnr-title": "No seat number specified!",
