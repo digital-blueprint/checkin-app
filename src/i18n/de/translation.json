@@ -13,7 +13,7 @@
     "qr-false-body": "Dieser Code ist nicht für diese Applikation. Bitte benutzen Sie einen check-in QR-Code.",
     "success-checkin-title": "Erfolgreich angemeldet!",
     "success-checkin-body": "Sie haben sich erfolgreich am Ort {{room}} angemeldet.",
-    "success-checkin-seat-body": "Sie haben sich erfolgreich am Ort {{room}} am Sitzplatz #{{seat}} angemeldet.",
+    "success-checkin-seat-body": "Sie haben sich erfolgreich am Ort {{room}} am Sitzplatz {{seat}} angemeldet.",
     "error-title": "Fehler!",
     "error-body": "Es tut uns leid, Etwas ist schief gelaufen.",
     "no-permission-title": "Keine Rechte",

@@ -13,7 +13,7 @@
     "qr-false-body": "This code is not for this application. Please use a check-in QR code.",
     "success-checkin-title": "Checked in!",
     "success-checkin-body": "You have successfully checked into {{room}}.",
-    "success-checkin-seat-body": "You have successfully checked into {{room}} at #{{seat}}.",
+    "success-checkin-seat-body": "You have successfully checked into {{room}} at {{seat}}.",
     "error-title": "Error!",
     "error-body": "We're sorry, something went wrong.",
     "no-permission-title": "No permissions",
