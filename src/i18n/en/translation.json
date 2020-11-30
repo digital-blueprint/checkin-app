@@ -43,7 +43,7 @@
     "data-protection": "What does TU Graz do with your data? You can find the data protection declaration for the app \"TU Graz check-in \" here:",
     "data-protection-link": "Privacy statement",
     "how-to": "Scan the attached QR code or manually select a location to check in. In the event of a risk, you will be contacted by TU Graz by email.",
-    "manual-checkin": "Enter the room name from the COVID-19 prevention poster."
+    "manual-checkin": "Please enter the name of the place where you are."
   },
   "check-out": {
     "title": "Show all check-ins",
