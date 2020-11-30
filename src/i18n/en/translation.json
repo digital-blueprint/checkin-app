@@ -42,7 +42,7 @@
     "other-checkins_plural": "You have {{count}} more check-ins.",
     "data-protection": "What does TU Graz do with your data? You can find the data protection declaration for the app \"TU Graz check-in \" here:",
     "data-protection-link": "Privacy statement",
-    "how-to": "Scan the QR code on your place with the QR code reader of this application, or select your seat manually to check-in at this location. If there is a possible COVID-19 infection, you will be contacted by TU Graz by email."
+    "how-to": "Scan the attached QR code or manually select a location to check in. In the event of a risk, you will be contacted by TU Graz by email."
   },
   "check-out": {
     "title": "Show all check-ins",
@@ -73,7 +73,7 @@
     "max-time-title": "Time too high!",
     "max-time-body": "Please enter a different time for check-out.",
     "data-protection": "With the check-in I confirm that I have made the data protection declaration for the \"TU Graz check-in\" app known to the guest I have checked in.",
-    "how-to": "Check-in a guest at a location for the duration of the visit so that they can be contacted by email from TU Graz in the event of a possible COVID-19 infection.",
+    "how-to": "Check in a guest without a TU Graz account at a location for the duration of their visit. The check out takes place automatically at the specified time. In the event of a risk, the guest will be contacted by TU Graz by email.",
     "no-seatnr-title": "No seat number specified!",
     "no-seatnr-body": "No seat number was specified. Please enter a valid seat number.",
     "already-checkin-title": "Already checked in!",

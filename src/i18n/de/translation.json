@@ -42,7 +42,7 @@
     "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen.",
     "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz check-in \" finden sie hier:",
     "data-protection-link": "Zur Datenschutzerklärung",
-    "how-to": "Scannen Sie mit dem QR Code Reader dieser Applikation den QR Code auf Ihrem Platz, oder wählen Sie Ihren Platz manuell aus um sich an diesem Ort anzumelden. Bei einer möglichen COVID-19 Infektion werden Sie von der TU Graz per E-Mail kontaktiert."
+    "how-to": "Scannen Sie den angebrachten QR-Code oder wählen Sie einen Ort manuell aus, um sich anzumelden. Im Risikofall werden Sie von der TU Graz per E-Mail kontaktiert."
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",
@@ -73,7 +73,7 @@
     "max-time-title": "Zeitangabe zu hoch!",
     "max-time-body": "Bitte geben Sie für die Abmeldung einen anderen Zeitpunkt ein.",
     "data-protection": "Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App \"TU Graz check-in\" zur Kenntnis gebracht habe.",
-    "how-to": "Melden Sie einen Gast bei einem Ort für die Dauer des Besuchs an, damit dieser bei einer möglichen COVID-19 Infektion von der TU Graz per E-Mail kontaktiert wird.",
+    "how-to": "Melden Sie einen Gast ohne TU Graz-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der TU Graz per E-Mail kontaktiert.",
     "no-seatnr-title": "Kein Sitzplatz angegeben!",
     "no-seatnr-body": "Es wurde kein Sitzplatz angegeben. Bitte Geben Sie eine Sitzplatz-Nummer ein.",
     "already-checkin-title": "Bereits angemeldet!",
