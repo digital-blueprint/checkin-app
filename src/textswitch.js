@@ -70,9 +70,7 @@ export class TextSwitch extends LitElement {
                 background-color: var(--dbp-secondary-bg-color) !important;
             }
             
-             @media only screen
-            and (orientation: portrait)
-            and (max-device-width: 765px) {  
+             @media only screen and (max-device-width: 765px) {  
                 div{
                     display: block;
                     white-space: inherit;
