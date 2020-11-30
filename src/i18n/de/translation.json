@@ -42,7 +42,8 @@
     "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen.",
     "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz check-in \" finden sie hier:",
     "data-protection-link": "Zur Datenschutzerklärung",
-    "how-to": "Scannen Sie den angebrachten QR-Code oder wählen Sie einen Ort manuell aus, um sich anzumelden. Im Risikofall werden Sie von der TU Graz per E-Mail kontaktiert."
+    "how-to": "Scannen Sie den angebrachten QR-Code oder wählen Sie einen Ort manuell aus, um sich anzumelden. Im Risikofall werden Sie von der TU Graz per E-Mail kontaktiert.",
+    "manual-checkin": "Geben Sie den Raumnamen vom COVID-19 Präventions Poster ein."
   },
   "check-out": {
     "title": "Zeige alle Anmeldungen",

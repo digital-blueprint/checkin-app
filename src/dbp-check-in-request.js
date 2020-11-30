@@ -857,7 +857,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showManuallyContainer) || this.showQrContainer || this.loading })}">
                 
                         <div class="container" id="manual-select">
-                            
+                            <p> ${i18n.t('check-in.manual-checkin')} </p>
                             <div class="field">
                                 <label class="label">${i18n.t('check-in.manually-place')}</label>
                                 <div class="control">
