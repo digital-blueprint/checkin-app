@@ -539,7 +539,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('guest-check-in.email')}</label>
                                         <div class="control">
-                                            <input type="email" class="input" id="email-field" placeholder="mail@email.at" name="email" .value="${this.guestEmail}" @input="${(event) => {this.processEmailInput(event)}}">
+                                            <input type="email" class="input" id="email-field" placeholder="mail@email.at" name="email" .value="${this.guestEmail}" @input="${(event) => {this.processEmailInput(event);}}">
                                         </div>
                                     </div>
                                     <div class="field">

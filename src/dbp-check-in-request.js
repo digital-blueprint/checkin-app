@@ -213,8 +213,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param refresh
      */
     async doCheckIn(refresh=false) {
-        //console.log('loc: ', this.locationHash, ', seat: ', this.seatNr);
-
         if (this.roomCapacity === null && this.seatNr >= 0) {
             this.seatNr = '';
         }
