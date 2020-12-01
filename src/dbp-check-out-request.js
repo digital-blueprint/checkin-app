@@ -438,7 +438,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
 
             @media only screen
-            and (orientation: portrait)
             and (max-device-width: 765px) {
                 .inline-block{    
                     width: 100%;
@@ -492,7 +491,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <div class="border checkins ${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
                     ${this.activeCheckins.map(i => html`
 
-                        <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`Sitzplatz: ${i.seatNumber}<br>` : ``}
+                        <span class="header"><strong>${i.location.name}</strong>${i.seatNumber !== null ? html`${i18n.t('check-in.seatNr')}: ${i.seatNumber}<br>` : ``}
                         ${i18n.t('check-out.checkin-until')} ${this.getReadableDate(i.endTime)}</span>
 
                         <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="${i18n.t('check-out.button-text')}" @click="${(event) => { this.doCheckOut(event, i); }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
