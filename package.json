@@ -46,10 +46,10 @@
     "@dbp-toolkit/notification": "^0.1.0",
     "@dbp-toolkit/person-profile": "^0.1.0",
     "@open-wc/scoped-elements": "^1.1.1",
+    "fontsource-source-sans-pro": "^3.0.9",
     "i18next": "^19.5.1",
     "lit-element": "^2.3.1",
-    "lit-html": "^1.2.1",
-    "source-sans-pro": "^2.45.0"
+    "lit-html": "^1.2.1"
   },
   "scripts": {
     "build-dev": "rollup -c --environment BUILD:development",
