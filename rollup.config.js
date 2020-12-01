@@ -270,7 +270,7 @@ export default (async () => {
                     {src: 'assets/*.svg', dest: 'dist/local/' + pkg.name},
                     {src: 'assets/icon/*', dest: 'dist/local/'  + pkg.name + '/icon/'},
                     {src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf', dest: 'dist/local/' + pkg.name},
-                    {src: await getPackagePath('source-sans-pro', 'WOFF2/OTF/*'), dest: 'dist/local/' + pkg.name + '/fonts'},
+                    {src: await getPackagePath('fontsource-source-sans-pro', '*'), dest: 'dist/local/' + pkg.name + '/fonts/source-sans-pro'},
                     {src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'), dest: 'dist/local/' + pkg.name, rename: 'spinner.js'},
                     {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/local/' + pkg.name, rename: 'browser-check.js'},
                     {src: 'assets/icon-*.png', dest: 'dist/local/' + pkg.name},
