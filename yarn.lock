@@ -824,6 +824,11 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@dbp-toolkit/font-source-sans-pro@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@dbp-toolkit/font-source-sans-pro/-/font-source-sans-pro-0.1.0.tgz#d178c7ff9d7c0d00daef138e4ee202d78956662c"
+  integrity sha512-PGE2D8HzlQt/I7f4q2UzMoHlEDfFdO7fBLQWDlYruMexeHWDQ3qRZOhWIuncnx8lHC31swI3CtT8wnHvSoNw8Q==
+
 "@eslint/eslintrc@^0.2.1":
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.2.1.tgz#f72069c330461a06684d119384435e12a5d76e3c"
