@@ -856,8 +856,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <span class="header"><strong>${this.checkedInRoom}</strong>${this.checkedInSeat !== null ? html`${i18n.t('check-in.seatNr')}: ${this.checkedInSeat}<br>` : ``}
                         ${i18n.t('check-out.checkin-until')} ${this.getReadableDate(this.checkedInEndTime)}</span>
     
-                        <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="${i18n.t('check-out.button-text')}" @click="${(event) => { this.doCheckOut; }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
-                        <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('check-in.refresh-button-text')}" @click="${(event) => { this.doRefreshSession; }}" title="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button></div></div>
+                        <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="${i18n.t('check-out.button-text')}" @click="${(event) => { this.doCheckOut(event); }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
+                        <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('check-in.refresh-button-text')}" @click="${(event) => { this.doRefreshSession(event); }}" title="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button></div></div>
                      </div>
                     ${ this.status ? html`
                         <dbp-inline-notification class="inline-notification" type="${this.status.type}" summary="${i18n.t(this.status.summary)}" 
