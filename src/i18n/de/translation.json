@@ -43,7 +43,7 @@
     "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz check-in \" finden sie hier:",
     "data-protection-link": "Zur Datenschutzerklärung",
     "how-to": "Scannen Sie den angebrachten QR-Code oder wählen Sie einen Ort manuell aus, um sich anzumelden. Im Risikofall werden Sie von der TU Graz per E-Mail kontaktiert.",
-    "manual-checkin": "Bitte geben Sie den Namen des Ortes ein, an dem Sie sich befinden. Sie können auch nach Teilen des Namens suchen (z.B. \"P1\", \"Rechbauerstraße\", \"PZ2EG048\").",
+    "manual-checkin": "Bitte geben Sie den Namen des Ortes ein, an dem Sie sich anmelden möchten.",
     "seatNr": "Sitzplatz"
   },
   "check-out": {
