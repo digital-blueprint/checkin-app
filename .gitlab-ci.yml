@@ -94,7 +94,7 @@ deploy_production:
   # We don't need artifacts from previous runs
   dependencies: []
   script:
-    - git clone git@gitlab.tugraz.at:dbp/middleware/e2e-tests.git --depth 1
+    - git clone https://gitlab.tugraz.at/dbp/middleware/e2e-tests.git --depth 1
     - cd e2e-tests
     - npm install
     - ./node_modules/.bin/cypress run --browser "$BROWSER" --spec "cypress/integration/checkin/*.spec.js"
