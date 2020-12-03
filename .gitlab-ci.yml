@@ -104,7 +104,7 @@ deploy_production:
   artifacts:
     paths:
       - e2e-tests/cypress/videos/*
-      - /e2e-testscypress/screenshots/*
+      - e2e-tests/cypress/screenshots/*
     expire_in: 4 week
     when: always
 
