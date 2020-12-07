@@ -194,6 +194,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     async doCheckInManually(event) {
         let button = event.target;
+        if(button.disabled) {
+            return;
+        }
         try {
             button.start();
             await this.doCheckIn();

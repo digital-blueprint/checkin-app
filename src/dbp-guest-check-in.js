@@ -172,6 +172,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     async _onCheckInClicked(event)  {
         let isDisabled = true;
         let button = event.target;
+        if(button.disabled) {
+            return;
+        }
         button.start();
         try {
             await this.doCheckIn();
