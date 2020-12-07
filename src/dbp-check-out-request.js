@@ -128,7 +128,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * Parses the active checkins respons
+     * Parses the active checkins response
      *
      * @param response
      *
