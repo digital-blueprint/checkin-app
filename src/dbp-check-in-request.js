@@ -117,7 +117,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         while (count_trys != 5) {
 
             let time = Math.pow(5, count_trys);
-            responseData = await this.sendCheckOutRequest(this.locationHash, this.seatNr);
+            responseData = await this.sendCheckOutRequest(locationHash, seat);
             console.debug("times", time);
             if (responseData.status == 201) {
                 return responseData;
