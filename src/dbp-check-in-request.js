@@ -111,6 +111,24 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         super.update(changedProperties);
     }
 
+    async tryCheckOut(locationHash, seat) {
+        let count_trys = 0;
+        let responseData;
+        while (count_trys != 5) {
+
+            let time = Math.pow(5, count_trys);
+            responseData = await this.sendCheckOutRequest(locationHash, seat);
+            console.debug("times", time);
+            if (responseData.status == 201) {
+                return responseData;
+            }
+            await new Promise(r => setTimeout(r, time));
+            count_trys ++;
+        }
+        return responseData;
+
+    }
+
     /**
      * Init a checkout and Check if it was successful
      *
@@ -122,7 +140,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         let responseData;
         button.start();
         try {
-            responseData = await this.sendCheckOutRequest(this.locationHash, this.seatNr);
+            responseData = await this.tryCheckOut(this.locationHash, this.seatNr);
         } finally {
             button.stop();
         }
