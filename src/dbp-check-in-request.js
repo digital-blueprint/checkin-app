@@ -212,6 +212,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     async doCheckInManually(event) {
         let button = event.target;
+        if(button.disabled) {
+            return;
+        }
         try {
             button.start();
             await this.doCheckIn();
@@ -874,8 +877,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <span class="header"><strong>${this.checkedInRoom}</strong>${this.checkedInSeat !== null ? html`${i18n.t('check-in.seatNr')}: ${this.checkedInSeat}<br>` : ``}
                         ${i18n.t('check-out.checkin-until')} ${this.getReadableDate(this.checkedInEndTime)}</span>
     
-                        <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" @click="${(event) => { this.doCheckOut(event); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</dbp-loading-button></div></div>
-                        <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" @click="${(event) => { this.doRefreshSession(event); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</dbp-loading-button></div></div>
+                        <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="${i18n.t('check-out.button-text')}" @click="${(event) => { this.doCheckOut(event); }}" title="${i18n.t('check-out.button-text')}">${i18n.t('check-out.button-text')}</dbp-loading-button></div></div>
+                        <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('check-in.refresh-button-text')}" @click="${(event) => { this.doRefreshSession(event); }}" title="${i18n.t('check-in.refresh-button-text')}">${i18n.t('check-in.refresh-button-text')}</dbp-loading-button></div></div>
                      </div>
                     ${ this.status ? html`
                         <dbp-inline-notification class="inline-notification" type="${this.status.type}" summary="${i18n.t(this.status.summary)}" 
@@ -911,7 +914,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 </div>
                             </div>
                            
-                            <div class="btn"><dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this.doCheckInManually}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button></div>
+                            <div class="btn"><dbp-loading-button id="do-manually-checkin" type="is-primary" value="${i18n.t('check-in.manually-checkin-button-text')}" @click="${this.doCheckInManually}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0) }>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button></div>
                         </div>
                     </div>  
                     <div class="control ${classMap({hidden: !this.loading})}">

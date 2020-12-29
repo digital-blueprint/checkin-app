@@ -172,6 +172,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     async _onCheckInClicked(event)  {
         let isDisabled = true;
         let button = event.target;
+        if(button.disabled) {
+            return;
+        }
         button.start();
         try {
             await this.doCheckIn();
@@ -562,7 +565,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                         </div>
                                     </div>
                                 <div class="btn">
-                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || !this.isEmailSet || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0)}>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button>
+                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" value="${i18n.t('check-in.manually-checkin-button-text')}" @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || !this.isEmailSet || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0)}>${i18n.t('check-in.manually-checkin-button-text')}</dbp-loading-button>
                                 </div>
                             </div>
                     </div>
