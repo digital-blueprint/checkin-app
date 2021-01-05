@@ -1,0 +1,17 @@
+{
+  "element": "dbp-report-risk",
+  "module_src": "dbp-report-risk.js",
+  "routing_name": "report-risk",
+  "name": {
+    "de": "Risiko melden",
+    "en": "Report risk"
+  },
+  "short_name": {
+    "de": "Risiko melden",
+    "en": "Report risk"
+  },
+  "description": {
+    "de": "Zeigt Information, wie man ein Infektionsrisiko melden kann.",
+    "en": "Shows information on how to report a risk of infection."
+  }
+}

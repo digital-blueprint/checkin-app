@@ -159,6 +159,7 @@ export default (async () => {
         'src/dbp-check-out-request.js',
         'src/dbp-guest-check-in.js',
         'src/dbp-check-in-info.js',
+        'src/dbp-report-risk.js',
         ] : glob.sync('test/**/*.js'),
         output: {
         dir: 'dist',

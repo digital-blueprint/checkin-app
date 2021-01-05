@@ -85,6 +85,12 @@
     "title": "Information",
     "description": "Mit dieser Applikation erhalten Sie Informationen über checkin.tugraz.at."
   },
+  "report-risk": {
+    "title": "Risiko melden",
+    "description": "Mit dieser Applikation erhalten Sie Informationen, wie Sie ein Infektionsrisiko melden können.",
+    "text": "Sollten Sie als Studierende*r als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich umgehend bei ",
+    "more-information": "Weitere Informationen über die aktuell geltenden Bestimmungen an der TU Graz erhalten Sie unter "
+  },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!",
   "loading-msg-checkin": "Anmelden ...",
   "loading-msg-checkout": "Abmelden ...",
