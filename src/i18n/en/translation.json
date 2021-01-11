@@ -88,7 +88,7 @@
   "report-risk": {
     "title": "Report risk",
     "description": "With this application, you will receive information on how to report a risk of infection.",
-    "text": "If you are a suspected COVID-19 case or a case of illness, report this immediately to ",
+    "text": "If you are a suspected COVID-19 case or a case of illness, please report this immediately to ",
     "more-information": "For more information about the currently valid regulations at Graz University of Technology, please visit "
   },
   "error-login-message": "You need to be logged in to use this function!",
