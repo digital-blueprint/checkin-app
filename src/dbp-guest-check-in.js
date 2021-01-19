@@ -38,7 +38,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     static get properties() {
-        return {
+        return this.getProperties({
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             seatNr: { type: Number, attribute: false },
@@ -46,7 +46,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             isRoomSelected: { type: Boolean, attribute: false },
             roomCapacity: { type: Number, attribute: false },
             isEmailSet: { type: Boolean, attribute: false }
-        };
+        });
     }
 
     connectedCallback() {
@@ -548,7 +548,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('check-in.manually-place')}</label>
                                         <div class="control">
-                                            <dbp-check-in-place-select lang="${this.lang}" entry-point-url="${commonUtils.getAPiUrl()}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-check-in-place-select>
+                                            <dbp-check-in-place-select lang="${this.lang}" entry-point-url="${this.entryPointUrl}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-check-in-place-select>
                                         </div>
                                     </div>
                                     <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">

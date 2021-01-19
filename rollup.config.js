@@ -155,6 +155,7 @@ export default (async () => {
     return {
         input: (build != 'test') ? [
         'src/' + pkg.name + '.js',
+        'vendor/toolkit/packages/provider/src/dbp-provider.js',
         'src/dbp-check-in-request.js',
         'src/dbp-check-out-request.js',
         'src/dbp-guest-check-in.js',

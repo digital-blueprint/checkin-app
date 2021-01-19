@@ -13,5 +13,6 @@
   "description": {
     "de": "Zeigt alle angemeldeten Orte.",
     "en": "Shows all checked-in places."
-  }
+  },
+  "subscribe": "lang:lang,entry-point-url:entry-point-url"
 }

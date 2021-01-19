@@ -31,13 +31,13 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     static get properties() {
-        return {
+        return this.getProperties({
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             activeCheckins: { type: Array, attribute: false },
             initialCheckinsLoading: { type: Boolean, attribute: false },
             loading: { type: Boolean, attribute: false },
-        };
+        });
     }
 
     connectedCallback() {

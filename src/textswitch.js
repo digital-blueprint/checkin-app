@@ -1,5 +1,6 @@
-import {html, LitElement, css} from 'lit-element';
+import {html, css} from 'lit-element';
 import * as commonStyles from '@dbp-toolkit/common/styles';
+import {AdapterLitElement} from "@dbp-toolkit/provider/src/adapter-lit-element";
 
 const BUTTON1 = "button1";
 const BUTTON2 = "button2";
@@ -17,7 +18,7 @@ const BUTTON2 = "button2";
  * Example:
  *  <my-tag name="one" name1="one" name2="two" value1="One", value2="Two"></my-tag>
  */
-export class TextSwitch extends LitElement {
+export class TextSwitch extends AdapterLitElement {
     constructor() {
         super();
         this.value1 = "";
@@ -30,7 +31,7 @@ export class TextSwitch extends LitElement {
     }
 
     static get properties() {
-        return {
+        return this.getProperties({
             value1: { type: String },
             value2: { type: String },
             name1: { type: String },
@@ -38,7 +39,7 @@ export class TextSwitch extends LitElement {
             name: { type: String, reflect: true },
             disabled: { type: Boolean },
             _active: { type: Boolean },
-        };
+        });
     }
 
     static get styles() {

@@ -13,5 +13,6 @@
   "description": {
     "de": "Meldet einen Gast an einem Ort an.",
     "en": "Logs a guest in one place."
-  }
+  },
+  "subscribe": "lang:lang,entry-point-url:entry-point-url"
 }

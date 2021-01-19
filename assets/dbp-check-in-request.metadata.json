@@ -13,5 +13,6 @@
   "description": {
     "de": "Meldet den eingeloggten User an einem Ort an.",
     "en": "Logs the logged in user in one place."
-  }
+  },
+  "subscribe": "lang:lang,entry-point-url:entry-point-url"
 }
