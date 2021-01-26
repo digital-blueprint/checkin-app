@@ -90,12 +90,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     break;
                 case "wrongQR":
                     setTimeout( function () {
-                        that.wrongQR = [];
+                        that.wrongHash.length = 0;
                     }, 5000);
                     break;
                 case "locationHash":
                     setTimeout(function () {
-                        that.wrongHash = [];
+                        that.wrongHash.length = 0;
                     }, 5000);
                     break;
                 case "status":
@@ -106,6 +106,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     }
                     break;
             }
+            console.log("######", propName);
         });
 
         super.update(changedProperties);
@@ -490,6 +491,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         try {
             [location, seat] = parseQRCode(data, this.searchHashString);
         } catch(error) {
+            let checkAlreadySend = await this.wrongHash.includes(data);
+            if (checkAlreadySend) {
+                return false;
+            }
             this.wrongQR.push(data);
             send({
                 "summary": i18n.t('check-in.qr-false-title'),
