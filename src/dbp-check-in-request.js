@@ -10,7 +10,6 @@ import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from '@dbp-toolkit/qr-code-scanner';
 import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
 import { send } from '@dbp-toolkit/common/notification';
-import searchQRString from 'consts:searchQRString';
 import {parseQRCode} from './utils.js';
 
 const i18n = createI18nInstance();
@@ -20,7 +19,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this.lang = i18n.language;
-        this.entryPointUrl = commonUtils.getAPiUrl();
+        this.entryPointUrl = '';
         this.locationHash = '';
         this.seatNr = '';
         this.isCheckedIn = false;
@@ -31,7 +30,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.agent = '';
         this.showManuallyContainer = false;
         this.showQrContainer = false;
-        this.searchHashString = searchQRString;
+        this.searchHashString = '';
         this.wrongHash = [];
         this.wrongQR = [];
         this.isRoomSelected = false;
@@ -70,6 +69,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             checkinCount: { type: Number, attribute: false },
             checkedInEndTime: { type: String, attribute: false },
             loadingMsg: { type: String, attribute: false },
+            searchHashString: { type: String, attribute: 'search-hash-string' },
             loading: {type: Boolean, attribute: false},
             status: { type: Object, attribute: false },
             wrongQR : { type: Array, attribute: false },

@@ -13,7 +13,7 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this.lang = i18n.language;
-        this.entryPointUrl = commonUtils.getAPiUrl();
+        this.entryPointUrl = '';
     }
 
     static get scopedElements() {

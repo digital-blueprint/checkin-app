@@ -15,7 +15,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this.lang = i18n.language;
-        this.entryPointUrl = commonUtils.getAPiUrl();
+        this.entryPointUrl = '';
         this.activeCheckins = [];
         this.loading = false;
         this._initialFetchDone = false;

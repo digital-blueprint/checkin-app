@@ -71,12 +71,16 @@
 
 <body>
 <dbp-provider id="root"
-              lang="de" entry-point-url="<%= entryPointURL %>">
+              lang="de" entry-point-url="<%= entryPointURL %>" search-hash-string="<%= searchQRString %>">
     <<%= name %>
         subscribe="lang:lang,entry-point-url:entry-point-url"
         src="<%= getUrl(name + '.topic.metadata.json') %>"
         base-path="<%= getUrl('') %>"
         keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'
+        git-info='<%= buildInfo.info %>'
+        build-url='<%= buildInfo.url %>'
+        build-time='<%= buildInfo.time %>'
+        env='<%= buildInfo.env %>'
         matomo-url="<%= matomoUrl %>"
         matomo-site-id="<%= matomoSiteId %>"
         no-welcome-page
