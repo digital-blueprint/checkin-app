@@ -31,7 +31,8 @@ export class TextSwitch extends AdapterLitElement {
     }
 
     static get properties() {
-        return this.getProperties({
+        return {
+            ...super.properties,
             value1: { type: String },
             value2: { type: String },
             name1: { type: String },
@@ -39,7 +40,7 @@ export class TextSwitch extends AdapterLitElement {
             name: { type: String, reflect: true },
             disabled: { type: Boolean },
             _active: { type: Boolean },
-        });
+        };
     }
 
     static get styles() {

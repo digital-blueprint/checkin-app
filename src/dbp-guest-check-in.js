@@ -38,7 +38,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     static get properties() {
-        return this.getProperties({
+        return {
+            ...super.properties,
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             seatNr: { type: Number, attribute: false },
@@ -46,7 +47,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             isRoomSelected: { type: Boolean, attribute: false },
             roomCapacity: { type: Number, attribute: false },
             isEmailSet: { type: Boolean, attribute: false }
-        });
+        };
     }
 
     connectedCallback() {

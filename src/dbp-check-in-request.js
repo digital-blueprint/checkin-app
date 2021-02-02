@@ -55,7 +55,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     static get properties() {
-        return this.getProperties({
+        return {
+            ...super.properties,
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             locationHash: { type: String, attribute: false },
@@ -74,7 +75,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             status: { type: Object, attribute: false },
             wrongQR : { type: Array, attribute: false },
             wrongHash : { type: Array, attribute: false },
-        });
+        };
     }
 
     connectedCallback() {

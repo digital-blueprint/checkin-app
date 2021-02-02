@@ -27,10 +27,11 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     static get properties() {
-        return this.getProperties({
+        return {
+            ...super.properties,
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
-        });
+        };
     }
 
     connectedCallback() {
