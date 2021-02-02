@@ -14,5 +14,5 @@
     "de": "Zeigt Information, wie man ein Infektionsrisiko melden kann.",
     "en": "Shows information on how to report a risk of infection."
   },
-  "subscribe": "lang:lang,entry-point-url:entry-point-url"
+  "subscribe": "lang:lang,entry-point-url:entry-point-url,auth:auth"
 }

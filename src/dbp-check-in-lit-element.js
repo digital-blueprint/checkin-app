@@ -55,7 +55,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
     isLoading() {
         if (this._loginStatus === "logged-out")
             return false;
-        return (!this.isLoggedIn() && window.DBPAuthToken !== undefined);
+        return (!this.isLoggedIn() && this.auth.token !== undefined);
     }
 
 
@@ -92,7 +92,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
+                Authorization: "Bearer " + this.auth.token
             },
         };
         response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
@@ -120,7 +120,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
+                Authorization: "Bearer " + this.auth.token
             },
             body: JSON.stringify(body)
         };
@@ -150,7 +150,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
+                Authorization: "Bearer " + this.auth.token
             },
             body: JSON.stringify(body)
         };

@@ -160,7 +160,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + window.DBPAuthToken
+                Authorization: "Bearer " + this.auth.token
             },
             body: JSON.stringify(body)
         };

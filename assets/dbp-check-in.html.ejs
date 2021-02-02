@@ -74,6 +74,7 @@
               lang="de" entry-point-url="<%= entryPointURL %>" search-hash-string="<%= searchQRString %>">
     <<%= name %>
         subscribe="lang:lang,entry-point-url:entry-point-url"
+        auth
         src="<%= getUrl(name + '.topic.metadata.json') %>"
         base-path="<%= getUrl('') %>"
         keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'

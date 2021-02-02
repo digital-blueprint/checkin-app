@@ -14,5 +14,5 @@
     "de": "Meldet den eingeloggten User an einem Ort an.",
     "en": "Logs the logged in user in one place."
   },
-  "subscribe": "lang:lang,entry-point-url:entry-point-url,search-hash-string:search-hash-string"
+  "subscribe": "lang:lang,entry-point-url:entry-point-url,search-hash-string:search-hash-string,auth:auth"
 }
