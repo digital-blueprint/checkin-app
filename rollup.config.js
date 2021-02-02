@@ -1,5 +1,4 @@
 import path from 'path';
-import fs from 'fs';
 import url from 'url';
 import glob from 'glob';
 import resolve from '@rollup/plugin-node-resolve';
@@ -7,168 +6,74 @@ import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import {terser} from "rollup-plugin-terser";
 import json from '@rollup/plugin-json';
-import replace from "@rollup/plugin-replace";
 import serve from 'rollup-plugin-serve';
 import urlPlugin from "@rollup/plugin-url";
 import license from 'rollup-plugin-license';
 import del from 'rollup-plugin-delete';
 import emitEJS from 'rollup-plugin-emit-ejs';
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
-import selfsigned from 'selfsigned';
-
-// -------------------------------
-
-// Some new web APIs are only available when HTTPS is active.
-// Note that this only works with a Non-HTTPS API endpoint with Chrome,
-// Firefox will emit CORS errors, see https://bugzilla.mozilla.org/show_bug.cgi?id=1488740
-const USE_HTTPS = true;
-
-// -------------------------------
+import appConfig from './app.config.js';
+import {getPackagePath, getBuildInfo, generateTLSConfig, getDistPath} from './vendor/toolkit/rollup.utils.js';
 
 const pkg = require('./package.json');
-const build = (typeof process.env.BUILD !== 'undefined') ? process.env.BUILD : 'local';
+const appEnv = (typeof process.env.APP_ENV !== 'undefined') ? process.env.APP_ENV : 'local';
 const watch = process.env.ROLLUP_WATCH === 'true';
-const buildFull = (!watch && build !== 'test') || (process.env.FORCE_FULL !== undefined);
-const matomoUrl = 'https://analytics.tugraz.at/';
-
-console.log("build: " + build);
-let basePath = '';
-let entryPointURL = '';
-let keyCloakServer = '';
-let keyCloakBaseURL = '';
-let keyCloakClientId = '';
-let matomoSiteId = 131;
+const buildFull = (!watch && appEnv !== 'test') || (process.env.FORCE_FULL !== undefined);
 let useTerser = buildFull;
 let useBabel = buildFull;
 let checkLicenses = buildFull;
-let searchQRString = 'tugrazcheckin';
+let useHTTPS = true;
 
-switch (build) {
-  case 'local':
-    basePath = '/dist/';
-    entryPointURL = 'http://127.0.0.1:8000';
-    keyCloakServer = 'auth-dev.tugraz.at';
-    keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
-    keyCloakClientId = 'auth-dev-mw-frontend-local';
-    break;
-  case 'development':
-    basePath = '/apps/checkin/';
-    entryPointURL = 'https://mw-dev.tugraz.at';
-    keyCloakServer = 'auth-dev.tugraz.at';
-    keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
-    keyCloakClientId = 'checkin-dev_tugraz_at-CHECKIN';
-    break;
-  case 'demo':
-    basePath = '/apps/checkin/';
-    entryPointURL = 'https://api-demo.tugraz.at';
-    keyCloakServer = 'auth-test.tugraz.at';
-    keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
-    keyCloakClientId = 'checkin-demo_tugraz_at-CHECKIN';
-    break;
-  case 'production':
-    basePath = '/';
-    entryPointURL = 'https://api.tugraz.at';
-    keyCloakServer = 'auth.tugraz.at';
-    keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
-    keyCloakClientId = 'checkin_tugraz_at-CHECKIN';
-    matomoSiteId = 150;
-    break;
-  case 'test':
-    basePath = '/apps/checkin/';
-    entryPointURL = '';
-    keyCloakServer = '';
-    keyCloakBaseURL = '';
-    keyCloakClientId = '';
-    break;
-  case 'bs':
-    basePath = '/dist/';
-    entryPointURL = 'https://bs-local.com:8000';
-    keyCloakServer = 'auth-dev.tugraz.at';
-    keyCloakBaseURL = 'https://' + keyCloakServer + '/auth';
-    keyCloakClientId = 'auth-dev-mw-frontend-local';
-    break;
-  default:
-    console.error('Unknown build environment: ' + build);
+console.log("APP_ENV: " + appEnv);
+
+let config;
+if (appEnv in appConfig) {
+    config = appConfig[appEnv];
+} else if (appEnv === 'test') {
+    config = {
+        basePath: '/',
+        entryPointURL: 'https://test',
+        keyCloakBaseURL: 'https://test',
+        keyCloakClientId: '',
+        matomoUrl: '',
+        matomoSiteId: -1,
+    };
+} else {
+    console.error(`Unknown build environment: '${appEnv}', use one of '${Object.keys(appConfig)}'`);
     process.exit(1);
 }
 
-/**
- * Creates a server certificate and caches it in the .cert directory
- */
-function generateTLSConfig() {
-  fs.mkdirSync('.cert', {recursive: true});
+config.searchQRString = 'tugrazcheckin';
 
-  if (!fs.existsSync('.cert/server.key') || !fs.existsSync('.cert/server.cert')) {
-    const attrs = [{name: 'commonName', value: 'dbp-dev.localhost'}];
-    const pems = selfsigned.generate(attrs, {algorithm: 'sha256', days: 9999});
-    fs.writeFileSync('.cert/server.key', pems.private);
-    fs.writeFileSync('.cert/server.cert', pems.cert);
-  }
-
-  return {
-    key: fs.readFileSync('.cert/server.key'),
-    cert: fs.readFileSync('.cert/server.cert')
-  }
+function getOrigin(url) {
+    if (url)
+        return new URL(url).origin;
+    return '';
 }
 
-function getBuildInfo() {
-    const child_process = require('child_process');
-    const url = require('url');
-
-    let remote = child_process.execSync('git config --get remote.origin.url').toString().trim();
-    let commit = child_process.execSync('git rev-parse --short HEAD').toString().trim();
-
-    let parsed = url.parse(remote);
-    // convert git urls
-    if (parsed.protocol === null) {
-        parsed = url.parse('git://' + remote.replace(":", "/"));
-        parsed.protocol = 'https:';
-    }
-    let newPath = parsed.path.slice(0, parsed.path.lastIndexOf('.'));
-    let newUrl = parsed.protocol + '//' + parsed.host + newPath + '/commit/' + commit;
-
-    return {
-        info: commit,
-        url: newUrl,
-        time: new Date().toISOString(),
-        env: build
-    }
-}
-
-export async function getPackagePath(packageName, assetPath) {
-    const r = resolve();
-    const resolved = await r.resolveId(packageName);
-    let packageRoot;
-    if (resolved !== null) {
-        const id = (await r.resolveId(packageName)).id;
-        const packageInfo = r.getPackageInfoForId(id);
-        packageRoot = packageInfo.root;
-    } else {
-        // Non JS packages
-        packageRoot = path.dirname(require.resolve(packageName + '/package.json'));
-    }
-    return path.relative(process.cwd(), path.join(packageRoot, assetPath));
-}
+config.CSP = `default-src 'self' 'unsafe-eval' 'unsafe-inline' \
+    ${getOrigin(config.matomoUrl)} ${getOrigin(config.keyCloakBaseURL)} ${getOrigin(config.entryPointURL)}; \
+    img-src * blob: data:`
 
 export default (async () => {
+    let privatePath = await getDistPath(pkg.name)
     return {
-        input: (build != 'test') ? [
-        'src/' + pkg.name + '.js',
-        'src/dbp-check-in-request.js',
-        'src/dbp-check-out-request.js',
-        'src/dbp-guest-check-in.js',
-        'src/dbp-check-in-info.js',
-        'src/dbp-report-risk.js',
-        ] : glob.sync('test/**/*.js'),
+        input: (appEnv != 'test') ? [
+                'src/' + pkg.name + '.js',
+                'src/dbp-check-in-request.js',
+                'src/dbp-check-out-request.js',
+                'src/dbp-guest-check-in.js',
+                'src/dbp-check-in-info.js',
+                'src/dbp-report-risk.js',
+            ] : glob.sync('test/**/*.js'),
         output: {
-        dir: 'dist',
-        entryFileNames: '[name].js',
-        chunkFileNames: 'shared/[name].[hash].[format].js',
-        format: 'esm',
-        sourcemap: true
+            dir: 'dist',
+            entryFileNames: '[name].js',
+            chunkFileNames: 'shared/[name].[hash].[format].js',
+            format: 'esm',
+            sourcemap: true
         },
         preserveEntrySignatures: false,
-        // external: ['zlib', 'http', 'fs', 'https', 'url'],
         onwarn: function (warning, warn) {
             // ignore "suggestions" warning re "use strict"
             if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
@@ -186,30 +91,29 @@ export default (async () => {
         },
         plugins: [
             del({
-            targets: 'dist/*'
+                targets: 'dist/*'
             }),
             emitEJS({
-            src: 'assets',
-            include: ['**/*.ejs', '**/.*.ejs'],
-            data: {
-                getUrl: (p) => {
-                return url.resolve(basePath, p);
-                },
-                getPrivateUrl: (p) => {
-                    return url.resolve(`${basePath}local/${pkg.name}/`, p);
-                },
-                name: pkg.name,
-                entryPointURL: entryPointURL,
-                basePath: basePath,
-                keyCloakServer: keyCloakServer,
-                keyCloakBaseURL: keyCloakBaseURL,
-                keyCloakClientId: keyCloakClientId,
-                environment: build,
-                searchQRString: searchQRString,
-                matomoUrl: matomoUrl,
-                matomoSiteId: matomoSiteId,
-                buildInfo: getBuildInfo()
-            }
+                src: 'assets',
+                include: ['**/*.ejs', '**/.*.ejs'],
+                data: {
+                    getUrl: (p) => {
+                        return url.resolve(config.basePath, p);
+                    },
+                    getPrivateUrl: (p) => {
+                        return url.resolve(`${config.basePath}${privatePath}/`, p);
+                    },
+                    name: pkg.name,
+                    entryPointURL: config.entryPointURL,
+                    basePath: config.basePath,
+                    keyCloakBaseURL: config.keyCloakBaseURL,
+                    keyCloakClientId: config.keyCloakClientId,
+                    CSP: config.CSP,
+                    searchQRString: config.searchQRString,
+                    matomoUrl: config.matomoUrl,
+                    matomoSiteId: config.matomoSiteId,
+                    buildInfo: getBuildInfo()
+                }
             }),
             resolve({
                 // ignore node_modules from vendored packages
@@ -239,35 +143,32 @@ export default (async () => {
             }),
             json(),
             urlPlugin({
-            limit: 0,
-            include: [
-                "node_modules/suggestions/**/*.css",
-                "node_modules/select2/**/*.css",
-            ],
-            emitFiles: true,
-            fileName: 'shared/[name].[hash][extname]'
-            }),
-            replace({
-                "process.env.BUILD": '"' + build + '"',
+                limit: 0,
+                include: [
+                    "node_modules/suggestions/**/*.css",
+                    "node_modules/select2/**/*.css",
+                ],
+                emitFiles: true,
+                fileName: 'shared/[name].[hash][extname]'
             }),
             copy({
                 targets: [
-                    {src: 'assets/silent-check-sso.html', dest:'dist'},
-                    {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
-                    {src: 'assets/*.css', dest: 'dist/local/' + pkg.name},
-                    {src: 'assets/*.ico', dest: 'dist/local/' + pkg.name},
-                    {src: 'assets/*.svg', dest: 'dist/local/' + pkg.name},
-                    {src: 'assets/icon/*', dest: 'dist/local/'  + pkg.name + '/icon/'},
-                    {src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf', dest: 'dist/local/' + pkg.name},
-                    {src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'), dest: 'dist/local/' + pkg.name + '/fonts/source-sans-pro'},
-                    {src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'), dest: 'dist/local/' + pkg.name, rename: 'spinner.js'},
-                    {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/local/' + pkg.name, rename: 'browser-check.js'},
-                    {src: 'assets/icon-*.png', dest: 'dist/local/' + pkg.name},
-                    {src: 'assets/*-placeholder.png', dest: 'dist/local/' + pkg.name},
-                    {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
+                    {src: 'assets/*-placeholder.png', dest: 'dist/' + await getDistPath(pkg.name)},
+                    {src: 'assets/*.css', dest: 'dist/' + await getDistPath(pkg.name)},
+                    {src: 'assets/*.ico', dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: 'assets/*.metadata.json', dest: 'dist'},
-                    {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/local/@dbp-toolkit/common/icons'},
-                    {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/local/@dbp-toolkit/qr-code-scanner'},
+                    {src: 'assets/*.svg', dest: 'dist/' + await getDistPath(pkg.name)},
+                    {src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf', dest: 'dist/' + await getDistPath(pkg.name)},
+                    {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
+                    {src: 'assets/icon-*.png', dest: 'dist/' + await getDistPath(pkg.name)},
+                    {src: 'assets/icon/*', dest: 'dist/' + await getDistPath(pkg.name, 'icon')},
+                    {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
+                    {src: 'assets/silent-check-sso.html', dest:'dist'},
+                    {src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'), dest: 'dist/' + await getDistPath(pkg.name, 'fonts/source-sans-pro')},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'), dest: 'dist/' + await getDistPath(pkg.name)},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/' + await getDistPath(pkg.name)},
+                    {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/' + await getDistPath('@dbp-toolkit/common', 'icons')},
+                    {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/' + await getDistPath('@dbp-toolkit/qr-code-scanner')},
                 ],
             }),
             useBabel && getBabelOutputPlugin({
@@ -286,14 +187,14 @@ export default (async () => {
             }),
             useTerser ? terser() : false,
             watch ? serve({
-            contentBase: '.',
-            host: '127.0.0.1',
-            port: 8001,
-            historyApiFallback: basePath + pkg.name + '.html',
-            https: USE_HTTPS ? generateTLSConfig() : false,
-                headers: {
-                    'Content-Security-Policy': `default-src 'self' 'unsafe-eval' 'unsafe-inline' analytics.tugraz.at eid.egiz.gv.at ${keyCloakServer} ${entryPointURL} httpbin.org ; img-src * blob: data:`
-                },
+                contentBase: '.',
+                host: '127.0.0.1',
+                port: 8001,
+                historyApiFallback: config.basePath + pkg.name + '.html',
+                https: useHTTPS ? await generateTLSConfig() : false,
+                    headers: {
+                        'Content-Security-Policy': config.CSP
+                    },
             }) : false
         ]
     };
