@@ -5,6 +5,14 @@ export default class DBPCheckInLitElement extends DBPLitElement {
     constructor() {
         super();
         this.isSessionRefreshed = false;
+        this.auth = {};
+    }
+
+    static get properties() {
+        return {
+            ...super.properties,
+            auth: { type: Object },
+        };
     }
 
     connectedCallback() {
@@ -44,7 +52,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      * @returns {boolean} true or false
      */
     isLoggedIn() {
-        return (window.DBPPerson !== undefined && window.DBPPerson !== null);
+        return (this.auth.person !== undefined && this.auth.person !== null);
     }
 
     /**

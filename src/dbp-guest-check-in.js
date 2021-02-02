@@ -361,7 +361,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     hasPermissions() {
-        return (window.DBPPerson && Array.isArray(window.DBPPerson.roles) && window.DBPPerson.roles.indexOf('ROLE_STAFF') !== -1);
+        return (this.auth.person && Array.isArray(this.auth.person.roles) && this.auth.person.roles.indexOf('ROLE_STAFF') !== -1);
     }
 
     static get styles() {
