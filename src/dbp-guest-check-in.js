@@ -549,7 +549,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('check-in.manually-place')}</label>
                                         <div class="control">
-                                            <dbp-check-in-place-select lang="${this.lang}" entry-point-url="${this.entryPointUrl}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-check-in-place-select>
+                                            <dbp-check-in-place-select subscribe="auth" lang="${this.lang}" entry-point-url="${this.entryPointUrl}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-check-in-place-select>
                                         </div>
                                     </div>
                                     <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
