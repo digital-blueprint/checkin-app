@@ -112,7 +112,7 @@ export default (async () => {
                     searchQRString: config.searchQRString,
                     matomoUrl: config.matomoUrl,
                     matomoSiteId: config.matomoSiteId,
-                    buildInfo: getBuildInfo()
+                    buildInfo: getBuildInfo(appEnv)
                 }
             }),
             resolve({
