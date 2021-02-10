@@ -1,5 +1,5 @@
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
-import {EventBus} from '@dbp-toolkit/common';
+import JSONLD from "@dbp-toolkit/common/jsonld";
 
 export default class DBPCheckInLitElement extends DBPLitElement {
     constructor() {
@@ -20,18 +20,13 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
         this._loginStatus = '';
         this._loginState = [];
-        this._bus = new EventBus();
-        this._updateAuth = this._updateAuth.bind(this);
-        this._bus.subscribe('auth-update', this._updateAuth);
     }
 
     /**
      *  Request a re-render every time isLoggedIn()/isLoading() changes
-     *
-     * @param e
      */
-    _updateAuth(e) {
-        this._loginStatus = e.status;
+    _updateAuth() {
+        this._loginStatus = this.auth['login-status'];
 
         let newLoginState = [this.isLoggedIn(), this.isLoading()];
         if (this._loginState.toString() !== newLoginState.toString()) {
@@ -40,10 +35,17 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         this._loginState = newLoginState;
     }
 
-    disconnectedCallback() {
-        this._bus.close();
+    update(changedProperties) {
+        changedProperties.forEach((oldValue, propName) => {
+            switch (propName) {
+                case "auth":
+                    JSONLD.doInitializationOnce(this.entryPointUrl, this.auth.token);
+                    this._updateAuth();
+                    break;
+            }
+        });
 
-        super.disconnectedCallback();
+        super.update(changedProperties);
     }
 
     /**
