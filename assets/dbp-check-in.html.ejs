@@ -69,6 +69,7 @@
         subscribe="lang:lang,entry-point-url:entry-point-url"
         auth
         requested-login-status
+        analytics-event
         src="<%= getUrl(name + '.topic.metadata.json') %>"
         base-path="<%= getUrl('') %>"
         keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'

@@ -86,9 +86,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckOutFailed', this.checkedInRoom]);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckOutFailed', 'name': this.checkedInRoom});
         } else {
             let response;
             this.loading = true;
@@ -110,9 +108,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckOutSuccess', this.checkedInRoom]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckOutSuccess', 'name': this.checkedInRoom});
             } else {
                 send({
                     "summary": i18n.t('check-out.checkout-failed-title'),
@@ -121,9 +117,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckOutFailed', this.checkedInRoom]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckOutFailed', 'name': this.checkedInRoom});
             }
         }
     }
@@ -233,9 +227,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             "timeout": 5,
         });
 
-        if (window._paq !== undefined) {
-            window._paq.push(['trackEvent', 'CheckOutRequest', 'RefreshFailed', locationName]);
-        }
+        this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'RefreshFailed', 'name': locationName});
     }
 
     /**
@@ -263,9 +255,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckOutRequest', 'RefreshSuccess', locationName]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'RefreshSuccess', 'name': locationName});
             } else {
                 send({
                     "summary": i18n.t('check-in.success-checkin-title', {room: locationName}),
@@ -274,9 +264,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInSuccess', locationName]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInSuccess', 'name': locationName});
             }
 
         // Invalid Input
@@ -289,9 +277,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             });
             console.log("error: Invalid Input.");
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed400', locationName]);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed400', 'name': locationName});
         // Error if room not exists
         } else if (responseData.status === 404) {
             send({
@@ -301,9 +287,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed404', locationName]);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed404', 'name': locationName});
         // Other errors
         } else if (responseData.status === 424) {
             let errorBody = await responseData.json();
@@ -311,9 +295,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             console.log("err: ", errorDescription);
             console.log("err: ", errorBody);
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed424', locationName]);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed424', 'name': locationName});
 
             // Error: invalid seat number
             if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
@@ -356,9 +338,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed403', locationName]);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed403', 'name': locationName});
         // Error: something else doesn't work
         } else{
             send({
@@ -368,9 +348,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckOutRequest', 'CheckInFailed', locationName]);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed', 'name': locationName});
         }
     }
 

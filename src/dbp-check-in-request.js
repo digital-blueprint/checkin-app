@@ -154,9 +154,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckInRequest', 'CheckOutSuccess', this.checkedInRoom]);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckOutSuccess', 'name': this.checkedInRoom});
 
             this.isCheckedIn = false;
             this.locationHash = "";
@@ -178,9 +176,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckInRequest', 'CheckOutFailed', this.checkedInRoom]);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckOutFailed', 'name': this.checkedInRoom});
         }
 
         return responseData;
@@ -264,9 +260,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         "timeout": 5,
                     });
 
-                    if (window._paq !== undefined) {
-                        window._paq.push(['trackEvent', 'CheckInRequest', 'RefreshSuccess', this.checkedInRoom]);
-                    }
+                    this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'RefreshSuccess', 'name': this.checkedInRoom});
                 } else {
                     send({
                         "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
@@ -275,9 +269,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         "timeout": 5,
                     });
 
-                    if (window._paq !== undefined) {
-                        window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInSuccess', this.checkedInRoom]);
-                    }
+                    this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInSuccess', 'name': this.checkedInRoom});
                 }
                 let getActiveCheckInsResponse = await this.getActiveCheckIns();
                 if ( getActiveCheckInsResponse.status === 200) {
@@ -307,9 +299,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed400', this.checkedInRoom]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed400', 'name': this.checkedInRoom});
             // Error if room not exists
             } else if (responseData.status === 404) {
                 send({
@@ -321,9 +311,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed404', this.checkedInRoom]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed404', 'name': this.checkedInRoom});
             // Other errors
             } else if (responseData.status === 424) {
                 let errorBody = await responseData.json();
@@ -331,9 +319,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 console.log("err: ", errorDescription);
                 console.log("err: ", errorBody);
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed424', this.checkedInRoom]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed424', 'name': this.checkedInRoom});
 
                 // Error: invalid seat number
                 if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
@@ -424,9 +410,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 });
                 this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed403', this.checkedInRoom]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed403', 'name': this.checkedInRoom});
             // Error: something else doesn't work
             } else{
                 send({
@@ -438,9 +422,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                if (window._paq !== undefined) {
-                    window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailed', this.checkedInRoom]);
-                }
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed', 'name': this.checkedInRoom});
             }
 
         // Error: no location hash detected
@@ -454,9 +436,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-            if (window._paq !== undefined) {
-                window._paq.push(['trackEvent', 'CheckInRequest', 'CheckInFailedNoLocationHash']);
-            }
+            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailedNoLocationHash'});
         }
     }
 
@@ -645,9 +625,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             "timeout": 5,
         });
 
-        if (window._paq !== undefined) {
-            window._paq.push(['trackEvent', 'CheckInRequest', 'RefreshFailed', locationName]);
-        }
+        this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'RefreshFailed', 'name': locationName});
     }
 
     static get styles() {
