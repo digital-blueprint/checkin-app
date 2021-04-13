@@ -1,4 +1,4 @@
-image: registry.gitlab.tugraz.at/dbp/apps/checkin/main:v1
+image: registry.gitlab.tugraz.at/dbp/topics/checkin/main:v1
 
 cache:
   key: $CI_PROJECT_PATH

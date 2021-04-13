@@ -1,12 +1,12 @@
 # Check-in Application
 
-[GitLab Repository](https://gitlab.tugraz.at/dbp/apps/checkin)
+[GitLab Repository](https://gitlab.tugraz.at/dbp/topics/checkin)
 
 ## Local development
 
 ```bash
 # get the source
-git clone git@gitlab.tugraz.at:dbp/apps/checkin.git
+git clone git@gitlab.tugraz.at:dbp/topics/checkin.git
 cd checkin
 git submodule update --init
 
