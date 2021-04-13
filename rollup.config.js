@@ -80,8 +80,8 @@ export default (async () => {
                 return;
             }
             // ignore chai warnings
-            if (warning.code === 'CIRCULAR_DEPENDENCY') {
-            return;
+            if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('chai')) {
+                return;
             }
             // keycloak bundled code uses eval
             if (warning.code === 'EVAL') {
