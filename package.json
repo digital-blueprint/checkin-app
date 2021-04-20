@@ -5,8 +5,7 @@
   "license": "LGPL-2.1-or-later",
   "private": true,
   "workspaces": [
-    "vendor/toolkit/packages/*",
-    "."
+    "vendor/toolkit/packages/*"
   ],
   "devDependencies": {
     "@babel/core": "^7.10.3",
