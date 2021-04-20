@@ -39,7 +39,6 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "auth":
-                    JSONLD.doInitializationOnce(this.entryPointUrl, this.auth.token);
                     this._updateAuth();
                     break;
             }
