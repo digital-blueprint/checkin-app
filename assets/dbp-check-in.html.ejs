@@ -63,25 +63,23 @@
 </head>
 
 <body>
-<dbp-provider id="root"
-              lang="de" entry-point-url="<%= entryPointURL %>" search-hash-string="<%= searchQRString %>">
-    <<%= name %>
-        subscribe="lang:lang,entry-point-url:entry-point-url"
-        auth
-        requested-login-status
-        analytics-event
-        src="<%= getUrl(name + '.topic.metadata.json') %>"
-        base-path="<%= getUrl('') %>"
-        keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'
-        git-info='<%= buildInfo.info %>'
-        build-url='<%= buildInfo.url %>'
-        build-time='<%= buildInfo.time %>'
-        env='<%= buildInfo.env %>'
-        matomo-url="<%= matomoUrl %>"
-        matomo-site-id="<%= matomoSiteId %>"
-        no-welcome-page
-    ><dbp-loading-spinner></dbp-loading-spinner></<%= name %>>
-</dbp-provider>
+<<%= name %>
+    lang="de" entry-point-url="<%= entryPointURL %>"
+    search-hash-string="<%= searchQRString %>"
+    auth
+    requested-login-status
+    analytics-event
+    src="<%= getUrl(name + '.topic.metadata.json') %>"
+    base-path="<%= getUrl('') %>"
+    keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'
+    git-info='<%= buildInfo.info %>'
+    build-url='<%= buildInfo.url %>'
+    build-time='<%= buildInfo.time %>'
+    env='<%= buildInfo.env %>'
+    matomo-url="<%= matomoUrl %>"
+    matomo-site-id="<%= matomoSiteId %>"
+    no-welcome-page
+><dbp-loading-spinner></dbp-loading-spinner></<%= name %>>
 
 <!-- Error handling for too old browsers -->
 <script src="<%= getPrivateUrl('browser-check.js') %>" defer></script>
