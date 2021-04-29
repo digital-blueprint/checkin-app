@@ -164,7 +164,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.checkedInEndTime = "";
             this.isRoomSelected = false;
             
-            let checkInPlaceSelect = this.shadowRoot.querySelector(this.constructor.getScopedTagName('dbp-check-in-place-select'));
+            let checkInPlaceSelect = this.shadowRoot.querySelector(this.getScopedTagName('dbp-check-in-place-select'));
             if (checkInPlaceSelect !== null) {
                 checkInPlaceSelect.clear();
             }
