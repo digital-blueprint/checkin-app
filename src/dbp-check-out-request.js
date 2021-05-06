@@ -86,7 +86,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
-            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckOutFailed', 'name': this.checkedInRoom});
+            await this.sendErrorAnalyticsEvent('CheckOutRequest', 'CheckOutFailed', this.checkedInRoom);
         } else {
             let response;
             this.loading = true;
@@ -117,7 +117,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                     "timeout": 5,
                 });
 
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckOutFailed', 'name': this.checkedInRoom});
+                await this.sendErrorAnalyticsEvent('CheckOutRequest', 'CheckOutFailed', this.checkedInRoom, response);
             }
         }
     }
@@ -227,7 +227,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             "timeout": 5,
         });
 
-        this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'RefreshFailed', 'name': locationName});
+        await this.sendErrorAnalyticsEvent('CheckOutRequest', 'RefreshFailed', locationName, responseCheckout);
     }
 
     /**

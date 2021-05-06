@@ -176,7 +176,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "timeout": 5,
             });
 
-            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckOutFailed', 'name': this.checkedInRoom});
+            await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckOutFailed', this.checkedInRoom, responseData);
         }
 
         return responseData;
@@ -410,9 +410,9 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 });
                 this.wrongHash.push(this.locationHash + '-' + this.seatNr);
 
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed403', 'name': this.checkedInRoom});
-            // Error: something else doesn't work
-            } else{
+                await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckInFailed403', this.checkedInRoom, responseData);
+            } else {
+                // Error: something else doesn't work
                 send({
                     "summary": i18n.t('check-in.error-title'),
                     "body": i18n.t('check-in.error-body'),
@@ -625,7 +625,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             "timeout": 5,
         });
 
-        this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'RefreshFailed', 'name': locationName});
+        await this.sendErrorAnalyticsEvent('CheckInRequest', 'RefreshFailed', locationName, responseCheckout);
     }
 
     static get styles() {

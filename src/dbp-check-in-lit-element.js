@@ -1,5 +1,5 @@
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
-import JSONLD from "@dbp-toolkit/common/jsonld";
+import {getStackTrace} from "@dbp-toolkit/common/error";
 
 export default class DBPCheckInLitElement extends DBPLitElement {
     constructor() {
@@ -167,5 +167,28 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
 
         return response;
+    }
+
+    /**
+     * Sends an analytics error event for the request of a room
+     *
+     * @param category
+     * @param action
+     * @param room
+     * @param responseData
+     */
+    async sendErrorAnalyticsEvent(category, action, room, responseData = {}) {
+        const responseBody = await responseData.json();
+        const data = {
+            status: responseData.status || '',
+            url: responseData.url || '',
+            description: responseBody['hydra:description'],
+            room: room,
+            // get 5 items from the stack trace
+            stack: getStackTrace().slice(1, 6)
+        }
+
+        // console.log("sendErrorEvent", data);
+        this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': action, 'name': JSON.stringify(data)});
     }
 }
