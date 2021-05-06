@@ -186,7 +186,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             room: room,
             // get 5 items from the stack trace
             stack: getStackTrace().slice(1, 6)
-        }
+        };
 
         // console.log("sendErrorEvent", data);
         this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': action, 'name': JSON.stringify(data)});
