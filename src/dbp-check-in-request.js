@@ -319,7 +319,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 console.log("err: ", errorDescription);
                 console.log("err: ", errorBody);
 
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed424', 'name': this.checkedInRoom});
+                await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckInFailed424', this.checkedInRoom, responseData);
 
                 // Error: invalid seat number
                 if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
