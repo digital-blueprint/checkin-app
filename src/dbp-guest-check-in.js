@@ -263,7 +263,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 });
             // Other errors
             } else if (responseData.status === 424) {
-                let errorBody = await responseData.json();
+                let errorBody = await responseData.clone().json();
                 let errorDescription = errorBody["hydra:description"];
                 console.log("err: ", errorDescription);
                 console.log("err: ", errorBody);

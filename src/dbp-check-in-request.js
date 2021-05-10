@@ -241,7 +241,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             // When you are checked in
             if (responseData.status === 201) {
-                let responseBody = await responseData.json();
+                let responseBody = await responseData.clone().json();
                 //console.log("----------", responseBody);
                 this.checkedInRoom = responseBody.location.name;
                 this.checkedInSeat = responseBody.seatNumber;
@@ -314,7 +314,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed404', 'name': this.checkedInRoom});
             // Other errors
             } else if (responseData.status === 424) {
-                let errorBody = await responseData.json();
+                let errorBody = await responseData.clone().json();
                 let errorDescription = errorBody["hydra:description"];
                 console.log("err: ", errorDescription);
                 console.log("err: ", errorBody);

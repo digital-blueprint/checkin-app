@@ -178,13 +178,18 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      * @param responseData
      */
     async sendErrorAnalyticsEvent(category, action, room, responseData = {}) {
-        // use a clone of responseData to prevent "Failed to execute 'json' on 'Response': body stream already read"
-        const responseBody = await responseData.clone().json();
+        let responseBody = {};
+
+        // Use a clone of responseData to prevent "Failed to execute 'json' on 'Response': body stream already read"
+        // after this function, but still a TypeError will occur if .json() was already called before this function
+        try {
+            responseBody = await responseData.clone().json();
+        } catch (e) {}
 
         const data = {
             status: responseData.status || '',
             url: responseData.url || '',
-            description: responseBody['hydra:description'],
+            description: responseBody['hydra:description'] || '',
             room: room,
             // get 5 items from the stack trace
             stack: getStackTrace().slice(1, 6)
