@@ -178,7 +178,9 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      * @param responseData
      */
     async sendErrorAnalyticsEvent(category, action, room, responseData = {}) {
-        const responseBody = await responseData.json();
+        // use a clone of responseData to prevent "Failed to execute 'json' on 'Response': body stream already read"
+        const responseBody = await responseData.clone().json();
+
         const data = {
             status: responseData.status || '',
             url: responseData.url || '',
