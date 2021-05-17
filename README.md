@@ -1,6 +1,6 @@
 # Check-in Application
 
-[GitLab Repository](https://gitlab.tugraz.at/dbp/topics/checkin)
+[GitLab Repository](https://gitlab.tugraz.at/dbp/check-in/checkin)
 
 ## Local development
 
