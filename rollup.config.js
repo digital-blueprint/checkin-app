@@ -103,7 +103,7 @@ export default (async () => {
                     getPrivateUrl: (p) => {
                         return url.resolve(`${config.basePath}${privatePath}/`, p);
                     },
-                    name: pkg.name,
+                    name: pkg.internalName,
                     entryPointURL: config.entryPointURL,
                     basePath: config.basePath,
                     keyCloakBaseURL: config.keyCloakBaseURL,
@@ -162,7 +162,7 @@ export default (async () => {
                     {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
                     {src: 'assets/icon-*.png', dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: 'assets/icon/*', dest: 'dist/' + await getDistPath(pkg.name, 'icon')},
-                    {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
+                    {src: 'assets/manifest.json', dest: 'dist', rename: pkg.internalName + '.manifest.json'},
                     {src: 'assets/silent-check-sso.html', dest:'dist'},
                     {src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'), dest: 'dist/' + await getDistPath(pkg.name, 'fonts/source-sans-pro')},
                     {src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'), dest: 'dist/' + await getDistPath(pkg.name)},
@@ -190,7 +190,7 @@ export default (async () => {
                 contentBase: '.',
                 host: '127.0.0.1',
                 port: 8001,
-                historyApiFallback: config.basePath + pkg.name + '.html',
+                historyApiFallback: config.basePath + pkg.internalName + '.html',
                 https: useHTTPS ? await generateTLSConfig() : false,
                     headers: {
                         'Content-Security-Policy': config.CSP
