@@ -59,7 +59,7 @@ export default (async () => {
     let privatePath = await getDistPath(pkg.name)
     return {
         input: (appEnv != 'test') ? [
-                'src/' + pkg.name + '.js',
+                'src/' + pkg.internalName + '.js',
                 'src/dbp-check-in-request.js',
                 'src/dbp-check-out-request.js',
                 'src/dbp-guest-check-in.js',
