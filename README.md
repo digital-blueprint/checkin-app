@@ -91,3 +91,16 @@ Note that you will need a Keycloak server along with a client id for the domain 
 - `auth` object: you need to set that object property for the auth token
     - example auth property: `{token: "THE_BEARER_TOKEN"}`
     - note: most often this should be an attribute that is not set directly, but subscribed at a provider
+
+### dbp-report-risk
+
+This is an information page on how to report a risk of infection. You can use it like this:
+[dbp-report-risk/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-report-risk/index.html)
+
+#### Attributes
+
+- `lang` (optional, default: `de`): set to `de` or `en` for German or English
+    - example `lang="de"`
+- `auth` object: you need to set that object property for the auth token
+    - example auth property: `{token: "THE_BEARER_TOKEN"}`
+    - note: most often this should be an attribute that is not set directly, but subscribed at a provider
