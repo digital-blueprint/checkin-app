@@ -13,7 +13,6 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this.lang = i18n.language;
-        this.entryPointUrl = '';
     }
 
     static get scopedElements() {
@@ -27,7 +26,6 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
         return {
             ...super.properties,
             lang: { type: String },
-            entryPointUrl: { type: String, attribute: 'entry-point-url' },
         };
     }
 
