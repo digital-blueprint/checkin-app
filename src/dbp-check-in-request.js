@@ -10,7 +10,7 @@ import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from '@dbp-toolkit/qr-code-scanner';
 import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
 import { send } from '@dbp-toolkit/common/notification';
-import {parseQRCode} from './utils.js';
+import {escapeRegExp, parseQRCode} from './utils.js';
 
 const i18n = createI18nInstance();
 
@@ -818,6 +818,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     render() {
         let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
+        const matchRegexString = '.*' + escapeRegExp(this.searchHashString) + '.*';
 
         return html`
 
@@ -879,7 +880,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <div id="roomselectorwrapper"></div>
                 <div class="border ${classMap({hidden: !(this.showQrContainer || this.showManuallyContainer)})}">
                     <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showQrContainer) || this.showManuallyContainer || this.loading})}">
-                        <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex=".*tugrazcheckin.*" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
+                        <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex="${matchRegexString}" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
                     </div>
                     <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showManuallyContainer) || this.showQrContainer || this.loading })}">
                 

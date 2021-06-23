@@ -107,3 +107,14 @@ export function parseQRCode(data, id) {
         seat = parseInt(seatStr, 10);
     return [location, seat];
 }
+
+/**
+ * Escapes strings for regular expressions
+ * see: https://stackoverflow.com/a/6969486/1581487
+ *
+ * @param string
+ * @returns {*}
+ */
+export function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
