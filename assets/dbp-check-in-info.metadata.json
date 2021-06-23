@@ -11,8 +11,8 @@
     "en": "Information"
   },
   "description": {
-    "de": "Zeigt alle Informationen zu checkin.tugraz.at.",
-    "en": "Shows all information about checkin.tugraz.at."
+    "de": "Zeigt alle Informationen zur Checkin Seite.",
+    "en": "Shows all information about the checkin page."
   },
   "subscribe": "lang:lang,entry-point-url:entry-point-url,auth:auth"
 }
