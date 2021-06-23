@@ -88,8 +88,7 @@
   "report-risk": {
     "title": "Risiko melden",
     "description": "Mit dieser Applikation erhalten Sie Informationen, wie Sie ein Infektionsrisiko melden können.",
-    "text": "Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei ",
-    "more-information": "Weitere Informationen über die aktuell geltenden Bestimmungen an der TU Graz erhalten Sie unter "
+    "text": "Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei Ihrer Meldestelle!"
   },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!",
   "loading-msg-checkin": "Anmelden ...",
