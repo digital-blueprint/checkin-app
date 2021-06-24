@@ -104,3 +104,33 @@ This is an information page on how to report a risk of infection. You can use it
 - `auth` object: you need to set that object property for the auth token
     - example auth property: `{token: "THE_BEARER_TOKEN"}`
     - note: most often this should be an attribute that is not set directly, but subscribed at a provider
+
+#### Slots
+
+You use templates tags to inject slots into the activity.
+These templates will be converted to div containers when the page is loaded and will not show up before that.
+
+##### additional-information
+
+The content of this slot will be shown below the other text and can be used to provide
+further information about the process to report a risk. For example a link to a page with
+more information about how to report a risk can be provided.
+
+Example:
+
+```html
+<dbp-report-risk lang="de">
+  <template slot="additional-information">
+    <dbp-translated subscribe="lang">
+      <div slot="de">
+        Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei
+        <a target="_blank" href="mailto:your@email.address">your@email.address</a>!
+      </div>
+      <div slot="en">
+        If you are a suspected COVID-19 case or a case of illness, please report this immediately to
+        <a target="_blank" href="mailto:your@email.address">your@email.address</a>!
+      </div>
+    </dbp-translated>
+  </template>
+</dbp-report-risk>
+```

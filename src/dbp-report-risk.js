@@ -104,7 +104,7 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
                 <h2>${i18n.t('report-risk.title')}</h2>
                 <p class="">${i18n.t('report-risk.description')}</p>
-                <slot name="extra-description">
+                <slot name="additional-information">
                     <p>
                         ${i18n.t('report-risk.text')}
                     </p>
