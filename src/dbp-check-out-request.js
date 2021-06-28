@@ -417,7 +417,8 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
 
             @media only screen
-            and (max-device-width: 765px) {
+            and (orientation: portrait)
+            and (max-width:768px) {
                 .inline-block{    
                     width: 100%;
                 }

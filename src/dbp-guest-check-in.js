@@ -483,7 +483,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             @media only screen
             and (orientation: portrait)
-            and (max-device-width: 764.9px) {   
+            and (max-width:768px) {   
                 .inline-block{    
                     width: 100%;
                 }

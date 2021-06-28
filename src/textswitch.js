@@ -71,8 +71,10 @@ export class TextSwitch extends AdapterLitElement {
             .button:hover {
                 background-color: var(--dbp-secondary-bg-color) !important;
             }
-            
-             @media only screen and (max-device-width: 765px) {  
+
+            @media only screen
+            and (orientation: portrait)
+            and (max-width:768px) {  
                 div{
                     display: block;
                     white-space: inherit;

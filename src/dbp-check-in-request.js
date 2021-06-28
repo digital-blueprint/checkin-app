@@ -763,9 +763,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 margin-top: 2rem;
                 display: block;
             }
-            
-           
-            @media (max-width:767.9px) {
+
+
+            @media only screen
+            and (orientation: portrait)
+            and (max-width:768px) {
                 .inline-block{    
                     width: 100%;
                 }
