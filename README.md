@@ -134,3 +134,7 @@ Example:
   </template>
 </dbp-report-risk>
 ```
+
+### Design Note
+To ensure a uniform and responsive design these activities should occupy 100% width of the window when the activities width are under 768 px.
+
