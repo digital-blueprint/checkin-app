@@ -58,6 +58,17 @@ Note that you will need a Keycloak server along with a client id for the domain 
 - `search-hash-string`: String used in the qr code to determine if the qr code has the room information
     - example `search-hash-string="tugrazcheckin"`
 
+#### Slots
+
+You use templates tags to inject slots into the activity.
+These templates will be converted to div containers when the page is loaded and will not show up before that.
+
+##### additional-information
+
+The content of this slot will be shown below the other text and can be used to provide
+further information about the check-in process. For example a link to a page with the
+data protection declaration can be provided.
+
 ### dbp-check-out-request
 
 You can use this activity for checking-out from a location like this:

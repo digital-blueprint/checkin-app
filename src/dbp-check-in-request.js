@@ -839,16 +839,18 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
                 <h2>${i18n.t('check-in.title')}</h2>
                 <div>
-                <p class="">${i18n.t('check-in.description')}</p>
-                <p> ${i18n.t('check-in.how-to')}</p>
-                <p> 
-                    ${i18n.t('check-in.data-protection')} 
-                    <a href="${privacyURL}" title="${i18n.t('check-in.data-protection-link')}" target="_blank" class="int-link-internal"> 
-                        <span>${i18n.t('check-in.data-protection-link')} </span>
-                    </a>
-                </p>
+                    <p class="">${i18n.t('check-in.description')}</p>
+                    <slot name="additional-information">
+                        <!-- TODO: add default text -->
+                        <p> ${i18n.t('check-in.how-to')}</p>
+                        <p> 
+                            ${i18n.t('check-in.data-protection')} 
+                            <a href="${privacyURL}" title="${i18n.t('check-in.data-protection-link')}" target="_blank" class="int-link-internal"> 
+                                <span>${i18n.t('check-in.data-protection-link')} </span>
+                            </a>
+                        </p>
+                    </slot>
                 </div>
-            
                 <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
                     <dbp-textswitch id="text-switch" name1="qr-reader"
                         name2="manual"
