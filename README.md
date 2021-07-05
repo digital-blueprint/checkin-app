@@ -147,5 +147,19 @@ Example:
 ```
 
 ### Design Note
+
 To ensure a uniform and responsive design these activities should occupy 100% width of the window when the activities width are under 768 px.
 
+## Mandatory attributes
+
+If you are not using the `provider-root` attribute to "terminate" all provider attributes
+you need to manually add these attributes so that the topic will work properly:
+
+```html
+<dbp-check-in
+    auth
+    requested-login-status
+    analytics-event
+>
+</dbp-check-in>
+```
