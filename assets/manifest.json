@@ -4,50 +4,51 @@
   "start_url": "./dbp-check-in.html",
   "icons": [
     {
-      "src": "local/dbp-check-in/icon/pwa-72x72.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-72x72.png",
       "sizes": "72x72",
       "type": "image/png"
     },
     {
-      "src": "local/dbp-check-in/icon/pwa-96x96.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-96x96.png",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "local/dbp-check-in/icon/pwa-128x128.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-128x128.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "local/dbp-check-in/icon/pwa-144x144.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-144x144.png",
       "sizes": "144x144",
       "type": "image/png"
     },
     {
-      "src": "local/dbp-check-in/icon/pwa-152x152.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-152x152.png",
       "sizes": "152x152",
       "type": "image/png"
     },
     {
-      "src": "local/dbp-check-in/icon/pwa-192x192.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "local/dbp-check-in/icon/pwa-384x384.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-384x384.png",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
-      "src": "local/dbp-check-in/icon/pwa-256x256.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-256x256.png",
       "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "local/dbp-check-in/icon/pwa-512x512.png",
+      "src": "local/@dbp-topics/check-in/icon/pwa-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
+
   ],
   "background_color": "#FFFFFF",
   "display": "standalone",
