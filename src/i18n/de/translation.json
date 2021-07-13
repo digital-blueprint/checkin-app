@@ -4,8 +4,6 @@
     "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
     "qr-button-text": "Mit QR Code anmelden",
     "manually-button-text": "Ort manuell auswählen",
-    "checked-in-description": "Sie sind bis {{time}} am Ort {{room}} angemeldet.",
-    "checked-in-with-seat-description": "Sie sind bis {{time}} am Ort {{room}} am Sitzplatz {{seat}} angemeldet.",
     "checked-in-at": "{{clock}} Uhr am",
     "hash-false-title": "Raum existiert nicht!",
     "hash-false-body": "Der gescannte Raum existiert nicht, bitte wenden sie sich an den IT-Support.",
@@ -34,12 +32,9 @@
     "success-refresh-body": "Sie haben Ihre Anmeldung in {{room}} erfolgreich verlängert.",
     "refresh-failed-title": "Anmeldung verlängern fehlgeschlagen!",
     "refresh-failed-body": "Das Erneuern Ihrer Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es nochmal.",
-    "show-other-checkins": "Zeige alle Anmeldungen",
     "other-checkins-notification-title": "Weitere Anmeldungen gefunden!",
     "other-checkins-notification-body": "Sie haben eine weitere Anmeldung an einem anderen Ort. <a href=\"check-out-request\" title=\"\" target=\"_self\" class=\"int-link-internal\"><span>Zeige alle Anmeldungen</span></a>",
     "other-checkins-notification-body_plural": "Sie haben {{count}} weitere Anmeldungen an anderen Orten. <a href=\"check-out-request\" title=\"\" target=\"_self\" class=\"int-link-internal\"><span>Zeige alle Anmeldungen</span></a>",
-    "other-checkins": "Sie haben eine weitere Anmeldung.",
-    "other-checkins_plural": "Sie haben {{count}} weitere Anmeldungen.",
     "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz check-in \" finden sie hier:",
     "data-protection-link": "Zur Datenschutzerklärung",
     "how-to": "Scannen Sie den angebrachten QR-Code oder wählen Sie einen Ort manuell aus, um sich anzumelden. Im Risikofall werden Sie von der TU Graz per E-Mail kontaktiert.",
@@ -70,8 +65,6 @@
     "success-checkin-body": "Sie haben {{email}} erfolgreich angemeldet.",
     "no-time-title": "Zeitangabe fehlt!",
     "no-time-body": "Bitte geben Sie eine Zeit für die Abmeldung an.",
-    "past-time-title": "Zeitangabe in der Vergangenheit!",
-    "past-time-body": "Bitte geben Sie für die Abmeldung einen Zeitpunkt in der Zukunft ein.",
     "max-time-title": "Zeitangabe zu hoch!",
     "max-time-body": "Bitte geben Sie für die Abmeldung einen anderen Zeitpunkt ein.",
     "data-protection": "Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App \"TU Graz check-in\" zur Kenntnis gebracht habe.",
@@ -90,9 +83,5 @@
     "description": "Mit dieser Applikation erhalten Sie Informationen, wie Sie ein Infektionsrisiko melden können.",
     "text": "Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei Ihrer Meldestelle!"
   },
-  "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!",
-  "loading-msg-checkin": "Anmelden ...",
-  "loading-msg-checkout": "Abmelden ...",
-  "loading-msg-refresh": "Sitzung verlängern ...",
-  "loading-msg-guest-checkin": "Gast wird angemeldet ..."
+  "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
 }

@@ -13,8 +13,9 @@ export function createI18nInstance () {
  * Dummy function to mark strings as i18next keys for i18next-scanner
  *
  * @param {string} key
+ * @param {object} [options]
  * @returns {string} The key param as is
  */
-export function i18nKey(key) {
+export function i18nKey(key, options) {
     return key;
 }

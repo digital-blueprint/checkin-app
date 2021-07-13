@@ -149,7 +149,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         if (responseData.status === 201) {
             send({
                 "summary": i18n.t('check-out.checkout-success-title'),
-                "body":  i18n.t('check-out.checkout-success-body', {count: parseInt(this.seatNr), room: this.checkedInRoom}),
+                "body":  i18n.t('check-out.checkout-success-body', {room: this.checkedInRoom}),
                 "type": "success",
                 "timeout": 5,
             });
@@ -171,7 +171,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         } else {
             send({
                 "summary": i18n.t('check-out.checkout-failed-title'),
-                "body":  i18n.t('check-out.checkout-failed-body', {count: parseInt(this.seatNr), room: this.checkedInRoom}),
+                "body":  i18n.t('check-out.checkout-failed-body', {room: this.checkedInRoom}),
                 "type": "warning",
                 "timeout": 5,
             });
@@ -195,8 +195,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             return;
         this._checkInInProgress = true;
         try {
-            //this.loadingMsg = i18n.t('loading-msg-checkin');
-            //this.loading = true;
             let check = await this.decodeUrl(data);
             if (check) {
                 await this.doCheckIn();
@@ -280,7 +278,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     if (this.checkinCount > 1) {
                         this.status = ({
                             "summary": i18nKey('check-in.other-checkins-notification-title'),
-                            "body": i18nKey('check-in.other-checkins-notification-body'),
+                            "body": i18nKey('check-in.other-checkins-notification-body', {count: 0}),
                             "type": "warning",
                             "options": {count: this.checkinCount - 1},
                         });
@@ -357,7 +355,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         if (this.checkinCount > 1) {
                             this.status = ({
                                 "summary": i18nKey('check-in.other-checkins-notification-title'),
-                                "body": i18nKey('check-in.other-checkins-notification-body'),
+                                "body": i18nKey('check-in.other-checkins-notification-body', {count: 0}),
                                 "type": "warning",
                                 "options": {count: this.checkinCount - 1},
                             });

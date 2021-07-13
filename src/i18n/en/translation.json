@@ -4,8 +4,6 @@
     "description": "With this application you can check-in at a place.",
     "qr-button-text": "Check-in with QR Code",
     "manually-button-text": "Select location manually",
-    "checked-in-description": "You have been checked in the room {{room}} until {{time}}.",
-    "checked-in-with-seat-description": "You have been checked in the room {{room}} at seat {{seat}} until {{time}}.",
     "checked-in-at": "{{clock}} on ",
     "hash-false-title": "Room doesn't exist!",
     "hash-false-body": "The scanned room does not exist, please contact a TU Graz employee.",
@@ -34,12 +32,9 @@
     "success-refresh-body": "You have successfully extended your check-in in the {{room}}.",
     "refresh-failed-title": "Refresh check-in failed!",
     "refresh-failed-body": "Refreshing your check-in failed. Please try again.",
-    "show-other-checkins": "Show all check-ins",
     "other-checkins-notification-title": "More check-ins found!",
     "other-checkins-notification-body": "You have one more check-in at another location. <a href=\"check-out-request\" title=\"\" target=\"_self\" class=\"int-link-internal\"><span>Show all check-ins</span></a>",
     "other-checkins-notification-body_plural": "You have {{count}} more check-ins at other locations. <a href=\"check-out-request\" title=\"\" target=\"_self\" class=\"int-link-internal\"><span>Show all check-ins</span></a>",
-    "other-checkins": "You have one more check-in.",
-    "other-checkins_plural": "You have {{count}} more check-ins.",
     "data-protection": "What does TU Graz do with your data? You can find the data protection declaration for the app \"TU Graz check-in \" here:",
     "data-protection-link": "Privacy statement",
     "how-to": "Scan the attached QR code or manually select a location to check in. In the event of a risk, you will be contacted by TU Graz by email.",
@@ -70,8 +65,6 @@
     "success-checkin-body": "You have successfully checked in {{email}}.",
     "no-time-title": "Missing time!",
     "no-time-body": "Please enter a time for check-out.",
-    "past-time-title": "Time in the past!",
-    "past-time-body": "Please enter a time in the future for check-out.",
     "max-time-title": "Time too high!",
     "max-time-body": "Please enter a different time for check-out.",
     "data-protection": "With the check-in I confirm that I have made the data protection declaration for the \"TU Graz check-in\" app known to the guest I have checked in.",
@@ -90,9 +83,5 @@
     "description": "With this application, you will receive information on how to report a risk of infection.",
     "text": "If you are a suspected COVID-19 case or a case of illness, please report this immediately to your organization!"
   },
-  "error-login-message": "You need to be logged in to use this function!",
-  "loading-msg-checkin": "Check-in ...",
-  "loading-msg-checkout": "Check-out ...",
-  "loading-msg-refresh": "Refresh check-in ...",
-  "loading-msg-guest-checkin": "Check-in guest..."
+  "error-login-message": "You need to be logged in to use this function!"
 }

@@ -81,7 +81,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         if (locationHash.length === 0) {
             send({
                 "summary": i18n.t('check-out.checkout-failed-title'),
-                "body":  i18n.t('check-out.checkout-failed-body', {count: parseInt(seatNr), room: locationName}),
+                "body":  i18n.t('check-out.checkout-failed-body', {room: locationName}),
                 "type": "warning",
                 "timeout": 5,
             });
@@ -103,7 +103,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             if (response.status === 201) {
                 send({
                     "summary": i18n.t('check-out.checkout-success-title'),
-                    "body":  i18n.t('check-out.checkout-success-body', {count: parseInt(seatNr), room: locationName}),
+                    "body":  i18n.t('check-out.checkout-success-body', {room: locationName}),
                     "type": "success",
                     "timeout": 5,
                 });
@@ -112,7 +112,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             } else {
                 send({
                     "summary": i18n.t('check-out.checkout-failed-title'),
-                    "body":  i18n.t('check-out.checkout-failed-body', {count: parseInt(seatNr), room: locationName}),
+                    "body":  i18n.t('check-out.checkout-failed-body', {room: locationName}),
                     "type": "warning",
                     "timeout": 5,
                 });
