@@ -1,4 +1,4 @@
-import {createI18nInstance, i18nKey} from './i18n.js';
+import {createI18nInstance} from './i18n.js';
 import {css, html} from 'lit-element';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
@@ -13,6 +13,18 @@ import { send } from '@dbp-toolkit/common/notification';
 import {escapeRegExp, parseQRCode} from './utils.js';
 
 const i18n = createI18nInstance();
+
+
+/**
+ * Dummy function to mark strings as i18next keys for i18next-scanner
+ *
+ * @param {string} key
+ * @param {object} [options]
+ * @returns {string} The key param as is
+ */
+function i18nKey(key, options) {
+    return key;
+}
 
 
 class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
