@@ -2,17 +2,16 @@ import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import {css, html} from 'lit-element';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Icon, MiniSpinner} from "@dbp-toolkit/common";
-import {createI18nInstance} from "./i18n";
+import {createInstance} from "./i18n";
 import * as commonStyles from "@dbp-toolkit/common/styles";
 import {classMap} from "lit-html/directives/class-map";
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 
-const i18n = createI18nInstance();
-
 class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
-        this.lang = i18n.language;
+        this._i18n = createInstance();
+        this.lang = this._i18n.language;
     }
 
     static get scopedElements() {
@@ -37,7 +36,7 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "lang":
-                    i18n.changeLanguage(this.lang);
+                    this._i18n.changeLanguage(this.lang);
                     break;
             }
         });
@@ -89,6 +88,7 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
 
 
     render() {
+        const i18n = this._i18n;
         return html`
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
                 <span class="loading">

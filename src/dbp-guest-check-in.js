@@ -4,19 +4,18 @@ import * as commonUtils from '@dbp-toolkit/common/utils';
 import {LoadingButton, Icon, MiniSpinner} from "@dbp-toolkit/common";
 import {TextSwitch} from "./textswitch";
 import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
-import {createI18nInstance} from "./i18n";
+import {createInstance} from "./i18n";
 import * as commonStyles from "@dbp-toolkit/common/styles";
 import {classMap} from "lit-html/directives/class-map";
 import select2CSSPath from 'select2/dist/css/select2.min.css';
 import { send } from '@dbp-toolkit/common/notification';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 
-const i18n = createI18nInstance();
-
 class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
-        this.lang = i18n.language;
+        this._i18n = createInstance();
+        this.lang = this._i18n.language;
         this.entryPointUrl = '';
         this.isRoomSelected = false;
         this.roomCapacity = 0;
@@ -58,7 +57,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "lang":
-                    i18n.changeLanguage(this.lang);
+                    this._i18n.changeLanguage(this.lang);
                     break;
             }
         });
@@ -194,6 +193,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      */
     async doCheckIn() {
+        const i18n = this._i18n;
         if (!this.validateEmail(this.guestEmail)) {
             send({
                 "summary": i18n.t('guest-check-in.invalid-email-address-title'),
@@ -507,6 +507,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     render() {
         const select2CSS = commonUtils.getAssetURL(select2CSSPath);
         let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
+        const i18n = this._i18n;
         
         return html`
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">

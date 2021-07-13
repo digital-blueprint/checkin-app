@@ -1,4 +1,4 @@
-import {createI18nInstance} from './i18n.js';
+import {createInstance} from './i18n.js';
 import {css, html} from 'lit-element';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
@@ -11,9 +11,6 @@ import {QrCodeScanner} from '@dbp-toolkit/qr-code-scanner';
 import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
 import { send } from '@dbp-toolkit/common/notification';
 import {escapeRegExp, parseQRCode} from './utils.js';
-
-const i18n = createI18nInstance();
-
 
 /**
  * Dummy function to mark strings as i18next keys for i18next-scanner
@@ -30,7 +27,8 @@ function i18nKey(key, options) {
 class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
-        this.lang = i18n.language;
+        this._i18n = createInstance();
+        this.lang = this._i18n.language;
         this.entryPointUrl = '';
         this.locationHash = '';
         this.seatNr = '';
@@ -99,7 +97,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "lang":
-                    i18n.changeLanguage(this.lang);
+                    this._i18n.changeLanguage(this.lang);
                     break;
                 case "wrongQR":
                     setTimeout( function () {
@@ -152,6 +150,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     async doCheckOut(event) {
         let button = event.target;
         let responseData;
+        const i18n = this._i18n;
         button.start();
         try {
             responseData = await this.tryCheckOut(this.locationHash, this.seatNr);
@@ -242,6 +241,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param refresh
      */
     async doCheckIn(refresh=false) {
+        const i18n = this._i18n;
         if (this.roomCapacity === null && this.seatNr >= 0) {
             this.seatNr = '';
         }
@@ -476,6 +476,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @returns {boolean} false if data is invalid QR code data
      */
     async decodeUrl(data) {
+        const i18n = this._i18n;
         let location, seat;
         try {
             [location, seat] = parseQRCode(data, this.searchHashString);
@@ -585,6 +586,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @returns {string} readable date
      */
     getReadableDate(date) {
+        const i18n = this._i18n;
         let newDate = new Date(date);
         let month =  newDate.getMonth() + 1;
         let readable = i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear();
@@ -616,6 +618,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param locationName
      */
     async refreshSession(locationHash, seatNumber, locationName) {
+        const i18n = this._i18n;
         let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
         if (responseCheckout.status === 201) {
             await this.doCheckIn(true);
@@ -824,6 +827,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     render() {
         let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
         const matchRegexString = '.*' + escapeRegExp(this.searchHashString) + '.*';
+        const i18n = this._i18n;
 
         return html`
 

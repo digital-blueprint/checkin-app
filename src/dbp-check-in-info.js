@@ -3,17 +3,16 @@ import {css, html} from 'lit-element';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Button, Icon, MiniSpinner} from "@dbp-toolkit/common";
 import {TextSwitch} from "./textswitch";
-import {createI18nInstance} from "./i18n";
+import {createInstance} from "./i18n";
 import * as commonStyles from "@dbp-toolkit/common/styles";
 import {classMap} from "lit-html/directives/class-map";
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 
-const i18n = createI18nInstance();
-
 class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
-        this.lang = i18n.language;
+        this._i18n = createInstance();
+        this.lang = this._i18n.language;
         this.entryPointUrl = '';
     }
 
@@ -42,7 +41,7 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "lang":
-                    i18n.changeLanguage(this.lang);
+                    this._i18n.changeLanguage(this.lang);
                     break;
             }
         });
@@ -94,6 +93,7 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
 
 
     render() {
+        const i18n = this._i18n;
         return html`
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
                 <span class="loading">

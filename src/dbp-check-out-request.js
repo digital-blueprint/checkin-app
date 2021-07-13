@@ -1,4 +1,4 @@
-import {createI18nInstance} from './i18n.js';
+import {createInstance} from './i18n.js';
 import {css, html} from 'lit-element';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {classMap} from 'lit-html/directives/class-map.js';
@@ -9,12 +9,11 @@ import * as commonStyles from '@dbp-toolkit/common/styles';
 import {TextSwitch} from './textswitch.js';
 import {send} from "@dbp-toolkit/common/notification";
 
-const i18n = createI18nInstance();
-
 class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
-        this.lang = i18n.language;
+        this._i18n = createInstance();
+        this.lang = this._i18n.language;
         this.entryPointUrl = '';
         this.activeCheckins = [];
         this.loading = false;
@@ -49,7 +48,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "lang":
-                    i18n.changeLanguage(this.lang);
+                    this._i18n.changeLanguage(this.lang);
                     break;
             }
            
@@ -70,6 +69,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         let seatNr = '';
         let locationName = '';
         let button = event.target;
+        const i18n = this._i18n;
 
         if( entry !== undefined) { 
             locationHash = entry['location'] ? entry['location']['identifier'] : '';
@@ -211,6 +211,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param locationName
      */
     async refreshSession(locationHash, seatNumber, locationName) {
+        const i18n = this._i18n;
         let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
         if (responseCheckout.status === 201) {
             this.isSessionRefreshed = true;
@@ -241,7 +242,8 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param locationName
      */
     async doCheckIn(locationHash, seatNumber, locationName) {
-         let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
+        const i18n = this._i18n;
+        let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
         // When you are checked in
         if (responseData.status === 201) {
             if (this.isSessionRefreshed) {
@@ -357,6 +359,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @returns {string} readable date
      */
     getReadableDate(date) {
+        const i18n = this._i18n;
         let newDate = new Date(date);
         let month = newDate.getMonth() + 1;
         let readable = i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear();
@@ -445,6 +448,8 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     render() {
+        const i18n = this._i18n;
+
         if (this.isLoggedIn() && !this.isLoading() && !this._initialFetchDone && !this.initialCheckinsLoading) {
             this.getListOfActiveCheckins();
         }
