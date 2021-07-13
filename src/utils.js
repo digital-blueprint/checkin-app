@@ -113,7 +113,7 @@ export function parseQRCode(data, id) {
  * see: https://stackoverflow.com/a/6969486/1581487
  *
  * @param string
- * @returns {*}
+ * @returns {string} escaped
  */
 export function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string

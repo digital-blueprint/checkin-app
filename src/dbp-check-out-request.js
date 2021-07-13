@@ -126,7 +126,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
      * Parses the active checkins response
      *
      * @param response
-     *
      * @returns {Array} list
      */
     parseActiveCheckins(response) {
@@ -210,7 +209,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param locationHash
      * @param seatNumber
      * @param locationName
-     *
      */
     async refreshSession(locationHash, seatNumber, locationName) {
         let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
@@ -356,9 +354,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
      * Parse a incoming date to a readable date
      *
      * @param date
-     *
      * @returns {string} readable date
-     *
      */
     getReadableDate(date) {
         let newDate = new Date(date);

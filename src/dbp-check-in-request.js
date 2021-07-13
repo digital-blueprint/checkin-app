@@ -472,10 +472,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * Check if input QR code is already a invalid QR code
      *
      * @param data
-     *
      * @returns {boolean} true if data is valid not yet send QR code data
      * @returns {boolean} false if data is invalid QR code data
-     *
      */
     async decodeUrl(data) {
         let location, seat;
@@ -548,7 +546,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * correct values.
      *
      * @param event
-     *
      */
     processSelectedPlaceInformation(event) {
         this.isRoomSelected = true;
@@ -572,7 +569,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * Uses textswitch, switches container (manually room select or QR room select
      *
      * @param name
-     *
      */
     checkinSwitch(name) {
         if (name === "manual") {
@@ -586,9 +582,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * Parse a incoming date to a readable date
      *
      * @param date
-     *
      * @returns {string} readable date
-     *
      */
     getReadableDate(date) {
         let newDate = new Date(date);
@@ -620,7 +614,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param locationHash
      * @param seatNumber
      * @param locationName
-     *
      */
     async refreshSession(locationHash, seatNumber, locationName) {
         let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);

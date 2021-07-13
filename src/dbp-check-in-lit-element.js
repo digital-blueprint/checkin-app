@@ -73,9 +73,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      *
      * @param url
      * @param options
-     *
      * @returns {object} response (error or result)
-     *
      */
     async httpGetAsync(url, options) {
         let response = await fetch(url, options).then(result => {
@@ -92,7 +90,6 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      * Gets the active checkins of the current logged in user
      *
      * @returns {object} response
-     *
      */
     async getActiveCheckIns() {
         let response;
@@ -113,9 +110,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      *
      * @param  locationHash
      * @param seatNumber (optional)
-     *
      * @returns {object} response
-     *
      */
     async sendCheckOutRequest(locationHash, seatNumber) {
         let response;
@@ -143,9 +138,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      *
      * @param  locationHash
      * @param seatNumber (optional)
-     *
      * @returns {object} response
-     *
      */
     async sendCheckInRequest(locationHash, seatNumber) {
         let response;

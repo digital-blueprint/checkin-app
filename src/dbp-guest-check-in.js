@@ -71,7 +71,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * correct values.
      *
      * @param event
-     *
      */
     processSelectedPlaceInformation(event) {
         this.isRoomSelected = true;
@@ -142,9 +141,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param locationHash
      * @param seatNumber (optional)
      * @param endTime
-     *
      * @returns {object} response
-     *
      */
     async sendGuestCheckInRequest(guestEmail, locationHash, seatNumber, endTime) {
         let response;
