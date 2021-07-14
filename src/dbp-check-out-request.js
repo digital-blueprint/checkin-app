@@ -4,10 +4,11 @@ import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
-import {Icon, MiniSpinner, LoadingButton} from '@dbp-toolkit/common';
+import {Icon, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {TextSwitch} from './textswitch.js';
 import {send} from "@dbp-toolkit/common/notification";
+import * as CheckinStyles from './styles';
 
 class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -18,6 +19,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.activeCheckins = [];
         this.loading = false;
         this._initialFetchDone = false;
+
     }
 
     static get scopedElements() {
@@ -76,16 +78,8 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             seatNr = entry['seatNumber'];
             locationName = entry['location'] ? entry['location']['name'] : '';
         }
-        console.log('location hash: ', locationHash, ', seatnr: ', seatNr, ', location name: ', locationName);
     
         if (locationHash.length === 0) {
-            send({
-                "summary": i18n.t('check-out.checkout-failed-title'),
-                "body":  i18n.t('check-out.checkout-failed-body', {room: locationName}),
-                "type": "warning",
-                "timeout": 5,
-            });
-
             await this.sendErrorAnalyticsEvent('CheckOutRequest', 'CheckOutFailed', this.checkedInRoom);
         } else {
             let response;
@@ -109,17 +103,18 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 });
 
                 this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckOutSuccess', 'name': this.checkedInRoom});
+                return;
             } else {
-                send({
-                    "summary": i18n.t('check-out.checkout-failed-title'),
-                    "body":  i18n.t('check-out.checkout-failed-body', {room: locationName}),
-                    "type": "warning",
-                    "timeout": 5,
-                });
-
                 await this.sendErrorAnalyticsEvent('CheckOutRequest', 'CheckOutFailed', this.checkedInRoom, response);
             }
         }
+
+        send({
+            "summary": i18n.t('check-out.checkout-failed-title'),
+            "body":  i18n.t('check-out.checkout-failed-body', {room: locationName}),
+            "type": "warning",
+            "timeout": 5,
+        });
     }
 
     /**
@@ -195,178 +190,14 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         button.start();
         this.loading = true;
         try {
-            await this.refreshSession(locationHash, seatNr, locationName);
+            await this.refreshSession(locationHash, seatNr, locationName, 'CheckOutRequest');
+            await this.getListOfActiveCheckins();
         } finally {
             button.stop();
             this.loading = false;
         }
     }
 
-    /**
-     * Do a refresh: sends a checkout request, if this is successfully init a checkin
-     * sends an error notification if something wen wrong
-     *
-     * @param locationHash
-     * @param seatNumber
-     * @param locationName
-     */
-    async refreshSession(locationHash, seatNumber, locationName) {
-        const i18n = this._i18n;
-        let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
-        if (responseCheckout.status === 201) {
-            this.isSessionRefreshed = true;
-            await this.doCheckIn(locationHash, seatNumber, locationName);
-            await this.getListOfActiveCheckins();
-            return;
-        }
-        send({
-            "summary": i18n.t('check-in.refresh-failed-title'),
-            "body":  i18n.t('check-in.refresh-failed-body', {room: locationName}),
-            "type": "warning",
-            "timeout": 5,
-        });
-
-        await this.sendErrorAnalyticsEvent('CheckOutRequest', 'RefreshFailed', locationName, responseCheckout);
-    }
-
-    /**
-     * Sends a Checkin request and do error handling and parsing
-     * Include message for user when it worked or not
-     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
-     *
-     * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
-     *                  no seat number, already checkedin, no permissions, any other errors, location hash empty
-     *
-     * @param locationHash
-     * @param seatNumber
-     * @param locationName
-     */
-    async doCheckIn(locationHash, seatNumber, locationName) {
-        const i18n = this._i18n;
-        let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
-        // When you are checked in
-        if (responseData.status === 201) {
-            if (this.isSessionRefreshed) {
-                this.isSessionRefreshed = false;
-                send({
-                    "summary": i18n.t('check-in.success-refresh-title', {room: locationName}),
-                    "body": i18n.t('check-in.success-refresh-body', {room: locationName}),
-                    "type": "success",
-                    "timeout": 5,
-                });
-
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'RefreshSuccess', 'name': locationName});
-            } else {
-                send({
-                    "summary": i18n.t('check-in.success-checkin-title', {room: locationName}),
-                    "body": i18n.t('check-in.success-checkin-body', {room: locationName}),
-                    "type": "success",
-                    "timeout": 5,
-                });
-
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInSuccess', 'name': locationName});
-            }
-
-        // Invalid Input
-        } else if (responseData.status === 400) {
-            send({
-                "summary": i18n.t('check-in.invalid-input-title'),
-                "body":  i18n.t('check-in.invalid-input-body'),
-                "type": "danger",
-                "timeout": 5,
-            });
-            console.log("error: Invalid Input.");
-
-            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed400', 'name': locationName});
-        // Error if room not exists
-        } else if (responseData.status === 404) {
-            send({
-                "summary": i18n.t('check-in.hash-false-title'),
-                "body":  i18n.t('check-in.hash-false-body'),
-                "type": "danger",
-                "timeout": 5,
-            });
-
-            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed404', 'name': locationName});
-        // Other errors
-        } else if (responseData.status === 424) {
-            let errorBody = await responseData.clone().json();
-            let errorDescription = errorBody["hydra:description"];
-            console.log("err: ", errorDescription);
-            console.log("err: ", errorBody);
-
-            await this.sendErrorAnalyticsEvent('CheckOutRequest', 'CheckInFailed424', locationName, responseData);
-
-            // Error: invalid seat number
-            if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
-                send({
-                    "summary": i18n.t('check-in.invalid-seatnr-title'),
-                    "body":  i18n.t('check-in.invalid-seatnr-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-                console.log("error: Invalid seat nr");
-            }
-
-            // Error: no seat numbers
-            else if( errorDescription === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
-                send({
-                    "summary": i18n.t('check-in.no-seatnr-title'),
-                    "body":  i18n.t('check-in.no-seatnr-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-                console.log("error: Room has no seat nr");
-            }
-
-            else {
-                send({
-                    "summary": i18n.t('check-in.error-title'),
-                    "body": i18n.t('check-in.error-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-            }
-
-        }
-        // Error if you don't have permissions
-        else if (responseData.status === 403) {
-            send({
-                "summary": i18n.t('check-in.no-permission-title'),
-                "body":  i18n.t('check-in.no-permission-body'),
-                "type": "danger",
-                "timeout": 5,
-            });
-
-            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed403', 'name': locationName});
-        // Error: something else doesn't work
-        } else{
-            send({
-                "summary": i18n.t('check-in.error-title'),
-                "body": i18n.t('check-in.error-body'),
-                "type": "danger",
-                "timeout": 5,
-            });
-
-            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckInFailed', 'name': locationName});
-        }
-    }
-
-    /**
-     * Parse a incoming date to a readable date
-     *
-     * @param date
-     * @returns {string} readable date
-     */
-    getReadableDate(date) {
-        const i18n = this._i18n;
-        let newDate = new Date(date);
-        let month = newDate.getMonth() + 1;
-        let readable = i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear();
-        return readable;
-        //return newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear();
-        //return newDate.getDate() + "." + month + "." + newDate.getFullYear() + " " + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2);
-    }
 
     static get styles() {
         // language=css
@@ -375,14 +206,9 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getButtonCSS()}
             ${commonStyles.getNotificationCSS()}
+            ${CheckinStyles.getCheckinCss()}
 
-            h2:first-child {
-                margin-top: 0;
-            }
-
-            h2 {
-                margin-bottom: 10px;
-            }
+           
 
             .checkins {
                 display: grid;
@@ -407,20 +233,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 padding-top: 2rem;
                 border-top: 1px solid black;
             }
-            
-            .loading {
-                text-align: center;
-                display: flex;
-                padding: 30px;
-            }
-
 
             @media only screen
             and (orientation: portrait)
             and (max-width:768px) {
-                .inline-block{    
-                    width: 100%;
-                }
+                
 
                 .checkins {
                     display: block;

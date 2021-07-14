@@ -10,6 +10,7 @@ import {classMap} from "lit-html/directives/class-map";
 import select2CSSPath from 'select2/dist/css/select2.min.css';
 import { send } from '@dbp-toolkit/common/notification';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
+import * as CheckinStyles from './styles';
 
 class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -377,24 +378,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getThemeCSS()}
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getNotificationCSS()}
-
-            h2:first-child {
-                margin-top: 0;
-            }
-
-            h2 {
-                margin-bottom: 10px;
-                margin-top: 0px;
-            }
+            ${CheckinStyles.getCheckinCss()}
         
-            .border {
-                margin-top: 2rem;
-                border-top: 1px solid black;
-            }
 
-            .container {
-                margin-top: 2rem;
-            }
 
             .field {
                 margin-bottom: 1rem!important;
@@ -480,10 +466,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             @media only screen
             and (orientation: portrait)
-            and (max-width:768px) {   
-                .inline-block{    
-                    width: 100%;
-                }
+            and (max-width:768px) {
 
                 .btn {
                     display: flex;

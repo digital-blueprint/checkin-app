@@ -6,6 +6,7 @@ import {createInstance} from "./i18n";
 import * as commonStyles from "@dbp-toolkit/common/styles";
 import {classMap} from "lit-html/directives/class-map";
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
+import * as CheckinStyles from './styles';
 
 class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -50,38 +51,11 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getButtonCSS()}
             ${commonStyles.getNotificationCSS()}
-
-            h2:first-child {
-                margin-top: 0;
-            }
-
-            h2 {
-                margin-bottom: 10px;
-                margin-top: 0px;
-            }
-
-            .border {
-                margin-top: 2rem;
-                border-top: 1px solid black;
-            }
-
-            .container {
-                margin-top: 2rem;
-            }
+            ${CheckinStyles.getCheckinCss()}
+            
 
             .loading {
-                text-align: center;
-                display: flex;
                 justify-content: center;
-                padding: 30px;
-            }
-
-            @media only screen
-            and (orientation: portrait)
-            and (max-width:768px) {   
-                .inline-block{    
-                    width: 100%;
-                }
             }
         `;
     }

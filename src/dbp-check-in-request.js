@@ -11,17 +11,9 @@ import {QrCodeScanner} from '@dbp-toolkit/qr-code-scanner';
 import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
 import { send } from '@dbp-toolkit/common/notification';
 import {escapeRegExp, parseQRCode} from './utils.js';
+import * as CheckinStyles from './styles';
 
-/**
- * Dummy function to mark strings as i18next keys for i18next-scanner
- *
- * @param {string} key
- * @param {object} [options]
- * @returns {string} The key param as is
- */
-function i18nKey(key, options) {
-    return key;
-}
+
 
 
 class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
@@ -117,7 +109,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     }
                     break;
             }
-            console.log("######", propName);
+            //console.log("######", propName);
         });
 
         super.update(changedProperties);
@@ -126,12 +118,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     async tryCheckOut(locationHash, seat) {
         let count_trys = 0;
         let responseData;
-        while (count_trys != 5) {
+        while (count_trys !== 5) {
 
             let time = Math.pow(5, count_trys);
             responseData = await this.sendCheckOutRequest(locationHash, seat);
             console.debug("times", time);
-            if (responseData.status == 201) {
+            if (responseData.status === 201) {
                 return responseData;
             }
             await new Promise(r => setTimeout(r, time));
@@ -208,7 +200,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         try {
             let check = await this.decodeUrl(data);
             if (check) {
-                await this.doCheckIn();
+                // set seatnumber to '' if no seat is needed for the specific room
+                if (this.roomCapacity === null && this.seatNr >= 0) {
+                    this.seatNr = '';
+                }
+                await this.doCheckIn(this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', false, true);
             }
         } finally {
             this._checkInInProgress = false;
@@ -224,229 +220,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
         try {
             button.start();
-            await this.doCheckIn();
+            // set seatnumber to '' if no seat is needed for the specific room
+            if (this.roomCapacity === null && this.seatNr >= 0) {
+                this.seatNr = '';
+            }
+            await this.doCheckIn(this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', false, true);
         } finally {
             button.stop();
-        }
-    }
-
-    /**
-     * Sends a Checkin request and do error handling and parsing
-     * Include message for user when it worked or not
-     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
-     *
-     * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
-     * no seat number, already checkedin, no permissions, any other errors, location hash empty
-     *
-     * @param refresh
-     */
-    async doCheckIn(refresh=false) {
-        const i18n = this._i18n;
-        if (this.roomCapacity === null && this.seatNr >= 0) {
-            this.seatNr = '';
-        }
-
-        if (this.locationHash.length > 0) {
-            let responseData = await this.sendCheckInRequest(this.locationHash, this.seatNr);
-
-            // When you are checked in
-            if (responseData.status === 201) {
-                let responseBody = await responseData.clone().json();
-                //console.log("----------", responseBody);
-                this.checkedInRoom = responseBody.location.name;
-                this.checkedInSeat = responseBody.seatNumber;
-                this.checkedInEndTime = responseBody.endTime;
-                this.identifier = responseBody['identifier'];
-                this.agent = responseBody['agent'];
-                this.stopQRReader();
-                this.isCheckedIn = true;
-                this._("#text-switch")._active = "";
-
-                if (refresh) {
-                    send({
-                        "summary": i18n.t('check-in.success-refresh-title', {room: this.checkedInRoom}),
-                        "body": i18n.t('check-in.success-refresh-body', {room: this.checkedInRoom}),
-                        "type": "success",
-                        "timeout": 5,
-                    });
-
-                    this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'RefreshSuccess', 'name': this.checkedInRoom});
-                } else {
-                    send({
-                        "summary": i18n.t('check-in.success-checkin-title', {room: this.checkedInRoom}),
-                        "body": (this.seatNr !== '' ? i18n.t('check-in.success-checkin-seat-body', {room: this.checkedInRoom, seat: this.seatNr}) : i18n.t('check-in.success-checkin-body', {room: this.checkedInRoom})),
-                        "type": "success",
-                        "timeout": 5,
-                    });
-
-                    this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInSuccess', 'name': this.checkedInRoom});
-                }
-                let getActiveCheckInsResponse = await this.getActiveCheckIns();
-                if ( getActiveCheckInsResponse.status === 200) {
-                    let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
-                    let checkInsArray = getActiveCheckInsBody["hydra:member"];
-                    this.checkinCount = checkInsArray.length;
-
-                    if (this.checkinCount > 1) {
-                        this.status = ({
-                            "summary": i18nKey('check-in.other-checkins-notification-title'),
-                            "body": i18nKey('check-in.other-checkins-notification-body', {count: 0}),
-                            "type": "warning",
-                            "options": {count: this.checkinCount - 1},
-                        });
-
-                    }
-                }
-
-            // Invalid Input
-            } else if (responseData.status === 400) {
-                send({
-                    "summary": i18n.t('check-in.invalid-input-title'),
-                    "body":  i18n.t('check-in.invalid-input-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-
-                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed400', 'name': this.checkedInRoom});
-            // Error if room not exists
-            } else if (responseData.status === 404) {
-                send({
-                    "summary": i18n.t('check-in.hash-false-title'),
-                    "body":  i18n.t('check-in.hash-false-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-
-                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed404', 'name': this.checkedInRoom});
-            // Other errors
-            } else if (responseData.status === 424) {
-                let errorBody = await responseData.clone().json();
-                let errorDescription = errorBody["hydra:description"];
-                console.log("err: ", errorDescription);
-                console.log("err: ", errorBody);
-
-                await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckInFailed424', this.checkedInRoom, responseData);
-
-                // Error: invalid seat number
-                if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
-                    send({
-                        "summary": i18n.t('check-in.invalid-seatnr-title'),
-                        "body":  i18n.t('check-in.invalid-seatnr-body'),
-                        "type": "danger",
-                        "timeout": 5,
-                    });
-                    console.log("error: Invalid seat nr");
-                    this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-                }
-
-                // Error: no seat numbers
-                else if( errorDescription === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
-                    send({
-                        "summary": i18n.t('check-in.no-seatnr-title'),
-                        "body":  i18n.t('check-in.no-seatnr-body'),
-                        "type": "danger",
-                        "timeout": 5,
-                    });
-                    console.log("error: Room has no seat nr");
-                    this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-                }
-
-                // Error: you are already checked in here
-                else if( errorDescription === 'There are already check-ins at the location with provided seat for the current user!' ) {
-                    let getActiveCheckInsResponse = await this.getActiveCheckIns();
-                    if ( getActiveCheckInsResponse.status === 200) {
-                        let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
-                        let checkInsArray = getActiveCheckInsBody["hydra:member"];
-                        this.checkinCount = checkInsArray.length;
-                        let atActualRoomCheckIn = checkInsArray.filter(x => (x.location.identifier === this.locationHash && x.seatNumber === (this.seatNr === '' ? null : parseInt(this.seatNr) ) ));
-
-                        if (this.checkinCount > 1) {
-                            this.status = ({
-                                "summary": i18nKey('check-in.other-checkins-notification-title'),
-                                "body": i18nKey('check-in.other-checkins-notification-body', {count: 0}),
-                                "type": "warning",
-                                "options": {count: this.checkinCount - 1},
-                            });
-
-                        }
-
-                        if (atActualRoomCheckIn.length === 1) {
-                            this.checkedInRoom = atActualRoomCheckIn[0].location.name;
-                            this.checkedInEndTime = atActualRoomCheckIn[0].endTime;
-                            this.checkedInSeat = atActualRoomCheckIn[0].seatNumber;
-                            this.stopQRReader();
-                            this.isCheckedIn = true;
-                            this._("#text-switch")._active = "";
-                        } else {
-                            send({
-                                "summary": i18n.t('check-in.error-title'),
-                                "body": i18n.t('check-in.error-body'),
-                                "type": "danger",
-                                "timeout": 5,
-                            });
-                            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-                            return;
-                        }
-                    } else {
-                        send({
-                            "summary": i18n.t('check-in.error-title'),
-                            "body": i18n.t('check-in.error-body'),
-                            "type": "danger",
-                            "timeout": 5,
-                        });
-                        this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-                        return;
-                    }
-
-                    send({
-                        "summary": i18n.t('check-in.already-checkin-title'),
-                        "body":  i18n.t('check-in.already-checkin-body'),
-                        "type": "warning",
-                        "timeout": 5,
-                    });
-                }
-
-            // Error if you don't have permissions
-            } else if (responseData.status === 403) {
-                send({
-                    "summary": i18n.t('check-in.no-permission-title'),
-                    "body":  i18n.t('check-in.no-permission-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-
-                await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckInFailed403', this.checkedInRoom, responseData);
-            } else {
-                // Error: something else doesn't work
-                send({
-                    "summary": i18n.t('check-in.error-title'),
-                    "body": i18n.t('check-in.error-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-
-                this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailed', 'name': this.checkedInRoom});
-            }
-
-        // Error: no location hash detected
-        } else {
-            send({
-                "summary": i18n.t('check-in.error-title'),
-                "body": i18n.t('check-in.error-body'),
-                "type": "danger",
-                "timeout": 5,
-            });
-
-            this.wrongHash.push(this.locationHash + '-' + this.seatNr);
-
-            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckInFailedNoLocationHash'});
         }
     }
 
@@ -459,7 +239,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this._("#qr-scanner").stopScan = true;
             this.showManuallyContainer = false;
             this.showQrContainer = false;
-
         } else {
             console.log('error: qr scanner is not available. Is it already stopped?');
         }
@@ -503,11 +282,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
         let locationParam = this.locationHash + '-' + this.seatNr;
         let checkAlreadySend = await this.wrongHash.includes(locationParam);
-        if (checkAlreadySend) {
-            return false;
-        }
-
-        return true;
+        return !checkAlreadySend;
     }
 
     /**
@@ -536,7 +311,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         const that = this;
         this._('#manual-select').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-               that.doCheckIn();
+                // set seatnumber to '' if no seat is needed for the specific room
+                if (this.roomCapacity === null && this.seatNr >= 0) {
+                    this.seatNr = '';
+                }
+               that.doCheckIn(this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', false, true);
             }
         });
     }
@@ -580,21 +359,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * Parse a incoming date to a readable date
-     *
-     * @param date
-     * @returns {string} readable date
-     */
-    getReadableDate(date) {
-        const i18n = this._i18n;
-        let newDate = new Date(date);
-        let month =  newDate.getMonth() + 1;
-        let readable = i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear();
-        //let readable = newDate.getDate() + "." + month + "." + newDate.getFullYear() + " " + i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)});
-        return readable;
-    }
-
-    /**
      * Init a session refresh
      *
      * @param event
@@ -603,36 +367,13 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         let button = event.target;
         button.start();
         try {
-            await this.refreshSession(this.locationHash, this.seatNr, this.checkedInRoom);
+            await this.refreshSession(this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', true);
         } finally {
             button.stop();
         }
     }
 
-    /**
-     * Do a refresh: sends a checkout request, if this is successfully init a checkin
-     * sends an error notification if something wen wrong
-     *
-     * @param locationHash
-     * @param seatNumber
-     * @param locationName
-     */
-    async refreshSession(locationHash, seatNumber, locationName) {
-        const i18n = this._i18n;
-        let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
-        if (responseCheckout.status === 201) {
-            await this.doCheckIn(true);
-            return;
-        }
-        send({
-            "summary": i18n.t('check-in.refresh-failed-title'),
-            "body":  i18n.t('check-in.refresh-failed-body', {room: locationName}),
-            "type": "warning",
-            "timeout": 5,
-        });
 
-        await this.sendErrorAnalyticsEvent('CheckInRequest', 'RefreshFailed', locationName, responseCheckout);
-    }
 
     static get styles() {
         // language=css
@@ -640,15 +381,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getThemeCSS()}
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getNotificationCSS()}
-
-            h2:first-child {
-                margin-top: 0;
-            }
-
-            h2 {
-                margin-bottom: 10px;
-                margin-top: 0px;
-            }
+            ${CheckinStyles.getCheckinCss()}
+            
 
             #btn-container {
                 margin-top: 1.5rem;
@@ -701,11 +435,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
               -moz-appearance: textfield;
             }
             
-            .loading{
-                text-align: center;
-                display: flex;
-                padding: 30px;
-            }
+
             
             .int-link-internal{
                 transition: background-color 0.15s, color 0.15s;
@@ -774,10 +504,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             @media only screen
             and (orientation: portrait)
             and (max-width:768px) {
-                .inline-block{    
-                    width: 100%;
-                }
-                
+
                 .header {
                     margin-bottom: 0.5rem;
                 }

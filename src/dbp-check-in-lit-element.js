@@ -1,5 +1,17 @@
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
 import {getStackTrace} from "@dbp-toolkit/common/error";
+import {send} from "@dbp-toolkit/common/notification";
+
+/**
+ * Dummy function to mark strings as i18next keys for i18next-scanner
+ *
+ * @param {string} key
+ * @param {object} [options]
+ * @returns {string} The key param as is
+ */
+function i18nKey(key, options) {
+    return key;
+}
 
 export default class DBPCheckInLitElement extends DBPLitElement {
     constructor() {
@@ -141,8 +153,6 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      * @returns {object} response
      */
     async sendCheckInRequest(locationHash, seatNumber) {
-        let response;
-
         let body = {
             "location": '/check_in_places/' + locationHash,
             "seatNumber": parseInt(seatNumber),
@@ -157,9 +167,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             body: JSON.stringify(body)
         };
 
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
-
-        return response;
+        return await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
     }
 
     /**
@@ -193,4 +201,234 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         // console.log("sendErrorEvent", data);
         this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': action, 'name': JSON.stringify(data)});
     }
+
+
+    /**
+     * Sends a Checkin request and do error handling and parsing
+     * Include message for user when it worked or not
+     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
+     *
+     * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
+     * no seat number, already checkedin, no permissions, any other errors, location hash empty
+     *
+     * @param locationHash
+     * @param seatNumber
+     * @param locationName
+     * @param category
+     * @param refresh (default = false)
+     * @param setAdditionals (default = false)
+     */
+    async doCheckIn(locationHash, seatNumber, locationName, category, refresh=false, setAdditionals = false) {
+        const i18n = this._i18n;
+
+        // Error: no location hash detected
+        if (locationHash.length <= 0) {
+            this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), locationHash, seatNumber);
+            this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInFailedNoLocationHash'});
+            return;
+        }
+
+        let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
+        let status = responseData.status;
+        let responseBody = await responseData.clone().json();
+
+
+        switch (status) {
+            case 201:
+                console.log("201");
+                if (setAdditionals) {
+                    this.checkedInRoom = responseBody.location.name;
+                    this.checkedInSeat = responseBody.seatNumber;
+                    this.checkedInEndTime = responseBody.endTime;
+                    this.identifier = responseBody['identifier'];
+                    this.agent = responseBody['agent'];
+                    this.stopQRReader();
+                    this.isCheckedIn = true;
+                    this._("#text-switch")._active = "";
+                }
+
+                if (refresh) {
+                    send({
+                        "summary": i18n.t('check-in.success-refresh-title', {room: locationName}),
+                        "body": i18n.t('check-in.success-refresh-body', {room: locationName}),
+                        "type": "success",
+                        "timeout": 5,
+                    });
+
+                    this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'RefreshSuccess', 'name': locationName});
+                } else {
+                    send({
+                        "summary": i18n.t('check-in.success-checkin-title', {room: locationName}),
+                        "body": (this.seatNr !== '' ? i18n.t('check-in.success-checkin-seat-body', {room: locationName, seat: seatNumber}) : i18n.t('check-in.success-checkin-body', {room: locationName})),
+                        "type": "success",
+                        "timeout": 5,
+                    });
+
+                    this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInSuccess', 'name': locationName});
+                }
+                await this.checkOtherCheckins();
+                break;
+
+            // Invalid Input
+            case 400:
+                console.log("400");
+
+                this.saveWrongHashAndNotify(i18n.t('check-in.invalid-input-title'), i18n.t('check-in.invalid-input-body'), locationHash, seatNumber);
+                this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInFailed400', 'name': locationName});
+                break;
+
+            // No permissions
+            case 403:
+                console.log("403");
+
+                this.saveWrongHashAndNotify(i18n.t('check-in.no-permission-title'), i18n.t('check-in.no-permission-body'), locationHash, seatNumber);
+                await this.sendErrorAnalyticsEvent(category, 'CheckInFailed403', locationName, responseData);
+                break;
+
+            // Other errors
+            case 404:
+                console.log("404");
+
+                this.saveWrongHashAndNotify(i18n.t('check-in.hash-false-title'), i18n.t('check-in.hash-false-body'), locationHash, seatNumber);
+                this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInFailed404', 'name': locationName});
+                break;
+
+            // Can't checkin at provided place
+            case 424:
+                console.log("424");
+
+                await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckInFailed424', locationName, responseData);
+                await this.checkErrorDescription(responseBody["hydra:description"], locationHash, seatNumber);
+                break;
+
+            // Error: something else doesn't work
+            default:
+                this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), locationHash, seatNumber);
+                this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInFailed', 'name': locationName});
+                break;
+        }
+    }
+
+    async checkErrorDescription(errorDescription, locationHash, seatNumber) {
+        const i18n = this._i18n;
+        console.log(errorDescription);
+        switch (errorDescription) {
+            // Error: invalid seat number
+            case 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!':
+            case 'seatNumber too low!':
+                this.saveWrongHashAndNotify(i18n.t('check-in.invalid-seatnr-title'), i18n.t('check-in.invalid-seatnr-body'), locationHash, seatNumber);
+                break;
+
+            // Error: no seat numbers at provided room
+            case 'Location doesn\'t have any seats activated, you cannot set a seatNumber!':
+                this.saveWrongHashAndNotify(i18n.t('check-in.no-seatnr-title'), i18n.t('check-in.no-seatnr-body'), locationHash, seatNumber);
+                break;
+
+            // Error: you are already checked in here
+            case 'There are already check-ins at the location with provided seat for the current user!':
+                await this.checkOtherCheckins(locationHash, seatNumber, true);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    async checkOtherCheckins(locationHash, seatNumber, checkOtherSeats = false) {
+        const i18n = this._i18n;
+
+        let getActiveCheckInsResponse = await this.getActiveCheckIns();
+
+        if ( getActiveCheckInsResponse.status !== 200) {
+            this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), locationHash, seatNumber);
+            return;
+        }
+
+        let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
+        let checkInsArray = getActiveCheckInsBody["hydra:member"];
+        this.checkinCount = checkInsArray.length;
+        if (this.checkinCount > 1) {
+            this.status = ({
+                "summary": i18nKey('check-in.other-checkins-notification-title'),
+                "body": i18nKey('check-in.other-checkins-notification-body', {count: 0}),
+                "type": "warning",
+                "options": {count: this.checkinCount - 1},
+            });
+        }
+
+        if (!checkOtherSeats)
+            return;
+
+        let atActualRoomCheckIn = checkInsArray.filter(x => (x.location.identifier === this.locationHash && x.seatNumber === (seatNumber === '' ? null : parseInt(seatNumber) ) ));
+        if (atActualRoomCheckIn.length !== 1) {
+            this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), locationHash, seatNumber);
+            return;
+        }
+
+        this.checkedInRoom = atActualRoomCheckIn[0].location.name;
+        this.checkedInEndTime = atActualRoomCheckIn[0].endTime;
+        this.checkedInSeat = atActualRoomCheckIn[0].seatNumber;
+        this.stopQRReader();
+        this.isCheckedIn = true;
+        this._("#text-switch")._active = "";
+
+        send({
+            "summary": i18n.t('check-in.already-checkin-title'),
+            "body":  i18n.t('check-in.already-checkin-body'),
+            "type": "warning",
+            "timeout": 5,
+        });
+    }
+
+    saveWrongHashAndNotify(title, body, locationHash, seatNumber) {
+        send({
+            "summary": title,
+            "body": body,
+            "type": "danger",
+            "timeout": 5,
+        });
+        this.wrongHash.push(locationHash + '-' + seatNumber);
+    }
+
+    /**
+     * Do a refresh: sends a checkout request, if this is successfully init a checkin
+     * sends an error notification if something wen wrong
+     *
+     * @param locationHash
+     * @param seatNumber
+     * @param locationName
+     * @param locationName
+     * @param setAdditionals (default = false)
+     */
+    async refreshSession(locationHash, seatNumber, locationName, category, setAdditionals = false) {
+        const i18n = this._i18n;
+        let responseCheckout = await this.sendCheckOutRequest(locationHash, seatNumber);
+        if (responseCheckout.status === 201) {
+            await this.doCheckIn(locationHash, seatNumber, locationName, category, true, setAdditionals);
+            return;
+        }
+        send({
+            "summary": i18n.t('check-in.refresh-failed-title'),
+            "body":  i18n.t('check-in.refresh-failed-body', {room: locationName}),
+            "type": "warning",
+            "timeout": 5,
+        });
+
+        await this.sendErrorAnalyticsEvent('CheckInRequest', 'RefreshFailed', locationName, responseCheckout);
+    }
+
+    /**
+     * Parse a incoming date to a readable date
+     *
+     * @param date
+     * @returns {string} readable date
+     */
+    getReadableDate(date) {
+        const i18n = this._i18n;
+        let newDate = new Date(date);
+        let month = newDate.getMonth() + 1;
+        return i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear();
+    }
+
+
 }
