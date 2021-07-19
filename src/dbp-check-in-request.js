@@ -215,7 +215,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     async doCheckInManually(event) {
         let button = event.target;
-        if(button.disabled) {
+        if (button.disabled) {
             return;
         }
         try {
@@ -292,7 +292,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     showQrReader() {
         this.showQrContainer = true;
         this.showManuallyContainer = false;
-        if( this._('#qr-scanner') ) {
+        if ( this._('#qr-scanner') ) {
             this._('#qr-scanner').stopScan = false;
         }
     }

@@ -235,7 +235,6 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
         switch (status) {
             case 201:
-                console.log("201");
                 if (setAdditionals) {
                     this.checkedInRoom = responseBody.location.name;
                     this.checkedInSeat = responseBody.seatNumber;
@@ -245,6 +244,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     this.stopQRReader();
                     this.isCheckedIn = true;
                     this._("#text-switch")._active = "";
+                    locationName = responseBody.location.name;
                 }
 
                 if (refresh) {
@@ -259,7 +259,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                 } else {
                     send({
                         "summary": i18n.t('check-in.success-checkin-title', {room: locationName}),
-                        "body": (this.seatNr !== '' ? i18n.t('check-in.success-checkin-seat-body', {room: locationName, seat: seatNumber}) : i18n.t('check-in.success-checkin-body', {room: locationName})),
+                        "body": (seatNumber !== '' ? i18n.t('check-in.success-checkin-seat-body', {room: locationName, seat: seatNumber}) : i18n.t('check-in.success-checkin-body', {room: locationName})),
                         "type": "success",
                         "timeout": 5,
                     });
@@ -271,32 +271,24 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
             // Invalid Input
             case 400:
-                console.log("400");
-
                 this.saveWrongHashAndNotify(i18n.t('check-in.invalid-input-title'), i18n.t('check-in.invalid-input-body'), locationHash, seatNumber);
                 this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInFailed400', 'name': locationName});
                 break;
 
             // No permissions
             case 403:
-                console.log("403");
-
                 this.saveWrongHashAndNotify(i18n.t('check-in.no-permission-title'), i18n.t('check-in.no-permission-body'), locationHash, seatNumber);
                 await this.sendErrorAnalyticsEvent(category, 'CheckInFailed403', locationName, responseData);
                 break;
 
             // Other errors
             case 404:
-                console.log("404");
-
                 this.saveWrongHashAndNotify(i18n.t('check-in.hash-false-title'), i18n.t('check-in.hash-false-body'), locationHash, seatNumber);
                 this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInFailed404', 'name': locationName});
                 break;
 
             // Can't checkin at provided place
             case 424:
-                console.log("424");
-
                 await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckInFailed424', locationName, responseData);
                 await this.checkErrorDescription(responseBody["hydra:description"], locationHash, seatNumber);
                 break;

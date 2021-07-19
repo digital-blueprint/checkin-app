@@ -73,7 +73,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         let button = event.target;
         const i18n = this._i18n;
 
-        if( entry !== undefined) { 
+        if ( entry !== undefined) {
             locationHash = entry['location'] ? entry['location']['identifier'] : '';
             seatNr = entry['seatNumber'];
             locationName = entry['location'] ? entry['location']['name'] : '';
