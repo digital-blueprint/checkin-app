@@ -14,5 +14,5 @@
     "de": "Meldet einen Gast an einem Ort an.",
     "en": "Logs a guest in one place."
   },
-  "subscribe": "lang:lang,entry-point-url:entry-point-url,auth:auth"
+  "subscribe": "lang,entry-point-url,auth,html-overrides"
 }
