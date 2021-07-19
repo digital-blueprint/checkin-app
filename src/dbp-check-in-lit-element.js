@@ -229,9 +229,14 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         }
 
         let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
+        await this.checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh, setAdditionals)
+    }
+
+    async checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh=false, setAdditionals = false) {
+        const i18n = this._i18n;
+
         let status = responseData.status;
         let responseBody = await responseData.clone().json();
-
 
         switch (status) {
             case 201:
@@ -256,7 +261,28 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     });
 
                     this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'RefreshSuccess', 'name': locationName});
-                } else {
+                }
+                else if(category === 'GuestCheckInRequest') {
+                    send({
+                        "summary": i18n.t('guest-check-in.success-checkin-title', {email: this.guestEmail}),
+                        "body": i18n.t('guest-check-in.success-checkin-body', {email: this.guestEmail}),
+                        "type": "success",
+                        "timeout": 5,
+                    });
+
+                    locationName = responseBody.location.name;
+
+                    //Refresh necessary fields and values - keep time and place because it is nice to have for the next guest
+                    this._('#email-field').value = '';
+                    this.guestEmail = '';
+
+                    this._('#select-seat').value = '';
+                    this.seatNr = '';
+
+                    this.isEmailSet = false;
+                    this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInSuccess', 'name': locationName});
+                }
+                else {
                     send({
                         "summary": i18n.t('check-in.success-checkin-title', {room: locationName}),
                         "body": (seatNumber !== '' ? i18n.t('check-in.success-checkin-seat-body', {room: locationName, seat: seatNumber}) : i18n.t('check-in.success-checkin-body', {room: locationName})),
@@ -281,7 +307,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                 await this.sendErrorAnalyticsEvent(category, 'CheckInFailed403', locationName, responseData);
                 break;
 
-            // Other errors
+            // Error if room not exists
             case 404:
                 this.saveWrongHashAndNotify(i18n.t('check-in.hash-false-title'), i18n.t('check-in.hash-false-body'), locationHash, seatNumber);
                 this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInFailed404', 'name': locationName});
@@ -289,7 +315,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
             // Can't checkin at provided place
             case 424:
-                await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckInFailed424', locationName, responseData);
+                await this.sendErrorAnalyticsEvent(category, 'CheckInFailed424', locationName, responseData);
                 await this.checkErrorDescription(responseBody["hydra:description"], locationHash, seatNumber);
                 break;
 
@@ -316,12 +342,36 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                 this.saveWrongHashAndNotify(i18n.t('check-in.no-seatnr-title'), i18n.t('check-in.no-seatnr-body'), locationHash, seatNumber);
                 break;
 
+            // Error: no seat given
+            case 'Location has seats activated, you need to set a seatNumber!':
+                this.saveWrongHashAndNotify(i18n.t('guest-check-in.no-seatnr-title'), i18n.t('guest-check-in.no-seatnr-body'), locationHash, seatNumber);
+                break;
+
             // Error: you are already checked in here
             case 'There are already check-ins at the location with provided seat for the current user!':
                 await this.checkOtherCheckins(locationHash, seatNumber, true);
                 break;
 
+            // Error: Email is already checked in here
+            case 'There are already check-ins at the location with provided seat for the email address!':
+                send({
+                    "summary": i18n.t('guest-check-in.already-checkin-title'),
+                    "body":  i18n.t('guest-check-in.already-checkin-body'),
+                    "type": "warning",
+                    "timeout": 5,
+                });
+                break;
+
             default:
+                // Error: the endTime is too high
+                if (errorDescription.includes('The endDate can\'t be after ')) {
+                    send({
+                        "summary": i18n.t('guest-check-in.max-time-title'),
+                        "body":  i18n.t('guest-check-in.max-time-body'),
+                        "type": "danger",
+                        "timeout": 5,
+                    });
+                }
                 break;
         }
     }

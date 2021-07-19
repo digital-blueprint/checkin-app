@@ -21,6 +21,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.isRoomSelected = false;
         this.roomCapacity = 0;
         this.locationHash = '';
+        this.locationName = '';
         this.guestEmail = '';
         this.seatNr = '';
         this.endTime;
@@ -76,6 +77,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.isRoomSelected = true;
         this.roomCapacity = event.detail.capacity;
         this.locationHash = event.detail.room;
+        this.locationName = event.detail.name;
     }
 
     /**
@@ -88,8 +90,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         val = isNaN(val) ? "" : val;
         this.seatNr = Math.min(this.roomCapacity, val);
         this._('#select-seat').value = this.seatNr;
-
-        console.log("---" + this.roomCapacity + " " + this.seatNr + " " +  this.isRoomSelected);
     }
 
     validateEmail(inputText) {
@@ -112,7 +112,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     parseTime() {
         let value = this._('#end-time').value;
-        console.log(value);
 
         let splitted = value.split(':');
 
@@ -173,15 +172,20 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         if(button.disabled) {
             return;
         }
-        button.start();
         try {
-            await this.doCheckIn();
+            button.start();
+            await this.initCheckIn();
         } catch {
             isDisabled = false;
         } finally {
             button.stop();
             button.disabled = isDisabled;
         }
+    }
+
+    async _atChangeInput(event)  {
+        if (this._("#do-manually-checkin") )
+            this._("#do-manually-checkin").disabled = !this.isRoomSelected || !this.isEmailSet || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0);
     }
 
     /**
@@ -193,7 +197,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      *                  no seat number, already checkedin, no permissions, any other errors, location hash empty
      *
      */
-    async doCheckIn() {
+    async initCheckIn() {
         const i18n = this._i18n;
         if (!this.validateEmail(this.guestEmail)) {
             send({
@@ -202,7 +206,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 "type": "danger",
                 "timeout": 5,
             });
-            throw "invalid_email_error";
+            this.sendSetPropertyEvent('analytics-event', {'category': 'GuestCheckInRequest', 'action': 'GuestCheckInFailedInvalidEmail'});
+            return;
         }
 
         if (!this.parseTime()) {
@@ -215,139 +220,25 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             return;
         }
 
-        console.log('email: ', this.guestEmail, 'loc: ', this.locationHash, ', seat: ', this.seatNr, 'endTime: ', this.endTime);
-
         if (this.roomCapacity === null && this.seatNr >= 0) {
             this.seatNr = '';
         }
 
-        if (this.locationHash.length > 0) {
-            let responseData = await this.sendGuestCheckInRequest(this.guestEmail, this.locationHash, this.seatNr, this.endTime);
-            // When you are checked in
-            if (responseData.status === 201) {
-                this.isCheckedIn = true;
-
-                send({
-                        "summary": i18n.t('guest-check-in.success-checkin-title', {email: this.guestEmail}),
-                        "body": i18n.t('guest-check-in.success-checkin-body', {email: this.guestEmail}),
-                        "type": "success",
-                        "timeout": 5,
-                });
-
-                //Refresh necessary fields and values - keep time and place because it is nice to have for the next guest
-                this._('#email-field').value = '';
-                this.guestEmail = '';
-
-                this._('#select-seat').value = '';
-                this.seatNr = '';
-
-                this.isEmailSet = false;
-
-            // Invalid Input
-            } else if (responseData.status === 400) {
-                send({
-                    "summary": i18n.t('check-in.invalid-input-title'),
-                    "body":  i18n.t('check-in.invalid-input-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-            // Error if room not exists
-            } else if (responseData.status === 404) {
-                send({
-                    "summary": i18n.t('check-in.hash-false-title'),
-                    "body":  i18n.t('check-in.hash-false-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-            // Other errors
-            } else if (responseData.status === 424) {
-                let errorBody = await responseData.clone().json();
-                let errorDescription = errorBody["hydra:description"];
-                console.log("err: ", errorDescription);
-                console.log("err: ", errorBody);
-
-                // Error: invalid seat number
-                if( errorDescription === 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!' || errorDescription === 'seatNumber too low!') {
-                    send({
-                        "summary": i18n.t('check-in.invalid-seatnr-title'),
-                        "body":  i18n.t('check-in.invalid-seatnr-body'),
-                        "type": "danger",
-                        "timeout": 5,
-                    });
-                    console.log("error: Invalid seat nr");
-                }
-
-                // Error: no seat numbers
-                else if( errorDescription === 'Location doesn\'t have any seats activated, you cannot set a seatNumber!') {
-                    send({
-                        "summary": i18n.t('check-in.no-seatnr-title'),
-                        "body":  i18n.t('check-in.no-seatnr-body'),
-                        "type": "danger",
-                        "timeout": 5,
-                    });
-                    console.log("error: Room has no seat nr");
-                }
-
-                // Error: no seat given
-                else if( errorDescription === 'Location has seats activated, you need to set a seatNumber!') {
-                    send({
-                        "summary": i18n.t('guest-check-in.no-seatnr-title'),
-                        "body":  i18n.t('guest-check-in.no-seatnr-body'),
-                        "type": "danger",
-                        "timeout": 5,
-                    });
-                    console.log("error: Room has no seat nr");
-                }
-
-                // Error: you are already checked in here
-                else if( errorDescription === 'There are already check-ins at the location with provided seat for the email address!' ) {
-                    send({
-                        "summary": i18n.t('guest-check-in.already-checkin-title'),
-                        "body":  i18n.t('guest-check-in.already-checkin-body'),
-                        "type": "warning",
-                        "timeout": 5,
-                    });
-                } 
-                
-                // Error: the endTime is too high
-                else if ( errorDescription.includes('The endDate can\'t be after ') ) {
-                    send({
-                        "summary": i18n.t('guest-check-in.max-time-title'),
-                        "body":  i18n.t('guest-check-in.max-time-body'),
-                        "type": "danger",
-                        "timeout": 5,
-                    });
-                    throw "invalid_time_error";
-                }
-
-            // Error if you don't have permissions
-            } else if (responseData.status === 403) {
-                send({
-                    "summary": i18n.t('check-in.no-permission-title'),
-                    "body":  i18n.t('check-in.no-permission-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-
-            // Error: something else doesn't work
-            } else{
-                send({
-                    "summary": i18n.t('check-in.error-title'),
-                    "body": i18n.t('check-in.error-body'),
-                    "type": "danger",
-                    "timeout": 5,
-                });
-            }
+        let locationHash = this.locationHash;
+        let locationName = this.locationName;
+        let seatNumber = this.seatNr;
+        let category = 'GuestCheckInRequest';
 
         // Error: no location hash detected
-        } else {
-            send({
-                "summary": i18n.t('check-in.error-title'),
-                "body": i18n.t('check-in.error-body'),
-                "type": "danger",
-                "timeout": 5,
-            });
+        if (this.locationHash.length <= 0) {
+            this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), locationHash, seatNumber);
+            this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'GuestCheckInFailedNoLocationHash'});
+            return;
         }
+
+        let responseData = await this.sendGuestCheckInRequest(this.guestEmail, this.locationHash, this.seatNr, this.endTime);
+        await this.checkResponse(responseData, locationHash, seatNumber, locationName, category);
+
     }
 
     getCurrentTime() {
@@ -507,7 +398,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             html`
             <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
                     ${i18n.t('error-login-message')}
-                    ${console.log(this.isLoggedIn())}
                 </div>
                 
                 <div class="notification is-danger ${classMap({hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
@@ -534,30 +424,32 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     <div class="field">
                                         <label class="label">${i18n.t('guest-check-in.email')}</label>
                                         <div class="control">
-                                            <input type="email" class="input" id="email-field" placeholder="mail@email.at" name="email" .value="${this.guestEmail}" @input="${(event) => {this.processEmailInput(event);}}">
+                                            <input type="email" class="input" id="email-field" placeholder="mail@email.at" name="email" .value="${this.guestEmail}" @input="${(event) => {this.processEmailInput(event); this._atChangeInput(event);}}">
                                         </div>
                                     </div>
                                     <div class="field">
                                         <label class="label">${i18n.t('check-in.manually-place')}</label>
                                         <div class="control">
-                                            <dbp-check-in-place-select subscribe="auth" lang="${this.lang}" entry-point-url="${this.entryPointUrl}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"></dbp-check-in-place-select>
+                                            <dbp-check-in-place-select subscribe="auth" lang="${this.lang}" entry-point-url="${this.entryPointUrl}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"  @input="${(event) => {this._atChangeInput(event);}}"></dbp-check-in-place-select>
                                         </div>
                                     </div>
                                     <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
                                         <link rel="stylesheet" href="${select2CSS}">
                                         <label class="label">${i18n.t('check-in.manually-seat')}</label>
                                         <div class="control">
-                                            <input class="input" type="text" name="seat-number" .value="${this.seatNr}" id="select-seat" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event);}}">
+                                            <input class="input" type="text" name="seat-number" .value="${this.seatNr}" id="select-seat" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event); this._atChangeInput(event);}}">
                                         </div>
                                     </div>
                                     <div class="field">
                                         <label class="label">${i18n.t('guest-check-in.end-time')}</label>
                                         <div class="control">
-                                            <input type="time" class="input" placeholder="hh:mm" id="end-time" name="endTime" .defaultValue="${this.getCurrentTime()}">
+                                            <input type="time" class="input" placeholder="hh:mm" id="end-time" name="endTime" .defaultValue="${this.getCurrentTime()}" @input="${(event) => {this._atChangeInput(event);}}">
                                         </div>
                                     </div>
                                 <div class="btn">
-                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" value="${i18n.t('check-in.manually-checkin-button-text')}" @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" ?disabled=${!this.isRoomSelected || !this.isEmailSet || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0)}></dbp-loading-button>
+                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" value="${i18n.t('check-in.manually-checkin-button-text')}" 
+                                                        @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" 
+                                                        ?disabled=${!this.isRoomSelected || !this.isEmailSet || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0)}></dbp-loading-button>
                                 </div>
                             </div>
                     </div>
