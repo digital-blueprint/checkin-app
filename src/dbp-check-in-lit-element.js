@@ -229,7 +229,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         }
 
         let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
-        await this.checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh, setAdditionals)
+        await this.checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh, setAdditionals);
     }
 
     async checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh=false, setAdditionals = false) {
