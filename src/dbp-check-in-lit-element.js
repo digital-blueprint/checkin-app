@@ -439,7 +439,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      * @param locationHash
      * @param seatNumber
      * @param locationName
-     * @param locationName
+     * @param category
      * @param setAdditionals (default = false)
      */
     async refreshSession(locationHash, seatNumber, locationName, category, setAdditionals = false) {
