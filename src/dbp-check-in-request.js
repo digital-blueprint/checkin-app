@@ -569,8 +569,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             </div>
 
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
-
-                <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
+                
                 <h2>${i18n.t('check-in.title')}</h2>
                 <div>
                     <p class="">${i18n.t('check-in.description')}</p>

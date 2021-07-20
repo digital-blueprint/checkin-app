@@ -408,7 +408,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <div class="${classMap({hidden: !this.isLoggedIn() || !this.hasPermissions() || this.isLoading()})}">
     
                     <link rel="stylesheet" href="${select2CSS}">
-                    <vpu-notification lang="de" client-id="my-client-id"></vpu-notification>
                     <h2>${i18n.t('guest-check-in.title')}</h2>
     
                     <p class="">${i18n.t('guest-check-in.description')}</p>
