@@ -216,9 +216,9 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      * @param locationName
      * @param category
      * @param refresh (default = false)
-     * @param setAdditionals (default = false)
+     * @param setAdditional (default = false)
      */
-    async doCheckIn(locationHash, seatNumber, locationName, category, refresh=false, setAdditionals = false) {
+    async doCheckIn(locationHash, seatNumber, locationName, category, refresh=false, setAdditional = false) {
         const i18n = this._i18n;
 
         // Error: no location hash detected
@@ -229,10 +229,26 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         }
 
         let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
-        await this.checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh, setAdditionals);
+        await this.checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh, setAdditional);
     }
 
-    async checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh=false, setAdditionals = false) {
+    /**
+     * Parse the response of a checkin or guest checkin request
+     * Include message for user when it worked or not
+     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
+     *
+     * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
+     * no seat number, already checkedin, no permissions, any other errors, location hash empty
+     *
+     * @param responseData
+     * @param locationHash
+     * @param seatNumber
+     * @param locationName
+     * @param category
+     * @param refresh (default = false)
+     * @param setAdditional (default = false)
+     */
+    async checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh=false, setAdditional = false) {
         const i18n = this._i18n;
 
         let status = responseData.status;
@@ -240,7 +256,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
         switch (status) {
             case 201:
-                if (setAdditionals) {
+                if (setAdditional) {
                     this.checkedInRoom = responseBody.location.name;
                     this.checkedInSeat = responseBody.seatNumber;
                     this.checkedInEndTime = responseBody.endTime;
@@ -275,12 +291,9 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     //Refresh necessary fields and values - keep time and place because it is nice to have for the next guest
                     this._('#email-field').value = '';
                     this.guestEmail = '';
-
                     this._('#select-seat').value = '';
                     this.seatNr = '';
-
                     this.isEmailSet = false;
-                    this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInSuccess', 'name': locationName});
                 }
                 else {
                     send({
@@ -290,8 +303,8 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                         "timeout": 5,
                     });
 
-                    this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInSuccess', 'name': locationName});
                 }
+                this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInSuccess', 'name': locationName});
                 await this.checkOtherCheckins();
                 break;
 
@@ -329,7 +342,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
     async checkErrorDescription(errorDescription, locationHash, seatNumber) {
         const i18n = this._i18n;
-        console.log(errorDescription);
+
         switch (errorDescription) {
             // Error: invalid seat number
             case 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!':
@@ -389,12 +402,12 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
         let checkInsArray = getActiveCheckInsBody["hydra:member"];
         this.checkinCount = checkInsArray.length;
-        if (this.checkinCount > 1) {
+        if (checkInsArray.length > 1) {
             this.status = ({
                 "summary": i18nKey('check-in.other-checkins-notification-title'),
                 "body": i18nKey('check-in.other-checkins-notification-body', {count: 0}),
                 "type": "warning",
-                "options": {count: this.checkinCount - 1},
+                "options": {count: checkInsArray.length - 1},
             });
         }
 

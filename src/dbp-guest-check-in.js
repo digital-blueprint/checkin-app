@@ -189,6 +189,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
+     * Checks user input: email, time and
      * Sends a guest checkin request and do error handling and parsing
      * Include message for user when it worked or not
      * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send

@@ -168,7 +168,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             let responseBody = await response.json();
             if (responseBody !== undefined && responseBody.status !== 403) {
                 this.activeCheckins = this.parseActiveCheckins(responseBody);
-                console.log('active checkins: ', this.activeCheckins);
             }
         } finally {
             this.initialCheckinsLoading = false;
@@ -222,10 +221,6 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             .header {
                 display: grid;
                 align-items: center;
-            }
-
-            .no-checkins {
-
             }
             
             .border {
