@@ -47,9 +47,11 @@
     "button-text": "Check-out",
     "checkout-success-title": "Successfully checked out!",
     "checkout-success-body": "You have successfully checked out of the {{room}}.",
+    "already-checked-out-title": "No checkin found!",
+    "already-checked-out-body": "No active checkin was found at this location. You are probably already checked out.",
     "checkout-failed-title": "Check-out failed!",
     "checkout-failed-body": "Your check-out from {{room}} failed. We're sorry, something went wrong.",
-    "no-checkins-message": "You are currently not checked-in at any location..",
+    "no-checkins-message": "You are currently not checked-in at any location.",
     "loading-message": "Loading...",
     "checkin-until": "Check-in until:"
   },

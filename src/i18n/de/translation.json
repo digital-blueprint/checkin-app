@@ -47,6 +47,8 @@
     "button-text": "Abmelden",
     "checkout-success-title": "Erfolgreich abgemeldet!",
     "checkout-success-body": "Sie haben sich erfolgreich vom Ort {{room}} abgemeldet.",
+    "already-checked-out-title": "Keine Anmeldung gefunden!",
+    "already-checked-out-body": "Es wurde keine aktive Anmeldung auf diesem Platz gefunden. Sie sind wahrscheinlich schon abgemeldet.",
     "checkout-failed-title": "Abmeldung fehlgeschlagen!",
     "checkout-failed-body": "Ihre Abmeldung bei {{room}} schlug fehl. Es tut uns leid, etwas ist schief gelaufen.",
     "no-checkins-message": "Sie sind derzeit an keinem Ort angemeldet.",

@@ -253,7 +253,6 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
         let status = responseData.status;
         let responseBody = await responseData.clone().json();
-
         switch (status) {
             case 201:
                 if (setAdditional) {
@@ -305,7 +304,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
                 }
                 this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckInSuccess', 'name': locationName});
-                await this.checkOtherCheckins();
+                await this.checkOtherCheckins(locationHash, seatNumber);
                 break;
 
             // Invalid Input
@@ -342,7 +341,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
     async checkErrorDescription(errorDescription, locationHash, seatNumber) {
         const i18n = this._i18n;
-
+        console.log(errorDescription);
         switch (errorDescription) {
             // Error: invalid seat number
             case 'seatNumber must not exceed maximumPhysicalAttendeeCapacity of location!':
@@ -393,7 +392,6 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         const i18n = this._i18n;
 
         let getActiveCheckInsResponse = await this.getActiveCheckIns();
-
         if ( getActiveCheckInsResponse.status !== 200) {
             this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), locationHash, seatNumber);
             return;
@@ -401,6 +399,11 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
         let getActiveCheckInsBody = await getActiveCheckInsResponse.json();
         let checkInsArray = getActiveCheckInsBody["hydra:member"];
+
+        let checkActiveCheckin = checkInsArray.filter(x => (x.location.identifier === locationHash && x.seatNumber === (seatNumber === '' ? null : parseInt(seatNumber) ) ));
+        if (checkActiveCheckin.length === 0)
+            return -1;
+
         this.checkinCount = checkInsArray.length;
         if (checkInsArray.length > 1) {
             this.status = ({
@@ -414,7 +417,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         if (!checkOtherSeats)
             return;
 
-        let atActualRoomCheckIn = checkInsArray.filter(x => (x.location.identifier === this.locationHash && x.seatNumber === (seatNumber === '' ? null : parseInt(seatNumber) ) ));
+        let atActualRoomCheckIn = checkInsArray.filter(x => (x.location.identifier === locationHash && x.seatNumber === (seatNumber === '' ? null : parseInt(seatNumber) ) ));
         if (atActualRoomCheckIn.length !== 1) {
             this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), locationHash, seatNumber);
             return;
@@ -442,7 +445,8 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             "type": "danger",
             "timeout": 5,
         });
-        this.wrongHash.push(locationHash + '-' + seatNumber);
+        if (this.wrongHash)
+            this.wrongHash.push(locationHash + '-' + seatNumber);
     }
 
     /**
@@ -462,6 +466,18 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             await this.doCheckIn(locationHash, seatNumber, locationName, category, true, setAdditionals);
             return;
         }
+        if (responseCheckout.status === 424) {
+            //check if there is a checkin at wanted seat
+            let check = await this.checkOtherCheckins(this.locationHash, this.seatNumber);
+            if (check === -1)
+            {
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckOutFailedNoCheckin', 'name': this.checkedInRoom});
+                await this.doCheckIn(locationHash, seatNumber, locationName, category, true, setAdditionals);
+                return;
+            }
+
+        }
+
         send({
             "summary": i18n.t('check-in.refresh-failed-title'),
             "body":  i18n.t('check-in.refresh-failed-body', {room: locationName}),

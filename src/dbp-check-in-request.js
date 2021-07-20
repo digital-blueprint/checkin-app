@@ -118,11 +118,10 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     async tryCheckOut(locationHash, seat) {
         let count_trys = 0;
         let responseData;
-        while (count_trys !== 5) {
+        while (count_trys !== 4) {
 
             let time = Math.pow(5, count_trys);
             responseData = await this.sendCheckOutRequest(locationHash, seat);
-            console.debug("times", time);
             if (responseData.status === 201) {
                 return responseData;
             }
@@ -171,6 +170,36 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             if (checkInPlaceSelect !== null) {
                 checkInPlaceSelect.clear();
             }
+        }
+        else if (responseData.status === 424) {
+            //check if there is a checkin at wanted seat
+            let check = await this.checkOtherCheckins(this.locationHash, this.seatNumber);
+            if (check === -1)
+            {
+                console.log("already logged out");
+                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckOutFailedNoCheckin', 'name': this.checkedInRoom});
+
+                this.isCheckedIn = false;
+                this.locationHash = "";
+                this.seatNr = "";
+                this.checkedInRoom = "";
+                this.checkedInSeat = "";
+                this.checkedInEndTime = "";
+                this.isRoomSelected = false;
+
+                let checkInPlaceSelect = this.shadowRoot.querySelector(this.getScopedTagName('dbp-check-in-place-select'));
+                if (checkInPlaceSelect !== null) {
+                    checkInPlaceSelect.clear();
+                }
+
+                send({
+                    "summary": i18n.t('check-out.already-checked-out-title'),
+                    "body":  i18n.t('check-out.already-checked-out-body', {room: this.checkedInRoom}),
+                    "type": "warning",
+                    "timeout": 5,
+                });
+            }
+
         } else {
             send({
                 "summary": i18n.t('check-out.checkout-failed-title'),

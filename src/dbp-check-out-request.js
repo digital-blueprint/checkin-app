@@ -104,6 +104,19 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
                 this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckOutSuccess', 'name': this.checkedInRoom});
                 return;
+            } else if (response.status === 424) {
+                //check if there is a checkin at wanted seat
+                let check = await this.checkOtherCheckins(this.locationHash, this.seatNumber);
+                if (check === -1)
+                {
+                    send({
+                        "summary": i18n.t('check-out.already-checked-out-title'),
+                        "body":  i18n.t('check-out.already-checked-out-body', {room: this.checkedInRoom}),
+                        "type": "warning",
+                        "timeout": 5,
+                    });
+                }
+
             } else {
                 await this.sendErrorAnalyticsEvent('CheckOutRequest', 'CheckOutFailed', this.checkedInRoom, response);
             }
