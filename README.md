@@ -26,7 +26,7 @@ Jump to <https://localhost:8001> and you should get a Single Sign On login page.
 
 ## Using this app as pre-built package
 
-### Install apps
+### Install app
 
 If you want to install the DBP Check-in App in a new folder `check-in-app` you can call:
 
@@ -41,7 +41,7 @@ for example like this: [dbp-check-in/index.html](https://gitlab.tugraz.at/dbp/ch
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
 
-### Update apps
+### Update app
 
 If you want to update the DBP Check-in App in the current folder you can call:
 
