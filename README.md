@@ -26,16 +26,35 @@ Jump to <https://localhost:8001> and you should get a Single Sign On login page.
 
 ## Using this app as pre-built package
 
+### Install apps
+
+If you want to install the DBP Check-in App in a new folder `check-in-app` you can call:
+
+```bash
+npx @digital-blueprint/cli install-app check-in check-in-app
+```
+
+Afterwards you can point your Apache web-server to `check-in-app/public`.
+
+You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/)
+for example like this: [dbp-check-in/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-check-in/index.html)
+
+Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
+
+### Update apps
+
+If you want to update the DBP Check-in App in the current folder you can call:
+
+```bash
+npx @digital-blueprint/cli update-app check-in
+```
+
 Not only you can use this app as pre-built package installed from [npmjs](https://www.npmjs.com/package/@dbp-topics/check-in) via:
 
 ```bash
 npm install @dbp-topics/check-in
 ```
 
-But you can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/)
-for example like this: [dbp-check-in/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-check-in/index.html)
-
-Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
 
 ## Activities
 
