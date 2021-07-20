@@ -229,7 +229,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         }
 
         let responseData = await this.sendCheckInRequest(locationHash, seatNumber);
-        await this.checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh, setAdditional);
+        await this.checkCheckinResponse(responseData, locationHash, seatNumber, locationName, category, refresh, setAdditional);
     }
 
     /**
@@ -248,7 +248,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      * @param refresh (default = false)
      * @param setAdditional (default = false)
      */
-    async checkResponse(responseData, locationHash, seatNumber, locationName, category, refresh=false, setAdditional = false) {
+    async checkCheckinResponse(responseData, locationHash, seatNumber, locationName, category, refresh=false, setAdditional = false) {
         const i18n = this._i18n;
 
         let status = responseData.status;
@@ -501,5 +501,44 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         return i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear();
     }
 
+    async checkCheckoutResponse(response, locationHash, seatNumber, locationName, category, that = null, setAdditional = function (){}) {
+        const i18n = this._i18n;
+
+        if (response.status === 201) {
+            send({
+                "summary": i18n.t('check-out.checkout-success-title'),
+                "body":  i18n.t('check-out.checkout-success-body', {room: locationName}),
+                "type": "success",
+                "timeout": 5,
+            });
+
+            this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckOutSuccess', 'name': locationName});
+            setAdditional(that);
+
+        } else if (response.status === 424) {
+            //check if there is a checkin at wanted seat
+            let check = await this.checkOtherCheckins(locationHash, seatNumber);
+            if (check === -1)
+            {
+                this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'CheckOutFailedNoCheckin', 'name': locationName});
+                setAdditional(that);
+                send({
+                    "summary": i18n.t('check-out.already-checked-out-title'),
+                    "body":  i18n.t('check-out.already-checked-out-body', {room: locationName}),
+                    "type": "warning",
+                    "timeout": 5,
+                });
+            }
+
+        } else {
+            send({
+                "summary": i18n.t('check-out.checkout-failed-title'),
+                "body":  i18n.t('check-out.checkout-failed-body', {room: locationName}),
+                "type": "warning",
+                "timeout": 5,
+            });
+            await this.sendErrorAnalyticsEvent(category, 'CheckOutFailed', this.checkedInRoom, response);
+        }
+    }
 
 }

@@ -80,6 +80,12 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     
         if (locationHash.length === 0) {
+            send({
+                "summary": i18n.t('check-out.checkout-failed-title'),
+                "body":  i18n.t('check-out.checkout-failed-body', {room: locationName}),
+                "type": "warning",
+                "timeout": 5,
+            });
             await this.sendErrorAnalyticsEvent('CheckOutRequest', 'CheckOutFailed', this.checkedInRoom);
         } else {
             let response;
@@ -94,40 +100,10 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.loading = false;
             }
 
-            if (response.status === 201) {
-                send({
-                    "summary": i18n.t('check-out.checkout-success-title'),
-                    "body":  i18n.t('check-out.checkout-success-body', {room: locationName}),
-                    "type": "success",
-                    "timeout": 5,
-                });
-
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckOutRequest', 'action': 'CheckOutSuccess', 'name': this.checkedInRoom});
-                return;
-            } else if (response.status === 424) {
-                //check if there is a checkin at wanted seat
-                let check = await this.checkOtherCheckins(this.locationHash, this.seatNumber);
-                if (check === -1)
-                {
-                    send({
-                        "summary": i18n.t('check-out.already-checked-out-title'),
-                        "body":  i18n.t('check-out.already-checked-out-body', {room: this.checkedInRoom}),
-                        "type": "warning",
-                        "timeout": 5,
-                    });
-                }
-
-            } else {
-                await this.sendErrorAnalyticsEvent('CheckOutRequest', 'CheckOutFailed', this.checkedInRoom, response);
-            }
+           await this.checkCheckoutResponse(response, locationHash, seatNr, locationName, 'CheckOutRequest');
         }
 
-        send({
-            "summary": i18n.t('check-out.checkout-failed-title'),
-            "body":  i18n.t('check-out.checkout-failed-body', {room: locationName}),
-            "type": "warning",
-            "timeout": 5,
-        });
+
     }
 
     /**

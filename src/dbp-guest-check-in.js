@@ -238,7 +238,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
 
         let responseData = await this.sendGuestCheckInRequest(this.guestEmail, this.locationHash, this.seatNr, this.endTime);
-        await this.checkResponse(responseData, locationHash, seatNumber, locationName, category);
+        await this.checkCheckinResponse(responseData, locationHash, seatNumber, locationName, category);
 
     }
 

@@ -132,6 +132,21 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     }
 
+    resetCheckin(that) {
+        that.isCheckedIn = false;
+        that.locationHash = "";
+        that.seatNr = "";
+        that.checkedInRoom = "";
+        that.checkedInSeat = "";
+        that.checkedInEndTime = "";
+        that.isRoomSelected = false;
+
+        let checkInPlaceSelect = that.shadowRoot.querySelector(that.getScopedTagName('dbp-check-in-place-select'));
+        if (checkInPlaceSelect !== null) {
+            checkInPlaceSelect.clear();
+        }
+    }
+
     /**
      * Init a checkout and Check if it was successful
      *
@@ -140,78 +155,18 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     async doCheckOut(event) {
         let button = event.target;
-        let responseData;
-        const i18n = this._i18n;
+        let response;
+
         button.start();
         try {
-            responseData = await this.tryCheckOut(this.locationHash, this.seatNr);
+            response = await this.tryCheckOut(this.locationHash, this.seatNr);
         } finally {
             button.stop();
         }
-        if (responseData.status === 201) {
-            send({
-                "summary": i18n.t('check-out.checkout-success-title'),
-                "body":  i18n.t('check-out.checkout-success-body', {room: this.checkedInRoom}),
-                "type": "success",
-                "timeout": 5,
-            });
 
-            this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckOutSuccess', 'name': this.checkedInRoom});
+        await this.checkCheckoutResponse(response, this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', this, this.resetCheckin);
 
-            this.isCheckedIn = false;
-            this.locationHash = "";
-            this.seatNr = "";
-            this.checkedInRoom = "";
-            this.checkedInSeat = "";
-            this.checkedInEndTime = "";
-            this.isRoomSelected = false;
-            
-            let checkInPlaceSelect = this.shadowRoot.querySelector(this.getScopedTagName('dbp-check-in-place-select'));
-            if (checkInPlaceSelect !== null) {
-                checkInPlaceSelect.clear();
-            }
-        }
-        else if (responseData.status === 424) {
-            //check if there is a checkin at wanted seat
-            let check = await this.checkOtherCheckins(this.locationHash, this.seatNumber);
-            if (check === -1)
-            {
-                console.log("already logged out");
-                this.sendSetPropertyEvent('analytics-event', {'category': 'CheckInRequest', 'action': 'CheckOutFailedNoCheckin', 'name': this.checkedInRoom});
-
-                this.isCheckedIn = false;
-                this.locationHash = "";
-                this.seatNr = "";
-                this.checkedInRoom = "";
-                this.checkedInSeat = "";
-                this.checkedInEndTime = "";
-                this.isRoomSelected = false;
-
-                let checkInPlaceSelect = this.shadowRoot.querySelector(this.getScopedTagName('dbp-check-in-place-select'));
-                if (checkInPlaceSelect !== null) {
-                    checkInPlaceSelect.clear();
-                }
-
-                send({
-                    "summary": i18n.t('check-out.already-checked-out-title'),
-                    "body":  i18n.t('check-out.already-checked-out-body', {room: this.checkedInRoom}),
-                    "type": "warning",
-                    "timeout": 5,
-                });
-            }
-
-        } else {
-            send({
-                "summary": i18n.t('check-out.checkout-failed-title'),
-                "body":  i18n.t('check-out.checkout-failed-body', {room: this.checkedInRoom}),
-                "type": "warning",
-                "timeout": 5,
-            });
-
-            await this.sendErrorAnalyticsEvent('CheckInRequest', 'CheckOutFailed', this.checkedInRoom, responseData);
-        }
-
-        return responseData;
+        return response;
     }
 
     /**
