@@ -42,6 +42,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.loading = false;
         this.loadingMsg = '';
         this.status = null;
+        this.resetWrongQr = false;
+        this.resetWrongHash = false;
     }
 
     static get scopedElements() {
@@ -90,16 +92,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             switch (propName) {
                 case "lang":
                     this._i18n.changeLanguage(this.lang);
-                    break;
-                case "wrongQR":
-                    setTimeout( function () {
-                        that.wrongHash.length = 0;
-                    }, 5000);
-                    break;
-                case "locationHash":
-                    setTimeout(function () {
-                        that.wrongHash.length = 0;
-                    }, 5000);
                     break;
                 case "status":
                     if (oldValue !== undefined) {
@@ -244,8 +236,17 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         try {
             [location, seat] = parseQRCode(data, this.searchHashString);
         } catch(error) {
-            let checkAlreadySend = await this.wrongHash.includes(data);
+            let checkAlreadySend = await this.wrongQR.includes(data);
             if (checkAlreadySend) {
+                const that = this;
+                if (!this.resetWrongQr) {
+                    this.resetWrongQr = true;
+                    setTimeout( function () {
+                        that.wrongQR.splice(0,that.wrongQR.length);
+                        that.wrongQR.length = 0;
+                        that.resetWrongQr = false;
+                    }, 3000);
+                }
                 return false;
             }
             this.wrongQR.push(data);
@@ -266,6 +267,17 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
         let locationParam = this.locationHash + '-' + this.seatNr;
         let checkAlreadySend = await this.wrongHash.includes(locationParam);
+        if (checkAlreadySend) {
+            const that = this;
+            if (!this.resetWrongHash) {
+                this.resetWrongHash = true;
+                setTimeout( function () {
+                    that.wrongHash.splice(0,that.wrongHash.length);
+                    that.wrongHash.length = 0;
+                    that.resetWrongHash = false;
+                }, 3000);
+            }
+        }
         return !checkAlreadySend;
     }
 
