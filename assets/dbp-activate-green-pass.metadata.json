@@ -1,0 +1,18 @@
+{
+  "element": "dbp-activate-green-pass",
+  "module_src": "dbp-activate-green-pass.js",
+  "routing_name": "activate-green-pass",
+  "name": {
+    "de": "Grünen Pass aktivieren",
+    "en": "Activate Green Pass"
+  },
+  "short_name": {
+    "de": "Grünen Pass aktivieren",
+    "en": "Activate Green Pass"
+  },
+  "description": {
+    "de": "Aktiviert den grünen Pass für den eingeloggten User",
+    "en": "Activates the green pass for the logged in user."
+  },
+  "subscribe": "lang,entry-point-url,search-hash-string,auth,html-overrides"
+}

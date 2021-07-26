@@ -65,7 +65,9 @@ export default (async () => {
                 'src/dbp-guest-check-in.js',
                 'src/dbp-check-in-info.js',
                 'src/dbp-report-risk.js',
-            ] : glob.sync('test/**/*.js'),
+                'src/dbp-activate-green-pass.js',
+
+        ] : glob.sync('test/**/*.js'),
         output: {
             dir: 'dist',
             entryFileNames: '[name].js',
