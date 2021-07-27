@@ -11,6 +11,7 @@ import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from '@dbp-toolkit/qr-code-scanner';
 import { send } from '@dbp-toolkit/common/notification';
 import {escapeRegExp, parseGreenPassQRCode} from './utils.js';
+import {humanFileSize} from "@dbp-toolkit/common/i18next";
 import * as CheckinStyles from './styles';
 
 
@@ -40,11 +41,14 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.greenPassHash = '';
         this.isActivated = false;
         this.isRefresh = false;
+        this.QRCodeFile = '';
+
         this.fileHandlingEnabledTargets = 'local';
-        this.nextcloudWebAppPasswordURL = "";
-        this.nextcloudWebDavURL = "";
-        this.nextcloudName = "";
-        this.nextcloudFileURL = "";
+
+        this.nextcloudWebAppPasswordURL = '';
+        this.nextcloudWebDavURL = '';
+        this.nextcloudName = '';
+        this.nextcloudFileURL = '';
         this.nextcloudAuthInfo = '';
     }
 
@@ -77,6 +81,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             wrongHash : { type: Array, attribute: false },
             isActivated: { type: Boolean, attribute: false },
             isRefresh: { type: Boolean, attribute: false },
+            QRCodeFile: { type: Object, attribute: false },
+
             fileHandlingEnabledTargets: {type: String, attribute: 'file-handling-enabled-targets'},
             nextcloudWebAppPasswordURL: { type: String, attribute: 'nextcloud-web-app-password-url' },
             nextcloudWebDavURL: { type: String, attribute: 'nextcloud-webdav-url' },
@@ -458,6 +464,18 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
+    getFilesToActivate(event) {
+        this.QRCodeFile = event.detail.file;
+    }
+
+    getFileData() {
+        let data = html``;
+        if (this.QRCodeFile) {
+            data = html`<span class="header"><strong>${this.QRCodeFile.name}</strong>${humanFileSize(this.QRCodeFile.size)}</span>`;
+        }
+        return data;
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -725,12 +743,12 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                                 text="Upload area text"
                                 button-label="Datei auswählen"
                                 number-of-files="1"
-                                @dbp-file-source-file-selected="${this.saveFilesToClipboardEvent}"
-                                @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
-                                @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
+                                @dbp-file-source-file-selected="${this.getFilesToActivate}"
                     ></dbp-file-source>
-                    
-                    <dbp-loading-button id="activate-btn" type="is-primary" class="button" @click="${(event) => { this.doPassUpload(event); }}" value="Aktivieren"></dbp-loading-button>
+                    <div class="${classMap({hidden: !this.QRCodeFile})}">
+                        ${this.getFileData()}
+                        <dbp-loading-button id="activate-btn" type="is-primary" class="button" @click="${(event) => { this.doPassUpload(event); }}" value="Aktivieren"></dbp-loading-button>
+                    </div>
 
                 </div>
                 
