@@ -8,9 +8,8 @@ import {classMap} from 'lit-html/directives/class-map.js';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from '@dbp-toolkit/qr-code-scanner';
-import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
 import { send } from '@dbp-toolkit/common/notification';
-import {escapeRegExp, parseQRCode} from './utils.js';
+import {escapeRegExp, parseGreenPassQRCode} from './utils.js';
 import * as CheckinStyles from './styles';
 
 
@@ -39,6 +38,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.status = null;
         this.resetWrongQr = false;
         this.resetWrongHash = false;
+        this.greenPassHash = '';
     }
 
     static get scopedElements() {
@@ -128,18 +128,21 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param event
      * @returns {object} responseData
      */
-    async doCheckOut(event) {
+    async deleteGreenPass(event) {
         let button = event.target;
         let response;
 
         button.start();
         try {
-            response = await this.tryCheckOut(this.locationHash, this.seatNr);
+            //response = await this.tryCheckOut(this.greenPassHash, this.seatNr);
+            response = null;
+            //TODO: delete green pass
         } finally {
             button.stop();
         }
 
-        await this.checkCheckoutResponse(response, this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', this, this.resetCheckin);
+        //TODO: send correct response
+       // await this.checkCheckoutResponse(response, this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', this, this.resetCheckin);
 
         return response;
     }
@@ -207,9 +210,9 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     async decodeUrl(data) {
         const i18n = this._i18n;
-        let location, seat;
+        let passData;
         try {
-            [location, seat] = parseQRCode(data, this.searchHashString);
+            passData = parseGreenPassQRCode(data, this.searchHashString);
         } catch(error) {
             let checkAlreadySend = await this.wrongQR.includes(data);
             if (checkAlreadySend) {
@@ -234,10 +237,9 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             return false;
         }
 
-        this.locationHash = location;
+        this.greenPassHash = passData;
 
-        let locationParam = this.locationHash + '-' + this.seatNr;
-        let checkAlreadySend = await this.wrongHash.includes(locationParam);
+        let checkAlreadySend = await this.wrongHash.includes(this.greenPassHash);
         if (checkAlreadySend) {
             const that = this;
             if (!this.resetWrongHash) {
@@ -271,13 +273,15 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
      * and stop QR code scanner
      *
      */
-    showRoomSelector() {
+    showFilePicker() {
         this._("#qr-scanner").stopScan = true;
         this.showQrContainer = false;
 
         this._("#roomselectorwrapper").scrollIntoView({ behavior: 'smooth', block: 'start' });
         this._("#roomselectorwrapper").classList.remove('hidden');
         this._("#activate-btn").classList.remove('hidden');
+
+        //TODO show filePicker
     }
 
     doPassUpload(event) {
@@ -299,9 +303,9 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      * @param name
      */
-    checkinSwitch(name) {
+    uploadSwitch(name) {
         if (name === "manual") {
-            this.showRoomSelector();
+            this.showFilePicker();
         } else {
             this.showQrReader();
         }
@@ -312,10 +316,11 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      * @param event
      */
-    async doRefreshSession(event) {
+    async refreshGreenPass(event) {
         let button = event.target;
         button.start();
         try {
+            //TODO show uploadSwitch again
             // await this.refreshSession(this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', true);
         } finally {
             button.stop();
@@ -503,7 +508,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     render() {
-        let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
+        let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf'); //TODO change to greenpass pdf!
         const matchRegexString = '.*' + escapeRegExp(this.searchHashString) + '.*';
         const i18n = this._i18n;
 
@@ -541,7 +546,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         class="switch"
                         value1="${i18n.t('check-in.qr-button-text')}"
                         value2="File hochladen"
-                        @change=${ (e) => this.checkinSwitch(e.target.name) }></dbp-textswitch>
+                        @change=${ (e) => this.uploadSwitch(e.target.name) }></dbp-textswitch>
                 </div>
                 
                 <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
@@ -549,8 +554,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         <span class="header"><strong>${this.checkedInRoom}</strong>${this.checkedInSeat !== null ? html`${i18n.t('check-in.seatNr')}: ${this.checkedInSeat}<br>` : ``}
                         ${i18n.t('check-out.checkin-until')} ${this.getReadableDate(this.checkedInEndTime)}</span>
     
-                        <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="${i18n.t('check-out.button-text')}" @click="${(event) => { this.doCheckOut(event); }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
-                        <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('check-in.refresh-button-text')}" @click="${(event) => { this.doRefreshSession(event); }}" title="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button></div></div>
+                        <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="Dokument / Daten löschen" @click="${(event) => { this.deleteGreenPass(event); }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
+                        <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="Aktualisieren" @click="${(event) => { this.refreshGreenPass(event); }}" title="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button></div></div>
                      </div>
                     ${ this.status ? html`
                         <dbp-inline-notification class="inline-notification" type="${this.status.type}" summary="${i18n.t(this.status.summary)}" 
