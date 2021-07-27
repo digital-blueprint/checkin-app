@@ -76,6 +76,26 @@
     "already-checkin-title": "Already checked in!",
     "already-checkin-body": "You are already registered here. You will not be able to register here again until your current registration has expired."
   },
+  "green-pass-activation": {
+    "title": "Activate 3G Proof",
+    "description": "With this application you can activate your 3G proof.",
+    "additional-information": "Here you can scan a QR code or upload an existing PDF or image to activate your 3G proof for the period of its validity. Please note that this will still require you to obtain a ticket for rooms in order to comply with 3G rules.",
+    "success-activation-title": "Successful Activation!",
+    "success-activation-body": "Your 3G proof has been successfully activated.",
+    "invalid-qr-code-title": "Invalid QR Code!",
+    "invalid-qr-code-body": "This QR code is not a valid 3G proof. Please use another one or select the manual 3G inspection at the ticket store.",
+    "data-protection": "What does TU Graz do with your data? You can find the data protection declaration for the app \"TU Graz check-in\" here:",
+    "data-protection-link": "Privacy statement",
+    "qr-button-text": "Scan QR Code",
+    "manually-button-text": "Upload File manually",
+    "uploaded-success-message": "A 3G proof has been successfully verified and is active.",
+    "delete-button-text": "Delete",
+    "refresh-button-text": "Refresh",
+    "inline-notification-text": "Your 3G proof is valid until",
+    "valid-until": "{{date}} at {{clock}}.",
+    "inline-notification-warning": "Your 3G proof will expire soon!",
+    "activate-button-title": "Activate"
+  },
   "info": {
     "title": "Information",
     "description": "With this application you get information about checkin.tugraz.at."

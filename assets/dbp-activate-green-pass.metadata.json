@@ -1,18 +1,18 @@
 {
   "element": "dbp-activate-green-pass",
   "module_src": "dbp-activate-green-pass.js",
-  "routing_name": "activate-green-pass",
+  "routing_name": "activate-3g-proof",
   "name": {
-    "de": "Grünen Pass aktivieren",
-    "en": "Activate Green Pass"
+    "de": "3G Nachweis aktivieren",
+    "en": "Activate 3G Proof"
   },
   "short_name": {
-    "de": "Grünen Pass aktivieren",
-    "en": "Activate Green Pass"
+    "de": "3G Nachweis aktivieren",
+    "en": "Activate 3G Proof"
   },
   "description": {
-    "de": "Aktiviert den grünen Pass für den eingeloggten User",
-    "en": "Activates the green pass for the logged in user."
+    "de": "Aktiviert den 3G Nachweis für den eingeloggten User",
+    "en": "Activates the 3G proof for the logged in user."
   },
   "subscribe": "lang,entry-point-url,gp-search-hash-string,auth,html-overrides,nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url,file-handling-enabled-targets"
 }
