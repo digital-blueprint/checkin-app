@@ -14,5 +14,5 @@
     "de": "Aktiviert den grünen Pass für den eingeloggten User",
     "en": "Activates the green pass for the logged in user."
   },
-  "subscribe": "lang,entry-point-url,gp-search-hash-string,auth,html-overrides,nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url,file-handling-enabled-targets",
+  "subscribe": "lang,entry-point-url,gp-search-hash-string,auth,html-overrides,nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url,file-handling-enabled-targets"
 }
