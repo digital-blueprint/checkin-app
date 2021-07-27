@@ -82,11 +82,14 @@ export const fabricjs2pdfasPosition = (data) => {
 };
 
 export function parseGreenPassQRCode(data, id) {
-    // The QR code is of the format: "HC1:$hash"
+    // The QR code is of the format: "?$id:$hash"
     const searchHashString = `${id}:`;
     let index = data.search(searchHashString);
     if (index === -1)
         throw new Error('invalid green pass format');
+
+    console.log('QR code: ', data);
+
     let passData = data.substring(index + searchHashString.length);
     if (passData === "")
         throw new Error('invalid green pass qr code');

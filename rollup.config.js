@@ -44,6 +44,7 @@ if (appEnv in appConfig) {
 }
 
 config.searchQRString = 'tugrazcheckin';
+config.gpSearchQRString = 'HC1';
 
 function getOrigin(url) {
     if (url)
@@ -112,6 +113,7 @@ export default (async () => {
                     keyCloakClientId: config.keyCloakClientId,
                     CSP: config.CSP,
                     searchQRString: config.searchQRString,
+                    gpSearchQRString: config.gpSearchQRString,
                     matomoUrl: config.matomoUrl,
                     matomoSiteId: config.matomoSiteId,
                     buildInfo: getBuildInfo(appEnv)

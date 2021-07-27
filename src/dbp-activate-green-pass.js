@@ -21,7 +21,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this._i18n = createInstance();
         this.lang = this._i18n.language;
         this.entryPointUrl = '';
-        this.checkedInEndTime = '';
+        this.activationStartTime = '';
+        this.activationEndTime = '';
         this.identifier = '';
         this.agent = '';
         this.showManuallyContainer = false;
@@ -29,16 +30,14 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.searchHashString = '';
         this.wrongHash = [];
         this.wrongQR = [];
-        this.isRoomSelected = false;
-        this.roomCapacity = 0;
-        this._checkInInProgress = false;
-        this.checkinCount = 0;
+        this._activationInProgress = false;
         this.loading = false;
         this.loadingMsg = '';
         this.status = null;
         this.resetWrongQr = false;
         this.resetWrongHash = false;
         this.greenPassHash = '';
+        this.isActivated = false;
     }
 
     static get scopedElements() {
@@ -59,14 +58,15 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             showManuallyContainer: { type: Boolean, attribute: false},
             showQrContainer: { type: Boolean, attribute: false},
-            checkedInStartTime: {type: String, attribute: false},
-            checkedInEndTime: { type: String, attribute: false },
+            activationStartTime: {type: String, attribute: false},
+            activationEndTime: { type: String, attribute: false },
             loadingMsg: { type: String, attribute: false },
-            searchHashString: { type: String, attribute: 'search-hash-string' },
+            searchHashString: { type: String, attribute: 'gp-search-hash-string' },
             loading: {type: Boolean, attribute: false},
             status: { type: Object, attribute: false },
             wrongQR : { type: Array, attribute: false },
             wrongHash : { type: Array, attribute: false },
+            isActivated: { type: Boolean, attribute: false },
         };
     }
 
@@ -95,13 +95,13 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         super.update(changedProperties);
     }
 
-    async tryCheckOut(locationHash, seat) {
+    async tryDeleteActivation(gpHash) {
         let count_trys = 0;
         let responseData;
         while (count_trys !== 4) {
 
             let time = Math.pow(5, count_trys);
-            responseData = await this.sendCheckOutRequest(locationHash, seat);
+            responseData = 'response'; //await this.sendCheckOutRequest(gpHash); //TODO change to correct request
             if (responseData.status === 201) {
                 return responseData;
             }
@@ -112,14 +112,14 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     }
 
-    resetCheckin(that) {
-        that.locationHash = "";
-        that.checkedInEndTime = "";
+    resetCheckin(that) { //TODO rename + rework function
+        that.greenPassHash = "";
+        that.activationEndTime = "";
 
-        let checkInPlaceSelect = that.shadowRoot.querySelector(that.getScopedTagName('dbp-check-in-place-select'));
+        /*let checkInPlaceSelect = that.shadowRoot.querySelector(that.getScopedTagName('dbp-activate-in-place-select'));
         if (checkInPlaceSelect !== null) {
             checkInPlaceSelect.clear();
-        }
+        }*/
     }
 
     /**
@@ -134,17 +134,44 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
 
         button.start();
         try {
-            //response = await this.tryCheckOut(this.greenPassHash, this.seatNr);
-            response = null;
+            //response = await this.tryDeleteActivation(this.greenPassHash);
+            response = 'response';
             //TODO: delete green pass
         } finally {
             button.stop();
         }
 
         //TODO: send correct response
-       // await this.checkCheckoutResponse(response, this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', this, this.resetCheckin);
+       // await this.checkCheckoutResponse(response, this.greenPassHash, 'CheckInRequest', this, this.resetCheckin);
 
         return response;
+    }
+
+    /**
+     * Sends an Activation request and do error handling and parsing
+     * Include message for user when it worked or not
+     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
+     *
+     * Possible paths: activation, refresh session, invalid input, gp hash wrong
+     * already activated, no permissions, any other errors, gp hash empty
+     *
+     * @param greenPassHash
+     * @param category
+     * @param refresh (default = false)
+     * @param setAdditional (default = false)
+     */
+    async doActivation(greenPassHash, category, refresh = false, setAdditional = false) {
+        const i18n = this._i18n;
+
+        // Error: no location hash detected
+        if (greenPassHash.length <= 0) {
+            this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), greenPassHash);
+            this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'ActivationFailedNoGreenPassHash'});
+            return;
+        }
+
+        let responseData = { status: 201 }; //await this.sendCheckInRequest(gpHash); //TODO change to correct request
+        await this.checkActivationResponse(responseData, greenPassHash, category, refresh, setAdditional);
     }
 
     /**
@@ -152,33 +179,33 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
      *
      * @param event
      */
-    async doCheckInWithQR(event) {
+    async doActivationWithQR(event) {
         let data = event.detail['code'];
         event.stopPropagation();
 
-        if (this._checkInInProgress)
+        if (this._activationInProgress)
             return;
-        this._checkInInProgress = true;
+        this._activationInProgress = true;
         try {
             let check = await this.decodeUrl(data);
             if (check) {
-                // await this.doCheckIn(this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', false, true);
+                await this.doActivation(this.greenPassHash, 'ActivationRequest', false, true);
             }
         } finally {
-            this._checkInInProgress = false;
+            this._activationInProgress = false;
             this.loading = false;
             this.loadingMsg = "";
         }
     }
 
-    async doCheckInManually(event) {
+    async doActivationManually(event) {
         let button = event.target;
         if (button.disabled) {
             return;
         }
         try {
             button.start();
-            // await this.doCheckIn(this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', false, true);
+            await this.doActivation(this.greenPassHash, 'ActivationRequest', false, true);
         } finally {
             button.stop();
         }
@@ -230,7 +257,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.wrongQR.push(data);
             send({
                 "summary": i18n.t('check-in.qr-false-title'),
-                "body":  i18n.t('check-in.qr-false-body'),
+                "body":  "Dieser QR Code ist kein gültiger Grüner Pass QR Code. Bitten benutzen Sie einen anderen oder wählen Sie beim Check-in die Variante XXXX aus.",
                 "type": "danger",
                 "timeout": 5,
             });
@@ -238,9 +265,10 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
 
         this.greenPassHash = passData;
+        console.log('no error, ', passData);
 
-        let checkAlreadySend = await this.wrongHash.includes(this.greenPassHash);
-        if (checkAlreadySend) {
+        let gpAlreadySend = await this.wrongHash.includes(this.greenPassHash);
+        if (gpAlreadySend) { //TODO: what should we actually do if this qr code was already uploaded? Change code according to this.
             const that = this;
             if (!this.resetWrongHash) {
                 this.resetWrongHash = true;
@@ -251,7 +279,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                 }, 3000);
             }
         }
-        return !checkAlreadySend;
+        return !gpAlreadySend;
     }
 
     /**
@@ -295,7 +323,20 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this._('#btn-container').classList.add('hidden');
         this._("#notification-wrapper").classList.remove('hidden');
 
-        //TODO
+        this.isActivated = true; //TODO
+    }
+
+    /**
+     * Parse an incoming date to a readable date
+     *
+     * @param date
+     * @returns {string} readable date
+     */
+    getReadableActivationDate(date) {
+        const i18n = this._i18n;
+        let newDate = new Date(date);
+        let month = newDate.getMonth() + 1;
+        return newDate.getDate() + "." + month + "." + newDate.getFullYear() + ' um ' + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2); //i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear(); //TODO
     }
 
     /**
@@ -321,9 +362,63 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         button.start();
         try {
             //TODO show uploadSwitch again
-            // await this.refreshSession(this.locationHash, this.seatNr, this.checkedInRoom, 'CheckInRequest', true);
+            // await this.refreshSession(this.greenPassHash, 'CheckInRequest', true);
         } finally {
             button.stop();
+        }
+    }
+
+    /**
+     * Parse the response of a checkin or guest checkin request
+     * Include message for user when it worked or not
+     * Saves invalid QR codes in array in this.wrongHash, so no multiple requests are send
+     *
+     * Possible paths: checkin, refresh session, invalid input, roomhash wrong, invalid seat number
+     * no seat number, already checkedin, no permissions, any other errors, location hash empty
+     *
+     * @param responseData
+     * @param greenPassHash
+     * @param category
+     * @param refresh (default = false)
+     * @param setAdditional (default = false)
+     */
+    async checkActivationResponse(responseData, greenPassHash, category, refresh=false, setAdditional = false) {
+        const i18n = this._i18n;
+
+        let status = responseData.status;
+        let responseBody = { endTime: new Date() }//await responseData.clone().json(); //TODO change this after correct request
+        switch (status) {
+            case 201:
+                if (setAdditional) {
+                    this.activationEndTime = responseBody.endTime;
+                    //this.identifier = responseBody['identifier'];
+                    //this.agent = responseBody['agent'];
+                    this.stopQRReader();
+                    this.isActivated = true;
+                    this._("#text-switch")._active = "";
+                }
+
+                send({
+                    "summary": "Erfolgreiche Aktivierung",
+                    "body": "Ihr Grüner Pass wurde erfolgreich aktiviert.",
+                    "type": "success",
+                    "timeout": 5,
+                });
+
+                //this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'ActivationSuccess', 'name': locationName});
+                //await this.checkOtherCheckins(locationHash, seatNumber); //TODO
+                break;
+
+            // Invalid Input
+            case 400:
+                //this.saveWrongHashAndNotify(i18n.t('check-in.invalid-input-title'), i18n.t('check-in.invalid-input-body'), locationHash, seatNumber);
+                //this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'ActivationFailed400', 'name': locationName});
+                console.log('error 400');
+                break;
+
+            // Error: something else doesn't work
+            default:
+                break;
         }
     }
 
@@ -337,7 +432,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             
 
             #notification-wrapper {
-                border-top: 1px solid black;
+                margin-top: 2rem;
             }
             
             #btn-container {
@@ -539,24 +634,28 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </p>
                     </slot>
                 </div>
-                <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
+                <div id="btn-container" class="${classMap({hidden: this.isActivated})}">
                     <dbp-textswitch id="text-switch" name1="qr-reader"
                         name2="manual"
-                        name="${i18n.t('check-in.qr-button-text')} || File hochladen"
+                        name="${i18n.t('check-in.qr-button-text')} || Manueller File Upload"
                         class="switch"
                         value1="${i18n.t('check-in.qr-button-text')}"
-                        value2="File hochladen"
+                        value2="Manueller File Upload"
                         @change=${ (e) => this.uploadSwitch(e.target.name) }></dbp-textswitch>
                 </div>
                 
-                <div class="grid-container border ${classMap({hidden: !this.isCheckedIn})}">
+                <div class="grid-container border ${classMap({hidden: !this.isActivated})}">
                     <div class="checkins">
-                        <span class="header"><strong>${this.checkedInRoom}</strong>${this.checkedInSeat !== null ? html`${i18n.t('check-in.seatNr')}: ${this.checkedInSeat}<br>` : ``}
-                        ${i18n.t('check-out.checkin-until')} ${this.getReadableDate(this.checkedInEndTime)}</span>
-    
-                        <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="Dokument / Daten löschen" @click="${(event) => { this.deleteGreenPass(event); }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
-                        <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="Aktualisieren" @click="${(event) => { this.refreshGreenPass(event); }}" title="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button></div></div>
-                     </div>
+                        <span class="header"><strong>Grüner Pass ist aktiv.</strong></span>
+                        
+                        <div><div class="btn"><dbp-loading-button ?disabled="${this.loading}" value="Grünen Pass löschen" @click="${(event) => { this.deleteGreenPass(event); }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
+                        <div><div class="btn"><dbp-loading-button type="is-primary" id="refresh-btn" ?disabled="${this.loading}" value="Aktualisieren" @click="${(event) => { this.refreshGreenPass(event); }}" title="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button></div></div>
+                    </div>
+                    <div id="notification-wrapper" class="${classMap({hidden: !this.isActivated})}">
+                        <dbp-inline-notification type="success" body="Ihr Grüner Pass ist noch gültig bis ${this.getReadableActivationDate(this.activationEndTime)}."></dbp-inline-notification>
+                        <p>oder:</p>
+                        <dbp-inline-notification type="warning" body="Ihr Grüner Pass läuft in Kürze ab!"></dbp-inline-notification>
+                    </div>
                     ${ this.status ? html`
                         <dbp-inline-notification class="inline-notification" type="${this.status.type}" summary="${i18n.t(this.status.summary)}" 
                                                  body="${i18n.t(this.status.body, this.status.options)}" ></dbp-inline-notification>
@@ -568,12 +667,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </span>
                     </div>
                 </div>
-                <div id="notification-wrapper" class="hidden">
-                    <p>Sie haben Ihren Grünen Pass erfolgreich aktiviert.</p>
-                    <dbp-inline-notification type="success" body="Ihr Pass ist noch gültig bis <strong>DD/MM/YYYY hh:mm</strong>."></dbp-inline-notification>
-                    <p>oder:</p>
-                    <dbp-inline-notification type="warning" summary="Ihr Pass läuft in Kürze ab!"></dbp-inline-notification>
-                </div>
+                
                 
                 <div id="roomselectorwrapper" class="hidden">
                     <p>TODO: open file picker</p>
@@ -581,10 +675,10 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <dbp-loading-button id="activate-btn" type="is-primary" class="button hidden" @click="${(event) => { this.doPassUpload(event); }}" value="Aktivieren"></dbp-loading-button>
                 
                 <div class="border ${classMap({hidden: !(this.showQrContainer || this.showManuallyContainer)})}">
-                    <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showQrContainer) || this.showManuallyContainer || this.loading})}">
-                        <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex="${matchRegexString}" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doCheckInWithQR(event);}}"></dbp-qr-code-scanner>
+                    <div class="element ${classMap({hidden: (this.isActivated && !this.showQrContainer) || this.showManuallyContainer || this.loading})}">
+                        <dbp-qr-code-scanner id="qr-scanner" lang="${this.lang}" stop-scan match-regex="${matchRegexString}" @scan-started="${this._onScanStarted}" @code-detected="${(event) => { this.doActivationWithQR(event);}}"></dbp-qr-code-scanner>
                     </div>
-                    <div class="element ${classMap({hidden: (this.isCheckedIn && !this.showManuallyContainer) || this.showQrContainer || this.loading })}">
+                    <div class="element ${classMap({hidden: (this.isActivated && !this.showManuallyContainer) || this.showQrContainer || this.loading })}">
                 
                         <div class="container" id="manual-select">
                             <p> TODO: open file picker </p>

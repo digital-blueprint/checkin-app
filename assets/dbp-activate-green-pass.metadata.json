@@ -14,5 +14,5 @@
     "de": "Aktiviert den grünen Pass für den eingeloggten User",
     "en": "Activates the green pass for the logged in user."
   },
-  "subscribe": "lang,entry-point-url,search-hash-string,auth,html-overrides"
+  "subscribe": "lang,entry-point-url,gp-search-hash-string,auth,html-overrides"
 }
