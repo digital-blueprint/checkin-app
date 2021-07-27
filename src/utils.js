@@ -88,12 +88,11 @@ export function parseGreenPassQRCode(data, id) {
     if (index === -1)
         throw new Error('invalid green pass format');
 
-    console.log('QR code: ', data);
-
     let passData = data.substring(index + searchHashString.length);
     if (passData === "")
         throw new Error('invalid green pass qr code');
-    return passData;
+
+    return data;
     
 }
 

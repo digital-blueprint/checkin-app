@@ -39,9 +39,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.resetWrongHash = false;
         this.greenPassHash = '';
         this.isActivated = false;
-
+        this.isRefresh = false;
         this.fileHandlingEnabledTargets = 'local';
-
         this.nextcloudWebAppPasswordURL = "";
         this.nextcloudWebDavURL = "";
         this.nextcloudName = "";
@@ -77,7 +76,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             wrongQR : { type: Array, attribute: false },
             wrongHash : { type: Array, attribute: false },
             isActivated: { type: Boolean, attribute: false },
-
+            isRefresh: { type: Boolean, attribute: false },
             fileHandlingEnabledTargets: {type: String, attribute: 'file-handling-enabled-targets'},
             nextcloudWebAppPasswordURL: { type: String, attribute: 'nextcloud-web-app-password-url' },
             nextcloudWebDavURL: { type: String, attribute: 'nextcloud-webdav-url' },
@@ -112,6 +111,29 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         super.update(changedProperties);
     }
 
+    /**
+     * Activate Green Pass
+     *
+     * @param greenPassHash
+     * @returns {object} response
+     */
+    async sendActivationRequest(greenPassHash) {
+        let body = {
+            "greenPass": '/activate_green_pass/' + greenPassHash, //TODO change to correct request body
+        };
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/ld+json',
+                Authorization: "Bearer " + this.auth.token
+            },
+            body: JSON.stringify(body)
+        };
+
+        return await this.httpGetAsync(this.entryPointUrl + '/green_pass_activation_actions', options); //TODO change to correct request url
+    }
+
     async tryDeleteActivation(gpHash) {
         let count_trys = 0;
         let responseData;
@@ -127,16 +149,6 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
         return responseData;
 
-    }
-
-    resetCheckin(that) { //TODO rename + rework function
-        that.greenPassHash = "";
-        that.activationEndTime = "";
-
-        /*let checkInPlaceSelect = that.shadowRoot.querySelector(that.getScopedTagName('dbp-activate-in-place-select'));
-        if (checkInPlaceSelect !== null) {
-            checkInPlaceSelect.clear();
-        }*/
     }
 
     /**
@@ -187,7 +199,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             return;
         }
 
-        let responseData = { status: 201 }; //await this.sendCheckInRequest(gpHash); //TODO change to correct request
+        let responseData = { status: 201 }; //await this.sendActivationRequest(greenPassHash); //TODO change to correct request
         await this.checkActivationResponse(responseData, greenPassHash, category, refresh, setAdditional);
     }
 
@@ -349,7 +361,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
     getReadableActivationDate(date) {
         let newDate = new Date(date);
         let month = newDate.getMonth() + 1;
-        return newDate.getDate() + "." + month + "." + newDate.getFullYear() + ' um ' + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2); //i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear(); //TODO
+        return newDate.getDate() + "." + month + "." + newDate.getFullYear() + ' um ' + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2); //TODO i18n
     }
 
     /**
@@ -374,8 +386,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         let button = event.target;
         button.start();
         try {
-            //TODO show uploadSwitch again
-            // await this.refreshSession(this.greenPassHash, 'CheckInRequest', true);
+            this.isRefresh = true;
+            //await this.sendActivationRequest(this.greenPassHash); //TODO
         } finally {
             button.stop();
         }
@@ -396,7 +408,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @param setAdditional (default = false)
      */
     async checkActivationResponse(responseData, greenPassHash, category, refresh=false, setAdditional = false) {
-        const i18n = this._i18n;
+        //const i18n = this._i18n; //TODO replace hardcoded text with i18n values
 
         let status = responseData.status;
         let responseBody = {endTime: new Date()}; //await responseData.clone().json(); //TODO change this after correct request
@@ -658,7 +670,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </p>
                     </slot>
                 </div>
-                <div id="btn-container" class="${classMap({hidden: this.isActivated})}">
+                <div id="btn-container" class="${classMap({hidden: this.isActivated || this.isRefresh})}">
                     <dbp-textswitch id="text-switch" name1="qr-reader"
                         name2="manual"
                         name="${i18n.t('check-in.qr-button-text')} || Manueller File Upload"
