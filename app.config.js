@@ -6,6 +6,8 @@ export default {
         keyCloakClientId: 'auth-dev-mw-frontend-local',
         matomoUrl: 'https://analytics.tugraz.at/',
         matomoSiteId: 131,
+        nextcloudBaseURL: 'http://localhost:8081',
+        nextcloudName: 'TU Graz cloud',
     },
     development: {
         basePath: '/apps/checkin/',
@@ -14,6 +16,8 @@ export default {
         keyCloakClientId: 'checkin-dev_tugraz_at-CHECKIN',
         matomoUrl: 'https://analytics.tugraz.at/',
         matomoSiteId: 131,
+        nextcloudBaseURL: 'https://nc-dev.tugraz.at/pers',
+        nextcloudName: 'TU Graz cloud',
     },
     demo: {
         basePath: '/apps/checkin/',
@@ -22,6 +26,8 @@ export default {
         keyCloakClientId: 'checkin-demo_tugraz_at-CHECKIN',
         matomoUrl: 'https://analytics.tugraz.at/',
         matomoSiteId: 131,
+        nextcloudBaseURL: 'https://cloud.tugraz.at',
+        nextcloudName: 'TU Graz cloud',
     },
     production: {
         basePath: '/',
@@ -30,5 +36,7 @@ export default {
         keyCloakClientId: 'checkin_tugraz_at-CHECKIN',
         matomoUrl: 'https://analytics.tugraz.at/',
         matomoSiteId: 150,
+        nextcloudBaseURL: 'https://cloud.tugraz.at',
+        nextcloudName: 'TU Graz cloud',
     },
 };

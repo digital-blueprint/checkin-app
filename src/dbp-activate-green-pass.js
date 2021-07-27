@@ -4,6 +4,7 @@ import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {LoadingButton, Icon, MiniSpinner, InlineNotification} from '@dbp-toolkit/common';
+import {FileSource} from '@dbp-toolkit/file-handling';
 import {classMap} from 'lit-html/directives/class-map.js';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {TextSwitch} from './textswitch.js';
@@ -38,6 +39,14 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.resetWrongHash = false;
         this.greenPassHash = '';
         this.isActivated = false;
+
+        this.fileHandlingEnabledTargets = 'local';
+
+        this.nextcloudWebAppPasswordURL = "";
+        this.nextcloudWebDavURL = "";
+        this.nextcloudName = "";
+        this.nextcloudFileURL = "";
+        this.nextcloudAuthInfo = '';
     }
 
     static get scopedElements() {
@@ -48,6 +57,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
           'dbp-textswitch': TextSwitch,
           'dbp-qr-code-scanner': QrCodeScanner,
           'dbp-inline-notification': InlineNotification,
+          'dbp-file-source': FileSource,
         };
     }
 
@@ -67,6 +77,13 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             wrongQR : { type: Array, attribute: false },
             wrongHash : { type: Array, attribute: false },
             isActivated: { type: Boolean, attribute: false },
+
+            fileHandlingEnabledTargets: {type: String, attribute: 'file-handling-enabled-targets'},
+            nextcloudWebAppPasswordURL: { type: String, attribute: 'nextcloud-web-app-password-url' },
+            nextcloudWebDavURL: { type: String, attribute: 'nextcloud-webdav-url' },
+            nextcloudName: { type: String, attribute: 'nextcloud-name' },
+            nextcloudFileURL: { type: String, attribute: 'nextcloud-file-url' },
+            nextcloudAuthInfo: {type: String, attribute: 'nextcloud-auth-info'},
         };
     }
 
@@ -292,8 +309,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         if ( this._('#qr-scanner') ) {
             this._('#qr-scanner').stopScan = false;
         }
-        this._("#roomselectorwrapper").classList.add('hidden');
-        this._("#activate-btn").classList.add('hidden');
+        this._("#manualPassUploadWrapper").classList.add('hidden');
     }
 
     /**
@@ -305,9 +321,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this._("#qr-scanner").stopScan = true;
         this.showQrContainer = false;
 
-        this._("#roomselectorwrapper").scrollIntoView({ behavior: 'smooth', block: 'start' });
-        this._("#roomselectorwrapper").classList.remove('hidden');
-        this._("#activate-btn").classList.remove('hidden');
+        this._("#manualPassUploadWrapper").scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this._("#manualPassUploadWrapper").classList.remove('hidden');
 
         //TODO show filePicker
     }
@@ -318,8 +333,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
         this.showManuallyContainer = false;
         this.showQrContainer = false;
-        this._("#roomselectorwrapper").classList.add('hidden');
-        this._("#activate-btn").classList.add('hidden');
+        this._("#manualPassUploadWrapper").classList.add('hidden');
         this._('#btn-container').classList.add('hidden');
         this._("#notification-wrapper").classList.remove('hidden');
 
@@ -333,7 +347,6 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @returns {string} readable date
      */
     getReadableActivationDate(date) {
-        const i18n = this._i18n;
         let newDate = new Date(date);
         let month = newDate.getMonth() + 1;
         return newDate.getDate() + "." + month + "." + newDate.getFullYear() + ' um ' + newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2); //i18n.t('check-in.checked-in-at', {clock: newDate.getHours() + ":" + ("0" + newDate.getMinutes()).slice(-2)}) + " " + newDate.getDate() + "." + month + "." + newDate.getFullYear(); //TODO
@@ -386,7 +399,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         const i18n = this._i18n;
 
         let status = responseData.status;
-        let responseBody = { endTime: new Date() }//await responseData.clone().json(); //TODO change this after correct request
+        let responseBody = {endTime: new Date()}; //await responseData.clone().json(); //TODO change this after correct request
         switch (status) {
             case 201:
                 if (setAdditional) {
@@ -419,6 +432,17 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             // Error: something else doesn't work
             default:
                 break;
+        }
+    }
+
+    /*
+     * Open the file source
+     *
+     */
+    openFileSource() {
+        const fileSource = this._("#file-source");
+        if (fileSource) {
+            this._("#file-source").openDialog();
         }
     }
 
@@ -669,10 +693,34 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                 </div>
                 
                 
-                <div id="roomselectorwrapper" class="hidden">
+                <div id="manualPassUploadWrapper" class="hidden">
                     <p>TODO: open file picker</p>
+                    <button id="add-files-button" @click="${() => { this.openFileSource(); }}"
+                            class="button" title="TODO add title">
+                        Datei hochladen
+                    </button>
+                     <dbp-file-source
+                                id="file-source"
+                                context="TODO Kontext"
+                                nextcloud-auth-url="${this.nextcloudWebAppPasswordURL}"
+                                nextcloud-web-dav-url="${this.nextcloudWebDavURL}"
+                                nextcloud-name="${this.nextcloudName}"
+                                nextcloud-file-url="${this.nextcloudFileURL}"
+                                nexcloud-auth-info="${this.nextcloudAuthInfo}"
+                                enabled-targets="${this.fileHandlingEnabledTargets}"
+                                decompress-zip
+                                lang="${this.lang}"
+                                text="Upload area text"
+                                button-label="Datei auswählen"
+                                number-of-files="1"
+                                @dbp-file-source-file-selected="${this.saveFilesToClipboardEvent}"
+                                @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
+                                @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
+                    ></dbp-file-source>
+                    
+                    <dbp-loading-button id="activate-btn" type="is-primary" class="button" @click="${(event) => { this.doPassUpload(event); }}" value="Aktivieren"></dbp-loading-button>
+
                 </div>
-                <dbp-loading-button id="activate-btn" type="is-primary" class="button hidden" @click="${(event) => { this.doPassUpload(event); }}" value="Aktivieren"></dbp-loading-button>
                 
                 <div class="border ${classMap({hidden: !(this.showQrContainer || this.showManuallyContainer)})}">
                     <div class="element ${classMap({hidden: (this.isActivated && !this.showQrContainer) || this.showManuallyContainer || this.loading})}">
