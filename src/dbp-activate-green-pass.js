@@ -33,7 +33,6 @@ class QrScanner {
             this._engine = await this._scanner.createQrEngine(this._scanner.WORKER_PATH);
         }
         try {
-            console.log("image", image);
             await this._scanner.scanImage(image)
                 .then(result => console.log("QR found", result))
                 .catch(error => console.log("Error", error || 'No QR code found.'));
@@ -43,6 +42,7 @@ class QrScanner {
         }
     }
 }
+
 
 class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -68,7 +68,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.greenPassHash = '';
         this.isActivated = false;
         this.isRefresh = false;
-        this.QRCodeFile = '';
+        this.QRCodeFile = null;
 
         this.fileHandlingEnabledTargets = 'local';
 
@@ -164,53 +164,56 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         });
     };
 
-    async getImageFromPDF()
+    /**
+     * Converts a PDF file to an Canvas Image Array
+     *
+     * @param {File} file
+     */
+    async getImageFromPDF(file)
     {
-        const data = await this.readBinaryFileContent(this.QRCodeFile);
+        const data = await this.readBinaryFileContent(file);
         let pages = [], heights = [], width = 0, height = 0, currentPage = 1;
         let scale = 1.5;
         let canvasImages = [];
         try {
             let pdf = await pdfjs.getDocument({data: data}).promise;
-            await getPage(pdf);
+            await this.getPage(pdf, pages, heights, width, height, currentPage, scale, canvasImages);
+            return canvasImages;
         }
         catch (error) {
+            //TODO Throw error if pdf cant converted to image
             console.error(error);
-            return;
+            return -1;
         }
+    }
 
-        async function getPage(pdf) {
-            pdf.getPage(currentPage).then(page => {
-                let viewport = page.getViewport({scale});
-                let canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
-                let renderContext = { canvasContext: ctx, viewport: viewport };
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                page.render(renderContext).promise.then(response => {
-                    console.log("page rendered");
-                    pages.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    async getPage(pdf, pages, heights, width, height, currentPage, scale, canvasImages) {
+        let page = await pdf.getPage(currentPage);
+        let viewport = page.getViewport({scale});
+        let canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
+        let renderContext = { canvasContext: ctx, viewport: viewport };
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        await page.render(renderContext).promise;
+            console.log("page rendered");
+            pages.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
 
-                    heights.push(height);
-                    height += canvas.height;
-                    if (width < canvas.width) width = canvas.width;
+            heights.push(height);
+            height += canvas.height;
+            if (width < canvas.width) width = canvas.width;
 
-                    if (currentPage < pdf.numPages) {
-                        currentPage++;
-                        getPage();
-                    }
-                    else {
-                        let canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
-                        canvas.width = width;
-                        canvas.height = height;
-                        for(let i = 0; i < pages.length; i++)
-                            ctx.putImageData(pages[i], 0, heights[i]);
-                        canvasImages.push(canvas);
-                    }
-                });
-            });
-        }
-        return canvasImages;
-
+            if (currentPage < pdf.numPages) {
+                currentPage++;
+                await this.getPage(pdf, pages, heights, width, height, currentPage, scale, canvasImages);
+            }
+            else {
+                let canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
+                canvas.width = width;
+                canvas.height = height;
+                for(let i = 0; i < pages.length; i++)
+                    ctx.putImageData(pages[i], 0, heights[i]);
+                canvasImages.push(canvas);
+            }
     }
 
     /**
@@ -332,36 +335,59 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
 
-
+    /**
+     * Searches in the uploaded file for an QR Code
+     * If the file is a pdf the search in all pages
+     * The payload is null if no QR Code is found
+     *
+     * @returns {object} payload
+     */
     async searchQRInFile() {
         if (this.QRCodeFile.type === "application/pdf") {
-            let ret = await this.getImageFromPDF();
-            console.log("-----------", ret[0]);
-            let payload = "";
+            let pages = await this.getImageFromPDF(this.QRCodeFile);
+            let payload = null;
             let scanner = new QrScanner();
-            scanner.scanImage(ret[0]);
-            //TODo MAKE await foreach
-            console.log("yyaaaa", payload);
-
+            for (const page of pages) {
+                payload = await scanner.scanImage(page);
+                if (payload !== null)
+                    break;
+            }
             return payload;
         } else {
             let payload = "";
             let scanner = new QrScanner();
-            await scanner.scanImage(this.QRCodeFile);
+            payload = await scanner.scanImage(this.QRCodeFile);
             return payload;
         }
-
     }
 
+    /**
+     * Check uploaded file and search for QR code
+     * If a QR Code is found, validate it and send a Activation Request
+     *
+     */
     async doActivationManually(event) {
+        const i18n = this._i18n;
         let button = event.target;
         if (button.disabled) {
             return;
         }
         try {
-            this.greenPassHash = await this.searchQRInFile();
-            button.start();
-            //await this.doActivation(this.greenPassHash, 'ActivationRequest', false, true);
+            let data = await this.searchQRInFile();
+            if (data === null) {
+                send({
+                    "summary": i18n.t('green-pass-activation.no-qr-code-title'),
+                    "body":  i18n.t('green-pass-activation.no-qr-code-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else {
+                let check = await this.decodeUrl(data.data);
+                if (check) {
+                    await this.doActivation(this.greenPassHash, 'ActivationRequest', false, true);
+                }
+                button.start();
+            }
         } finally {
             button.stop();
         }
@@ -852,7 +878,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                 
                 
                 <div id="manualPassUploadWrapper" class="hidden">
-                    <p>TODO: open file picker</p>
+                    <p></p>
                     <button id="add-files-button" @click="${() => { this.openFileSource(); }}"
                             class="button" title="TODO add title">
                         Datei hochladen
@@ -860,6 +886,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                      <dbp-file-source
                                 id="file-source"
                                 context="TODO Kontext"
+                                allowed-mime-types="image/*,application/pdf,.pdf"
                                 nextcloud-auth-url="${this.nextcloudWebAppPasswordURL}"
                                 nextcloud-web-dav-url="${this.nextcloudWebDavURL}"
                                 nextcloud-name="${this.nextcloudName}"

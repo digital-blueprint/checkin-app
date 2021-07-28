@@ -84,6 +84,8 @@
     "success-activation-body": "Ihr 3G Nachweis wurde erfolgreich aktiviert.",
     "invalid-qr-code-title": "Ungültiger QR Code!",
     "invalid-qr-code-body": "Dieser QR Code ist kein gültiger 3G QR Code. Bitte benutzen Sie einen anderen oder wählen Sie beim Ticketerwerb die manuelle Überprüfung des 3G Nachweises aus.",
+    "no-qr-code-title": "Kein QR Code gefunden!",
+    "no-qr-code-body": "Im hochgeladenen Dokument wurde kein QR Code gefunden. Bitte benutzen Sie ein anderes Dokument oder wählen Sie beim Ticketerwerb die manuelle Überprüfung des 3G Nachweises aus.",
     "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz check-in\" finden sie hier:",
     "data-protection-link": "Zur Datenschutzerklärung",
     "qr-button-text": "QR Code scannen",

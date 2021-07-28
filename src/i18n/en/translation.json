@@ -84,6 +84,8 @@
     "success-activation-body": "Your 3G proof has been successfully activated.",
     "invalid-qr-code-title": "Invalid QR Code!",
     "invalid-qr-code-body": "This QR code is not a valid 3G proof. Please use another one or select the manual 3G inspection at the ticket store.",
+    "no-qr-code-title": "No QR code found!",
+    "no-qr-code-body": "No QR code was found in the uploaded document. Please use another document or select the manual 3G inspection at the ticket store.",
     "data-protection": "What does TU Graz do with your data? You can find the data protection declaration for the app \"TU Graz check-in\" here:",
     "data-protection-link": "Privacy statement",
     "qr-button-text": "Scan QR Code",
