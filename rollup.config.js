@@ -24,8 +24,6 @@ let useBabel = buildFull;
 let checkLicenses = buildFull;
 let useHTTPS = true;
 
-console.log("APP_ENV: " + appEnv);
-
 let config;
 if (appEnv in appConfig) {
     config = appConfig[appEnv];
@@ -199,7 +197,14 @@ export default (async () => {
                     {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/' + await getDistPath('@dbp-toolkit/common', 'icons')},
                     {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/' + await getDistPath('@dbp-toolkit/qr-code-scanner')},
+                    {
+                        src: await getPackagePath('pdfjs-dist', 'legacy/build/pdf.worker.js'),
+                        dest: 'dist/' + await getDistPath(pkg.name, 'pdfjs')
+                    },
+                    {src: await getPackagePath('pdfjs-dist', 'cmaps/*'), dest: 'dist/' + await getDistPath(pkg.name, 'pdfjs')}, // do we want all map files?
+
                     {src: await getPackagePath('tabulator-tables', 'dist/css'), dest: 'dist/' + await getDistPath('@dbp-toolkit/file-handling', 'tabulator-tables')},
+                    {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/' + await getDistPath(pkg.name)},
 
                 ],
             }),

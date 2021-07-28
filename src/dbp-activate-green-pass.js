@@ -13,9 +13,36 @@ import { send } from '@dbp-toolkit/common/notification';
 import {escapeRegExp, parseGreenPassQRCode} from './utils.js';
 import {humanFileSize} from "@dbp-toolkit/common/i18next";
 import * as CheckinStyles from './styles';
+import {name as pkgName} from './../package.json';
+import pdfjs from 'pdfjs-dist/legacy/build/pdf.js';
 
 
+class QrScanner {
+    constructor() {
+        this._engine = null;
+        this._canvas = document.createElement("canvas");
+        this._scanner = null;
+    }
 
+    async scanImage(image) {
+        if (this._scanner === null)  {
+            this._scanner = (await import('qr-scanner')).default;
+            this._scanner.WORKER_PATH = commonUtils.getAssetURL(pkgName, 'qr-scanner-worker.min.js');
+        }
+        if (this._engine === null) {
+            this._engine = await this._scanner.createQrEngine(this._scanner.WORKER_PATH);
+        }
+        try {
+            console.log("image", image);
+            await this._scanner.scanImage(image)
+                .then(result => console.log("QR found", result))
+                .catch(error => console.log("Error", error || 'No QR code found.'));
+            return {data: await this._scanner.scanImage(image)};
+        } catch (e) {
+            return null;
+        }
+    }
+}
 
 class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -94,6 +121,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
+        pdfjs.GlobalWorkerOptions.workerSrc = commonUtils.getAssetURL(pkgName, 'pdfjs/pdf.worker.js');
     }
 
     update(changedProperties) {
@@ -115,6 +143,74 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         });
 
         super.update(changedProperties);
+    }
+
+    /**
+     * Returns the content of the file
+     *
+     * @param {File} file The file to read
+     * @returns {string} The content
+     */
+    readBinaryFileContent = async (file) => {
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+            reader.onload = () => {
+                resolve(reader.result);
+            };
+            reader.onerror = () => {
+                reject(reader.error);
+            };
+            reader.readAsBinaryString(file);
+        });
+    };
+
+    async getImageFromPDF()
+    {
+        const data = await this.readBinaryFileContent(this.QRCodeFile);
+        let pages = [], heights = [], width = 0, height = 0, currentPage = 1;
+        let scale = 1.5;
+        let canvasImages = [];
+        try {
+            let pdf = await pdfjs.getDocument({data: data}).promise;
+            await getPage(pdf);
+        }
+        catch (error) {
+            console.error(error);
+            return;
+        }
+
+        async function getPage(pdf) {
+            pdf.getPage(currentPage).then(page => {
+                let viewport = page.getViewport({scale});
+                let canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
+                let renderContext = { canvasContext: ctx, viewport: viewport };
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                page.render(renderContext).promise.then(response => {
+                    console.log("page rendered");
+                    pages.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+
+                    heights.push(height);
+                    height += canvas.height;
+                    if (width < canvas.width) width = canvas.width;
+
+                    if (currentPage < pdf.numPages) {
+                        currentPage++;
+                        getPage();
+                    }
+                    else {
+                        let canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
+                        canvas.width = width;
+                        canvas.height = height;
+                        for(let i = 0; i < pages.length; i++)
+                            ctx.putImageData(pages[i], 0, heights[i]);
+                        canvasImages.push(canvas);
+                    }
+                });
+            });
+        }
+        return canvasImages;
+
     }
 
     /**
@@ -209,6 +305,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         await this.checkActivationResponse(responseData, greenPassHash, category, refresh, setAdditional);
     }
 
+
+
     /**
      * Init a checkin from a QR code scan event
      *
@@ -233,14 +331,37 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
+
+
+    async searchQRInFile() {
+        if (this.QRCodeFile.type === "application/pdf") {
+            let ret = await this.getImageFromPDF();
+            console.log("-----------", ret[0]);
+            let payload = "";
+            let scanner = new QrScanner();
+            scanner.scanImage(ret[0]);
+            //TODo MAKE await foreach
+            console.log("yyaaaa", payload);
+
+            return payload;
+        } else {
+            let payload = "";
+            let scanner = new QrScanner();
+            await scanner.scanImage(this.QRCodeFile);
+            return payload;
+        }
+
+    }
+
     async doActivationManually(event) {
         let button = event.target;
         if (button.disabled) {
             return;
         }
         try {
+            this.greenPassHash = await this.searchQRInFile();
             button.start();
-            await this.doActivation(this.greenPassHash, 'ActivationRequest', false, true);
+            //await this.doActivation(this.greenPassHash, 'ActivationRequest', false, true);
         } finally {
             button.stop();
         }
@@ -755,7 +876,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                     
                     <div class="${classMap({hidden: !this.QRCodeFile})}">
                         ${this.getFileData()}
-                        <dbp-loading-button id="activate-btn" type="is-primary" class="button" @click="${(event) => { this.doPassUpload(event); }}" value="${i18n.t('green-pass-activation.activate-button-title')}" title="${i18n.t('green-pass-activation.activate-button-title')}">></dbp-loading-button>
+                        <dbp-loading-button id="activate-btn" type="is-primary" class="button" @click="${(event) => { this.doActivationManually(event); }}" value="${i18n.t('green-pass-activation.activate-button-title')}" title="${i18n.t('green-pass-activation.activate-button-title')}">></dbp-loading-button>
+
                     </div>
                 </div>
                 
