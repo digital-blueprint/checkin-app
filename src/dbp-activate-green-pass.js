@@ -173,7 +173,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
     {
         const data = await this.readBinaryFileContent(file);
         let pages = [], heights = [], width = 0, height = 0, currentPage = 1;
-        let scale = 1.5;
+        let scale = 3;
         let canvasImages = [];
         try {
             let pdf = await pdfjs.getDocument({data: data}).promise;
@@ -182,6 +182,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
         catch (error) {
             //TODO Throw error if pdf cant converted to image
+            this.sendSetPropertyEvent('analytics-event', {'category': 'ActivateGreenPass', 'action': 'PdfToImageConversionFailed'});
             console.error(error);
             return -1;
         }
