@@ -502,7 +502,6 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.showManuallyContainer = false;
         this.showQrContainer = false;
         this._("#manualPassUploadWrapper").classList.add('hidden');
-        this._('#btn-container').classList.add('hidden');
         this._("#notification-wrapper").classList.remove('hidden');
 
         this.isActivated = true; //TODO
@@ -597,6 +596,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                     //this.agent = responseBody['agent'];
                     this.stopQRReader();
                     this.isActivated = true;
+                    this.isRefresh = false;
                     this._("#text-switch")._active = "";
                 }
 
@@ -911,7 +911,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </p>
                     </slot>
                 </div>
-                <div id="btn-container" class="${classMap({hidden: this.isActivated || this.isRefresh})}">
+                <div id="btn-container" class="${classMap({hidden: this.isActivated && !this.isRefresh})}">
                     <dbp-textswitch id="text-switch" name1="qr-reader"
                         name2="manual"
                         name="${i18n.t('green-pass-activation.qr-button-text')} || ${i18n.t('green-pass-activation.manually-button-text')}
@@ -921,40 +921,17 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         @change=${ (e) => this.uploadSwitch(e.target.name) }></dbp-textswitch>
                 </div>
                 
-                <div class="grid-container border ${classMap({hidden: !this.isActivated})}">
-                    <div class="checkins">
-                        <span class="header"><strong>${i18n.t('green-pass-activation.uploaded-success-message')} ${this.getReadableActivationDate(this.activationEndTime)}</strong></span>
-                        <div class="checkins-btn">
-                            <div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('green-pass-activation.refresh-button-text')}" @click="${(event) => { this.refreshGreenPass(event); }}" title="${i18n.t('green-pass-activation.refresh-button-text')}"></dbp-loading-button></div>
-                            <div class="btn"><dbp-loading-button ?disabled="${this.loading}" value="${i18n.t('green-pass-activation.delete-button-text')}" @click="${(event) => { this.deleteGreenPass(event); }}" title="${i18n.t('green-pass-activation.delete-button-text')}"></dbp-loading-button></div>
-                        </div>
-                    </div>
-
-                    <!--<div id="notification-wrapper" class="${classMap({hidden: !this.isActivated})}">
-                        ${ this.activationEndTime && this.checkTimeForCurrentDay() ? html`
-                            <dbp-inline-notification type="success" body="${i18n.t('green-pass-activation.inline-notification-text')}"></dbp-inline-notification>` : html`
-                            <dbp-inline-notification type="warning" body="${i18n.t('green-pass-activation.inline-notification-warning')}"></dbp-inline-notification>`
-                        }
-                    </div>-->
-                    
-                    <div class="control ${classMap({hidden: !this.loading})}">
-                        <span class="loading">
-                            <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>
-                        </span>
-                    </div>
-                </div>
-                
                 <div id="manualPassUploadWrapper" class="border ${classMap({hidden: (this.isActivated && this.showQrContainer) || !this.showManuallyContainer || this.loading})}">
                     <div class="upload-wrapper">
                         <label class="button is-primary" for="add-files-button">
-                            Datei zum Überprüfen auswählen
+                            ${i18n.t('green-pass-activation.filepicker-open-button-title')}
                         </label>
                         <button id="add-files-button" class="hidden" @click="${() => { this.openFileSource(); }}"
                                 class="button" title="TODO add title">
                         </button>
                          <dbp-file-source
                                     id="file-source"
-                                    context="TODO Kontext"
+                                    context="${i18n.t('green-pass-activation.filepicker-context')}"
                                     allowed-mime-types="image/*,application/pdf,.pdf"
                                     nextcloud-auth-url="${this.nextcloudWebAppPasswordURL}"
                                     nextcloud-web-dav-url="${this.nextcloudWebDavURL}"
@@ -965,7 +942,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                                     decompress-zip
                                     lang="${this.lang}"
                                     text="Upload area text"
-                                    button-label="Datei auswählen"
+                                    button-label="${i18n.t('green-pass-activation.filepicker-button-title')}"
                                     number-of-files="1"
                                     @dbp-file-source-file-selected="${this.getFilesToActivate}"
                         ></dbp-file-source>
@@ -985,12 +962,12 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                     </div>
                     <div class="element ${classMap({hidden: (this.isActivated && !this.showManuallyContainer) || this.showQrContainer || this.loading })}">
                 
-                        <div class="container" id="manual-select">
+                       <!-- <div class="container" id="manual-select">
                             <p> TODO: open file picker </p>
                             <div class="btn">
                                 <dbp-loading-button id="activate-btn" type="is-primary" class="button" value="${i18n.t('green-pass-activation.activate-button-title')}" @click="${(event) => { this.doPassUpload(event); }}" title="${i18n.t('green-pass-activation.activate-button-title')}"></dbp-loading-button>
                             </div>
-                        </div>
+                        </div>-->
                     </div>  
                     <div class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
@@ -998,6 +975,23 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </span>
                     </div>
                 </div>
+                
+                <div class="grid-container border ${classMap({hidden: !this.isActivated})}">
+                    <div class="checkins">
+                        <span class="header"><strong>${i18n.t('green-pass-activation.uploaded-success-message')} ${this.getReadableActivationDate(this.activationEndTime)}</strong></span>
+                        <div class="checkins-btn">
+                            <div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('green-pass-activation.refresh-button-text')}" @click="${(event) => { this.refreshGreenPass(event); }}" title="${i18n.t('green-pass-activation.refresh-button-text')}"></dbp-loading-button></div>
+                            <div class="btn"><dbp-loading-button ?disabled="${this.loading}" value="${i18n.t('green-pass-activation.delete-button-text')}" @click="${(event) => { this.deleteGreenPass(event); }}" title="${i18n.t('green-pass-activation.delete-button-text')}"></dbp-loading-button></div>
+                        </div>
+                    </div>
+                    
+                    <div class="control ${classMap({hidden: !this.loading})}">
+                        <span class="loading">
+                            <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>
+                        </span>
+                    </div>
+                </div>
+                
             </div>
         `;
     }

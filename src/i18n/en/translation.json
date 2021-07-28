@@ -96,7 +96,10 @@
     "inline-notification-text": "A valid 3G proof was found!",
     "valid-until": "{{date}} at {{clock}}.",
     "inline-notification-warning": "Your 3G proof will expire soon!",
-    "activate-button-title": "Activate"
+    "activate-button-title": "Activate",
+    "filepicker-button-title": "Choose File",
+    "filepicker-context": "Choose File for 3G Verification",
+    "filepicker-open-button-title": "Choose File for Verification"
   },
   "info": {
     "title": "Information",
