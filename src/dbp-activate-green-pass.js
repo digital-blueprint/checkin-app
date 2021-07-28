@@ -278,6 +278,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
        // await this.checkCheckoutResponse(response, this.greenPassHash, 'CheckInRequest', this, this.resetCheckin);
         this.activationEndTime = '';
         this.isActivated = false;
+        this.QRCodeFile = null;
 
         return response;
     }
@@ -386,6 +387,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                 let check = await this.decodeUrl(data.data);
                 if (check) {
                     await this.doActivation(this.greenPassHash, 'ActivationRequest', false, true);
+                    this.doPassUpload(); //TODO TIMING of showing container -> would be fine if there will appear a laoding icon during processing the file
                 }
                 button.start();
             }
@@ -640,7 +642,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
     getFileData() {
         let data = html``;
         if (this.QRCodeFile) {
-            data = html`<span class="header"><strong>${this.QRCodeFile.name}</strong>${humanFileSize(this.QRCodeFile.size)}</span>`;
+            data = html`<span class="show-file"><strong>${this.QRCodeFile.name} </strong> ${humanFileSize(this.QRCodeFile.size)}</span>`;
         }
         return data;
     }
@@ -665,6 +667,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getNotificationCSS()}
             ${CheckinStyles.getCheckinCss()}
+            ${commonStyles.getButtonCSS()}
             
 
             #notification-wrapper {
@@ -786,9 +789,27 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                 align-items: center;
             }
            
-            .inline-notification{
+            .inline-notification {
                 margin-top: 2rem;
                 display: block;
+            }
+            
+            .show-file {
+                margin-right: 15px;
+            }
+            
+            .file-block {
+                margin-top: 2rem;
+                display: inline-block;
+                width: 100%;
+            }
+            
+            .upload-wrapper {
+                margin-top: 1.5rem;
+            }
+            
+            label.button {
+                display: inline-block;
             }
 
 
@@ -920,34 +941,38 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                     </div>
                 </div>
                 
-                <div id="manualPassUploadWrapper" class="hidden">
-                    <p></p>
-                    <button id="add-files-button" @click="${() => { this.openFileSource(); }}"
-                            class="button" title="TODO add title">
-                        Datei hochladen
-                    </button>
-                     <dbp-file-source
-                                id="file-source"
-                                context="TODO Kontext"
-                                allowed-mime-types="image/*,application/pdf,.pdf"
-                                nextcloud-auth-url="${this.nextcloudWebAppPasswordURL}"
-                                nextcloud-web-dav-url="${this.nextcloudWebDavURL}"
-                                nextcloud-name="${this.nextcloudName}"
-                                nextcloud-file-url="${this.nextcloudFileURL}"
-                                nexcloud-auth-info="${this.nextcloudAuthInfo}"
-                                enabled-targets="${this.fileHandlingEnabledTargets}"
-                                decompress-zip
-                                lang="${this.lang}"
-                                text="Upload area text"
-                                button-label="Datei auswählen"
-                                number-of-files="1"
-                                @dbp-file-source-file-selected="${this.getFilesToActivate}"
-                    ></dbp-file-source>
-                    
-                    <div class="${classMap({hidden: !this.QRCodeFile})}">
-                        ${this.getFileData()}
-                        <dbp-loading-button id="activate-btn" type="is-primary" class="button" @click="${(event) => { this.doActivationManually(event); }}" value="${i18n.t('green-pass-activation.activate-button-title')}" title="${i18n.t('green-pass-activation.activate-button-title')}">></dbp-loading-button>
-
+                <div id="manualPassUploadWrapper" class="border ${classMap({hidden: (this.isActivated && this.showQrContainer) || !this.showManuallyContainer || this.loading})}">
+                    <div class="upload-wrapper">
+                        <label class="button is-primary" for="add-files-button">
+                            Datei zum Überprüfen auswählen
+                        </label>
+                        <button id="add-files-button" class="hidden" @click="${() => { this.openFileSource(); }}"
+                                class="button" title="TODO add title">
+                        </button>
+                         <dbp-file-source
+                                    id="file-source"
+                                    context="TODO Kontext"
+                                    allowed-mime-types="image/*,application/pdf,.pdf"
+                                    nextcloud-auth-url="${this.nextcloudWebAppPasswordURL}"
+                                    nextcloud-web-dav-url="${this.nextcloudWebDavURL}"
+                                    nextcloud-name="${this.nextcloudName}"
+                                    nextcloud-file-url="${this.nextcloudFileURL}"
+                                    nexcloud-auth-info="${this.nextcloudAuthInfo}"
+                                    enabled-targets="${this.fileHandlingEnabledTargets}"
+                                    decompress-zip
+                                    lang="${this.lang}"
+                                    text="Upload area text"
+                                    button-label="Datei auswählen"
+                                    number-of-files="1"
+                                    @dbp-file-source-file-selected="${this.getFilesToActivate}"
+                        ></dbp-file-source>
+                        
+                        <div class="${classMap({hidden: !this.QRCodeFile})}">
+                            <div class="file-block">
+                                ${this.getFileData()}
+                                <dbp-loading-button id="activate-btn" type="is-primary" class="" @click="${(event) => { this.doActivationManually(event); }}" value="${i18n.t('green-pass-activation.activate-button-title')}" title="${i18n.t('green-pass-activation.activate-button-title')}">></dbp-loading-button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
