@@ -668,10 +668,14 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getNotificationCSS()}
             ${CheckinStyles.getCheckinCss()}
             ${commonStyles.getButtonCSS()}
-            
+
+            h2 {
+                margin-top: 0;
+            }
 
             #notification-wrapper {
-                margin-top: 2rem;
+                /*margin-top: 2rem;*/
+                margin-bottom: 1.2em;
             }
             
             #btn-container {
@@ -875,7 +879,6 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this.checkIfAlreadyActivated();
 
         return html`
-
             <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
                 ${i18n.t('error-login-message')}
             </div>
