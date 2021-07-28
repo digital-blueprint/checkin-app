@@ -50,7 +50,6 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         this._i18n = createInstance();
         this.lang = this._i18n.language;
         this.entryPointUrl = '';
-        this.activationStartTime = '';
         this.activationEndTime = '';
         this.identifier = '';
         this.agent = '';
@@ -98,7 +97,6 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             showManuallyContainer: { type: Boolean, attribute: false},
             showQrContainer: { type: Boolean, attribute: false},
-            activationStartTime: {type: String, attribute: false},
             activationEndTime: { type: String, attribute: false },
             loadingMsg: { type: String, attribute: false },
             searchHashString: { type: String, attribute: 'gp-search-hash-string' },
@@ -278,6 +276,8 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
 
         //TODO: send correct response
        // await this.checkCheckoutResponse(response, this.greenPassHash, 'CheckInRequest', this, this.resetCheckin);
+        this.activationEndTime = '';
+        this.isActivated = false;
 
         return response;
     }
@@ -520,6 +520,26 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
+     * Checks if the validity of the 3G proof expires in the next 12 hours
+     *
+     * @returns {boolean} true if the 3G proof is valid for the next 12 hours
+     */
+    checkTimeForCurrentDay() {
+        const hours = 12;
+
+        let newDate = new Date();
+        newDate.setTime(newDate.getTime() + (hours * 60 * 60 * 1000));
+
+        let currDate = new Date(this.activationEndTime);
+        currDate.setTime(currDate.getTime() + (hours * 60 * 60 * 1000));
+
+        console.log('computed minimal validity: ', newDate.getDate() + '.' + (newDate.getMonth() + 1) + '.' + newDate.getFullYear() + ' at ' + newDate.getHours() + ':' + ("0" + newDate.getMinutes()).slice(-2));
+        console.log('current 3G proof validity: ', currDate.getDate() + '.' + (currDate.getMonth() + 1) + '.' + currDate.getFullYear() + ' at ' + currDate.getHours() + ':' + ("0" + currDate.getMinutes()).slice(-2));
+
+        return currDate.getTime() >= newDate.getTime();
+    }
+
+    /**
      * Uses textswitch, switches container (manually room select or QR room select
      *
      * @param name
@@ -566,7 +586,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         const i18n = this._i18n;
 
         let status = responseData.status;
-        let responseBody = {endTime: new Date()}; //await responseData.clone().json(); //TODO change this after correct request
+        let responseBody = {endTime: new Date().setMonth(8)}; //await responseData.clone().json(); //TODO change this after correct response
         switch (status) {
             case 201:
                 if (setAdditional) {
@@ -623,6 +643,19 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             data = html`<span class="header"><strong>${this.QRCodeFile.name}</strong>${humanFileSize(this.QRCodeFile.size)}</span>`;
         }
         return data;
+    }
+
+    checkIfAlreadyActivated() {
+        let hasValidDocument = false;
+
+        //TODO send request if user already has an activated 3g document. If yes - set activationEndTime + isActivated.
+
+        if (hasValidDocument) {
+            this.activationEndTime = new Date();
+            this.isActivated = true;
+
+            console.log('Found a valid 3G proof for the current user.');
+        }
     }
 
     static get styles() {
@@ -818,6 +851,7 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
         let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf'); //TODO change to greenpass pdf?
         const matchRegexString = '.*' + escapeRegExp(this.searchHashString) + '.*';
         const i18n = this._i18n;
+        this.checkIfAlreadyActivated();
 
         return html`
 
@@ -832,6 +866,13 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
             </div>
 
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
+
+                <div id="notification-wrapper" class="${classMap({hidden: !this.isActivated})}">
+                    ${ this.activationEndTime && this.checkTimeForCurrentDay() ? html`
+                        <dbp-inline-notification type="success" body="${i18n.t('green-pass-activation.inline-notification-text')}"></dbp-inline-notification>` : html`
+                        <dbp-inline-notification type="warning" body="${i18n.t('green-pass-activation.inline-notification-warning')}"></dbp-inline-notification>`
+                    }
+                </div>
                 
                 <h2>${i18n.t('green-pass-activation.title')}</h2>
                 <div>
@@ -858,17 +899,19 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                 
                 <div class="grid-container border ${classMap({hidden: !this.isActivated})}">
                     <div class="checkins">
-                        <span class="header"><strong>${i18n.t('green-pass-activation.uploaded-success-message')}</strong></span>
+                        <span class="header"><strong>${i18n.t('green-pass-activation.uploaded-success-message')} ${this.getReadableActivationDate(this.activationEndTime)}</strong></span>
                         <div class="checkins-btn">
                             <div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('green-pass-activation.refresh-button-text')}" @click="${(event) => { this.refreshGreenPass(event); }}" title="${i18n.t('green-pass-activation.refresh-button-text')}"></dbp-loading-button></div>
                             <div class="btn"><dbp-loading-button ?disabled="${this.loading}" value="${i18n.t('green-pass-activation.delete-button-text')}" @click="${(event) => { this.deleteGreenPass(event); }}" title="${i18n.t('green-pass-activation.delete-button-text')}"></dbp-loading-button></div>
                         </div>
                     </div>
-                    <div id="notification-wrapper" class="${classMap({hidden: !this.isActivated})}">
-                        <dbp-inline-notification type="success" body="${i18n.t('green-pass-activation.inline-notification-text')} ${this.getReadableActivationDate(this.activationEndTime)}."></dbp-inline-notification>
-                        <p>oder Variante 2 (wird kurz vor Ablauf angezeigt):</p>
-                        <dbp-inline-notification type="warning" body="${i18n.t('green-pass-activation.inline-notification-warning')}"></dbp-inline-notification>
-                    </div>
+
+                    <!--<div id="notification-wrapper" class="${classMap({hidden: !this.isActivated})}">
+                        ${ this.activationEndTime && this.checkTimeForCurrentDay() ? html`
+                            <dbp-inline-notification type="success" body="${i18n.t('green-pass-activation.inline-notification-text')}"></dbp-inline-notification>` : html`
+                            <dbp-inline-notification type="warning" body="${i18n.t('green-pass-activation.inline-notification-warning')}"></dbp-inline-notification>`
+                        }
+                    </div>-->
                     
                     <div class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
@@ -876,7 +919,6 @@ class GreenPassActivation extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </span>
                     </div>
                 </div>
-                
                 
                 <div id="manualPassUploadWrapper" class="hidden">
                     <p></p>
