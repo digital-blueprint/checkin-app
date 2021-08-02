@@ -55,7 +55,6 @@
             --dbp-override-warning-bg-color: #ffe183;
             --dbp-override-warning-text-color: black;
             --dbp-override-success-bg-color: #259207;
-            --dbp-override-image-nextcloud: url(<%= getUrl('') %>images/nextcloud.svg);
         }
     </style>
 
@@ -70,12 +69,6 @@
     provider-root
     lang="de" entry-point-url="<%= entryPointURL %>"
     search-hash-string="<%= searchQRString %>"
-    gp-search-hash-string="<%= gpSearchQRString %>"
-    file-handling-enabled-targets="local,nextcloud"
-    nextcloud-web-app-password-url="<%= nextcloudWebAppPasswordURL %>"
-    nextcloud-webdav-url="<%= nextcloudWebDavURL %>"
-    nextcloud-name="<%= nextcloudName %>"
-    nextcloud-file-url="<%= nextcloudFileURL %>"
     src="<%= getUrl(name + '.topic.metadata.json') %>"
     base-path="<%= getUrl('') %>"
     keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'

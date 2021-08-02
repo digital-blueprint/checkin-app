@@ -56,7 +56,6 @@ export const baseName = (str) =>
     return base;
 };
 
-
 export const fabricjs2pdfasPosition = (data) => {
     let angle = -(data.angle - 360) % 360;
     let bottom = data.bottom;
@@ -80,21 +79,6 @@ export const fabricjs2pdfasPosition = (data) => {
         p: data.currentPage
     };
 };
-
-export function parseGreenPassQRCode(data, id) {
-    // The QR code is of the format: "?$id:$hash"
-    const searchHashString = `${id}:`;
-    let index = data.search(searchHashString);
-    if (index === -1)
-        throw new Error('invalid green pass format');
-
-    let passData = data.substring(index + searchHashString.length);
-    if (passData === "")
-        throw new Error('invalid green pass qr code');
-
-    return data;
-    
-}
 
 export function parseQRCode(data, id) {
     // The QR code is of the format: ".*?$id: -$hash(-$seat|-|)"

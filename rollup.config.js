@@ -35,22 +35,10 @@ if (appEnv in appConfig) {
         keyCloakClientId: '',
         matomoUrl: '',
         matomoSiteId: -1,
-        nextcloudBaseURL: 'https://test',
-        nextcloudName: '',
     };
 } else {
     console.error(`Unknown build environment: '${appEnv}', use one of '${Object.keys(appConfig)}'`);
     process.exit(1);
-}
-
-if (config.nextcloudBaseURL) {
-    config.nextcloudFileURL = config.nextcloudBaseURL + '/index.php/apps/files/?dir=';
-    config.nextcloudWebAppPasswordURL = config.nextcloudBaseURL + '/index.php/apps/webapppassword';
-    config.nextcloudWebDavURL = config.nextcloudBaseURL + '/remote.php/dav/files';
-} else {
-    config.nextcloudFileURL = '';
-    config.nextcloudWebAppPasswordURL = '';
-    config.nextcloudWebDavURL = '';
 }
 
 if (watch) {
@@ -58,7 +46,6 @@ if (watch) {
 }
 
 config.searchQRString = 'tugrazcheckin';
-config.gpSearchQRString = 'HC1';
 
 function getOrigin(url) {
     if (url)
@@ -72,8 +59,6 @@ config.CSP = `default-src 'self' 'unsafe-eval' 'unsafe-inline' \
     httpbin.org ${getOrigin(config.nextcloudBaseURL)}; \
     img-src * blob: data:; font-src 'self' data:`;
 
-console.log(".....", config.CSP);
-
 export default (async () => {
     let privatePath = await getDistPath(pkg.name)
     return {
@@ -84,7 +69,6 @@ export default (async () => {
                 'src/dbp-guest-check-in.js',
                 'src/dbp-check-in-info.js',
                 'src/dbp-report-risk.js',
-                'src/dbp-activate-green-pass.js',
 
         ] : glob.sync('test/**/*.js'),
         output: {
@@ -127,16 +111,10 @@ export default (async () => {
                     name: pkg.internalName,
                     entryPointURL: config.entryPointURL,
                     basePath: config.basePath,
-                    nextcloudBaseURL: config.nextcloudBaseURL,
-                    nextcloudWebAppPasswordURL: config.nextcloudWebAppPasswordURL,
-                    nextcloudWebDavURL: config.nextcloudWebDavURL,
-                    nextcloudFileURL: config.nextcloudFileURL,
-                    nextcloudName: config.nextcloudName,
                     keyCloakBaseURL: config.keyCloakBaseURL,
                     keyCloakClientId: config.keyCloakClientId,
                     CSP: config.CSP,
                     searchQRString: config.searchQRString,
-                    gpSearchQRString: config.gpSearchQRString,
                     matomoUrl: config.matomoUrl,
                     matomoSiteId: config.matomoSiteId,
                     buildInfo: getBuildInfo(appEnv)
@@ -189,7 +167,6 @@ export default (async () => {
                     {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
                     {src: 'assets/icon-*.png', dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: 'assets/icon/*', dest: 'dist/' + await getDistPath(pkg.name, 'icon')},
-                    {src: 'assets/images/*', dest: 'dist/images'},
                     {src: 'assets/manifest.json', dest: 'dist', rename: pkg.internalName + '.manifest.json'},
                     {src: 'assets/silent-check-sso.html', dest:'dist'},
                     {src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'), dest: 'dist/' + await getDistPath(pkg.name, 'fonts/source-sans-pro')},
@@ -197,15 +174,6 @@ export default (async () => {
                     {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/' + await getDistPath('@dbp-toolkit/common', 'icons')},
                     {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/' + await getDistPath('@dbp-toolkit/qr-code-scanner')},
-                    {
-                        src: await getPackagePath('pdfjs-dist', 'legacy/build/pdf.worker.js'),
-                        dest: 'dist/' + await getDistPath(pkg.name, 'pdfjs')
-                    },
-                    {src: await getPackagePath('pdfjs-dist', 'cmaps/*'), dest: 'dist/' + await getDistPath(pkg.name, 'pdfjs')}, // do we want all map files?
-
-                    {src: await getPackagePath('tabulator-tables', 'dist/css'), dest: 'dist/' + await getDistPath('@dbp-toolkit/file-handling', 'tabulator-tables')},
-                    {src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'), dest: 'dist/' + await getDistPath(pkg.name)},
-
                 ],
             }),
             useBabel && getBabelOutputPlugin({

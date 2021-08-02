@@ -76,31 +76,6 @@
     "already-checkin-title": "Bereits angemeldet!",
     "already-checkin-body": "Sie sind hier bereits angemeldet. Sie können sich hier erst wieder anmelden, wenn Ihre aktuelle Anmeldung abgelaufen ist."
   },
-  "green-pass-activation": {
-    "title": "3G Nachweis aktivieren",
-    "description": "Mit dieser Applikation können Sie ihren 3G Nachweis überprüfen und aktivieren.",
-    "additional-information": "Hier können Sie einen QR Code scannen oder ein vorhandenes PDF oder Bild hochladen, um Ihren 3G Nachweis für den Zeitraum seiner Gültigkeit zu aktivieren. Bitte beachten Sie, dass Sie damit trotzdem noch für Räume ein Ticket erwerben müssen, um die 3G-Regeln einzuhalten.",
-    "success-activation-title": "Erfolgreiche Aktivierung!",
-    "success-activation-body": "Ihr 3G Nachweis wurde erfolgreich aktiviert.",
-    "invalid-qr-code-title": "Ungültiger QR Code!",
-    "invalid-qr-code-body": "Dieser QR Code ist kein gültiger 3G QR Code. Bitte benutzen Sie einen anderen oder wählen Sie beim Ticketerwerb die manuelle Überprüfung des 3G Nachweises aus.",
-    "no-qr-code-title": "Kein QR Code gefunden!",
-    "no-qr-code-body": "Im hochgeladenen Dokument wurde kein QR Code gefunden. Bitte benutzen Sie ein anderes Dokument oder wählen Sie beim Ticketerwerb die manuelle Überprüfung des 3G Nachweises aus.",
-    "data-protection": "Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App \"TU Graz Greenlight\" finden sie hier:",
-    "data-protection-link": "Zur Datenschutzerklärung",
-    "qr-button-text": "QR Code scannen",
-    "manually-button-text": "Datei manuell hochladen",
-    "uploaded-success-message": "Ein 3G Nachweis wurde erfolgreich überprüft und ist aktiv bis",
-    "delete-button-text": "Löschen",
-    "refresh-button-text": "Aktualisieren",
-    "inline-notification-text": "Ein gültiger 3G Nachweis wurde gefunden!",
-    "valid-until": "{{date}} um {{clock}} Uhr.",
-    "inline-notification-warning": "Ihr 3G Nachweis läuft in Kürze ab!",
-    "activate-button-title": "Aktivieren",
-    "filepicker-button-title": "Datei auswählen",
-    "filepicker-context": "Datei zum Überprüfen auswählen",
-    "filepicker-open-button-title": "Datei zum Überprüfen auswählen"
-  },
   "info": {
     "title": "Information",
     "description": "Mit dieser Applikation erhalten Sie Informationen über checkin.tugraz.at."
