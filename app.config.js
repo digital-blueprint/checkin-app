@@ -10,7 +10,7 @@ export default {
     },
     development: {
         basePath: '/apps/checkin/',
-        entryPointURL: 'https://mw-dev.tugraz.at',
+        entryPointURL: 'https://api-dev.tugraz.at',
         keyCloakBaseURL: 'https://auth-dev.tugraz.at/auth',
         keyCloakRealm: 'tugraz-vpu',
         keyCloakClientId: 'checkin-dev_tugraz_at-CHECKIN',
