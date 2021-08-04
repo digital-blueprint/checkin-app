@@ -33,6 +33,7 @@ if (appEnv in appConfig) {
         entryPointURL: 'https://test',
         keyCloakBaseURL: 'https://test',
         keyCloakClientId: '',
+        keyCloakRealm: '',
         matomoUrl: '',
         matomoSiteId: -1,
     };
@@ -113,6 +114,7 @@ export default (async () => {
                     basePath: config.basePath,
                     keyCloakBaseURL: config.keyCloakBaseURL,
                     keyCloakClientId: config.keyCloakClientId,
+                    keyCloakRealm: config.keyCloakRealm,
                     CSP: config.CSP,
                     searchQRString: config.searchQRString,
                     matomoUrl: config.matomoUrl,

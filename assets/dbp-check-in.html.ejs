@@ -71,7 +71,7 @@
     search-hash-string="<%= searchQRString %>"
     src="<%= getUrl(name + '.topic.metadata.json') %>"
     base-path="<%= getUrl('') %>"
-    keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'
+    keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "<%= keyCloakRealm %>", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'
     git-info='<%= buildInfo.info %>'
     build-url='<%= buildInfo.url %>'
     build-time='<%= buildInfo.time %>'
