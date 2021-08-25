@@ -20,9 +20,9 @@ export default {
     demo: {
         basePath: '/apps/checkin/',
         entryPointURL: 'https://api-demo.tugraz.at',
-        keyCloakBaseURL: 'https://auth-test.tugraz.at/auth',
-        keyCloakRealm: 'tugraz',
-        keyCloakClientId: 'checkin-demo_tugraz_at-CHECKIN',
+        keyCloakBaseURL: 'https://auth-demo.tugraz.at/auth',
+        keyCloakRealm: 'tugraz-vpu',
+        keyCloakClientId: 'dbp-check-in',
         matomoUrl: 'https://analytics.tugraz.at/',
         matomoSiteId: 131,
     },
