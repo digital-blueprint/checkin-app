@@ -49,13 +49,6 @@ If you want to update the DBP Check-in App in the current folder you can call:
 npx @digital-blueprint/cli update-app check-in
 ```
 
-Not only you can use this app as pre-built package installed from [npmjs](https://www.npmjs.com/package/@dbp-topics/check-in) via:
-
-```bash
-npm install @dbp-topics/check-in
-```
-
-
 ## Activities
 
 ### dbp-check-in-request
