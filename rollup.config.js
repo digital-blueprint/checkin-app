@@ -163,7 +163,7 @@ export default (async () => {
                     {src: 'assets/*-placeholder.png', dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: 'assets/*.css', dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: 'assets/*.ico', dest: 'dist/' + await getDistPath(pkg.name)},
-                    {src: 'assets/*.metadata.json', dest: 'dist'},
+                    {src: 'src/*.metadata.json', dest: 'dist'},
                     {src: 'assets/*.svg', dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf', dest: 'dist/' + await getDistPath(pkg.name)},
                     {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},

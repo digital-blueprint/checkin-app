@@ -11,12 +11,15 @@ import select2CSSPath from 'select2/dist/css/select2.min.css';
 import { send } from '@dbp-toolkit/common/notification';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import * as CheckinStyles from './styles';
+import {Activity} from './activity.js';
+import metadata from './dbp-guest-check-in.metadata.json';
 
 class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this._i18n = createInstance();
         this.lang = this._i18n.language;
+        this.activity = new Activity(metadata);
         this.entryPointUrl = '';
         this.isRoomSelected = false;
         this.roomCapacity = 0;
@@ -270,9 +273,13 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getThemeCSS()}
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getNotificationCSS()}
+            ${commonStyles.getActivityCSS()}
             ${CheckinStyles.getCheckinCss()}
-        
 
+            h2 {
+                margin-top: 0;
+                margin-bottom: 0px;
+            }
 
             .field {
                 margin-bottom: 1rem!important;
@@ -408,7 +415,13 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 <div class="${classMap({hidden: !this.isLoggedIn() || !this.hasPermissions() || this.isLoading()})}">
     
                     <link rel="stylesheet" href="${select2CSS}">
-                    <h2>${i18n.t('guest-check-in.title')}</h2>
+
+                    <h2>${this.activity.getName(this.lang)}</h2>
+                    <p class="subheadline">
+                        <slot name="description">
+                            ${this.activity.getDescription(this.lang)}
+                        </slot>
+                    </p>
     
                     <p class="">${i18n.t('guest-check-in.description')}</p>
                     <p> ${i18n.t('guest-check-in.how-to')}</p>

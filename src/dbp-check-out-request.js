@@ -9,12 +9,15 @@ import * as commonStyles from '@dbp-toolkit/common/styles';
 import {TextSwitch} from './textswitch.js';
 import {send} from "@dbp-toolkit/common/notification";
 import * as CheckinStyles from './styles';
+import {Activity} from './activity.js';
+import metadata from './dbp-check-out-request.metadata.json';
 
 class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this._i18n = createInstance();
         this.lang = this._i18n.language;
+        this.activity = new Activity(metadata);
         this.entryPointUrl = '';
         this.activeCheckins = [];
         this.loading = false;
@@ -194,9 +197,8 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getButtonCSS()}
             ${commonStyles.getNotificationCSS()}
+            ${commonStyles.getActivityCSS()}
             ${CheckinStyles.getCheckinCss()}
-
-           
 
             .checkins {
                 display: grid;
@@ -268,8 +270,13 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
 
-                <h2>${i18n.t('check-out.title')}</h2>
-                <p>${i18n.t('check-out.description')}</p>
+                <h2>${this.activity.getName(this.lang)}</h2>
+                <p class="subheadline">
+                    <slot name="description">
+                        ${this.activity.getDescription(this.lang)}
+                    </slot>
+                </p>
+
                 <div class="border checkins ${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
                     ${this.activeCheckins.map(i => html`
 

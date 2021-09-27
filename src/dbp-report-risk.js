@@ -7,12 +7,15 @@ import * as commonStyles from "@dbp-toolkit/common/styles";
 import {classMap} from "lit-html/directives/class-map";
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import * as CheckinStyles from './styles';
+import {Activity} from './activity.js';
+import metadata from './dbp-report-risk.metadata.json';
 
 class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this._i18n = createInstance();
         this.lang = this._i18n.language;
+        this.activity = new Activity(metadata);
     }
 
     static get scopedElements() {
@@ -51,6 +54,7 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getButtonCSS()}
             ${commonStyles.getNotificationCSS()}
+            ${commonStyles.getActivityCSS()}
             ${CheckinStyles.getCheckinCss()}
             
 
@@ -75,8 +79,12 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
             </div>
 
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
-                <h2>${i18n.t('report-risk.title')}</h2>
-                <p class="">${i18n.t('report-risk.description')}</p>
+                <h2>${this.activity.getName(this.lang)}</h2>
+                <p class="subheadline">
+                    <slot name="description">
+                        ${this.activity.getDescription(this.lang)}
+                    </slot>
+                </p>
                 <slot name="additional-information">
                     <p>
                         ${i18n.t('report-risk.text')}

@@ -12,15 +12,15 @@ import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
 import { send } from '@dbp-toolkit/common/notification';
 import {escapeRegExp, parseQRCode} from './utils.js';
 import * as CheckinStyles from './styles';
-
-
-
+import {Activity} from './activity.js';
+import metadata from './dbp-check-in-request.metadata.json';
 
 class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this._i18n = createInstance();
         this.lang = this._i18n.language;
+        this.activity = new Activity(metadata);
         this.entryPointUrl = '';
         this.locationHash = '';
         this.seatNr = '';
@@ -377,6 +377,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getThemeCSS()}
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getNotificationCSS()}
+            ${commonStyles.getActivityCSS()}
             ${CheckinStyles.getCheckinCss()}
             
 
@@ -566,9 +567,14 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
                 
-                <h2>${i18n.t('check-in.title')}</h2>
+                <h2>${this.activity.getName(this.lang)}</h2>
+
                 <div>
-                    <p class="">${i18n.t('check-in.description')}</p>
+                    <p class="subheadline">
+                        <slot name="description">
+                            ${this.activity.getDescription(this.lang)}
+                        </slot>
+                    </p>
                     <slot name="additional-information">
                         <!-- TODO: add default text -->
                         <p> ${i18n.t('check-in.how-to')}</p>
@@ -580,6 +586,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </p>
                     </slot>
                 </div>
+
                 <div id="btn-container" class="${classMap({hidden: this.isCheckedIn})}">
                     <dbp-textswitch id="text-switch" name1="qr-reader"
                         name2="manual"
@@ -597,12 +604,12 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     
                         <div><div class="btn"><dbp-loading-button type="is-primary" ?disabled="${this.loading}" value="${i18n.t('check-out.button-text')}" @click="${(event) => { this.doCheckOut(event); }}" title="${i18n.t('check-out.button-text')}"></dbp-loading-button></div></div>
                         <div><div class="btn"><dbp-loading-button id="refresh-btn" ?disabled="${this.loading}" value="${i18n.t('check-in.refresh-button-text')}" @click="${(event) => { this.doRefreshSession(event); }}" title="${i18n.t('check-in.refresh-button-text')}"></dbp-loading-button></div></div>
-                     </div>
+                    </div>
                     ${ this.status ? html`
                         <dbp-inline-notification class="inline-notification" type="${this.status.type}" summary="${i18n.t(this.status.summary)}" 
                                                  body="${i18n.t(this.status.body, this.status.options)}" ></dbp-inline-notification>
                     `: ``}
-                    
+
                     <div class="control ${classMap({hidden: !this.loading})}">
                         <span class="loading">
                             <dbp-mini-spinner text=${this.loadingMsg}></dbp-mini-spinner>

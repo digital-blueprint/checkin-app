@@ -8,12 +8,15 @@ import * as commonStyles from "@dbp-toolkit/common/styles";
 import {classMap} from "lit-html/directives/class-map";
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import * as CheckinStyles from './styles';
+import {Activity} from './activity.js';
+import metadata from './dbp-check-in-info.metadata.json';
 
 class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
         super();
         this._i18n = createInstance();
         this.lang = this._i18n.language;
+        this.activity = new Activity(metadata);
         this.entryPointUrl = '';
     }
 
@@ -56,6 +59,7 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getButtonCSS()}
             ${commonStyles.getNotificationCSS()}
+            ${commonStyles.getActivityCSS()}
             ${CheckinStyles.getCheckinCss()}
             
             .loading {
@@ -81,8 +85,12 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
     
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
                 
-                <h2>${i18n.t('info.title')}</h2>
-                <p class="">${i18n.t('info.description')}</p>
+                <h2>${this.activity.getName(this.lang)}</h2>
+                <p class="subheadline">
+                    <slot name="description">
+                        ${this.activity.getDescription(this.lang)}
+                    </slot>
+                </p>
                 <div class="border">
                         <div class="container">  
                                     TODO
