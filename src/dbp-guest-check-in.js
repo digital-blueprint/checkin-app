@@ -398,7 +398,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 </span>
             </div>
         
-            ${!this.hasPermissions ? 
+            ${!this.hasPermissions() ? 
             html` 
             <div class="notification is-danger ${classMap({hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
                 ${i18n.t('guest-check-in.error-permission-message')}
