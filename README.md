@@ -28,10 +28,10 @@ Jump to <https://localhost:8001> and you should get a Single Sign On login page.
 
 ### Install app
 
-If you want to install the DBP Check-in App in a new folder `check-in-app` you can call:
+If you want to install the DBP Check-in App in a new folder `check-in-app` with a path prefix `/` you can call:
 
 ```bash
-npx @digital-blueprint/cli install-app check-in check-in-app
+npx @digital-blueprint/cli install-app check-in check-in-app /
 ```
 
 Afterwards you can point your Apache web-server to `check-in-app/public`.
