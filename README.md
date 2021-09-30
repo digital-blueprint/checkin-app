@@ -172,6 +172,29 @@ you need to manually add these attributes so that the topic will work properly:
     auth
     requested-login-status
     analytics-event
+    ...
 >
 </dbp-check-in>
 ```
+
+So a working example would be:
+
+```html
+<dbp-check-in
+    provider-root
+    lang="de"
+    entry-point-url="http://your.api"
+    search-hash-string="unicheckin"
+    html-overrides="global-override"
+    src="/path/dbp-check-in.topic.metadata.json"
+    base-path="/"
+    keycloak-config='{"url": "https://keyclock.url/auth", "realm": "your-realm", "clientId": "your-client-id", "silentCheckSsoRedirectUri": "/path/silent-check-sso.html"}'
+><dbp-loading-spinner></dbp-loading-spinner>
+</dbp-check-in>
+```
+
+See [AppShell Attributes](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes)
+for a list of more attributes.
+
+See [Overriding slots in nested web components](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/common#overriding-slots-in-nested-web-components)
+for information about how to override slots.

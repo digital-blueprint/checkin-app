@@ -64,17 +64,13 @@
 
 <body>
 <dbp-check-in
-        lang="de" entry-point-url="https://api-dev.tugraz.at"
+        provider-root
+        lang="de"
+        entry-point-url="https://api-dev.tugraz.at"
         search-hash-string="tugrazcheckin"
-        auth
-        requested-login-status
-        analytics-event
         src="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/dbp-check-in.topic.metadata.json"
         base-path="/"
-        keycloak-config='{"url": "https://auth-dev.tugraz.at/auth", "realm": "tugraz-vpu", "clientId": "auth-dev-mw-frontend-local", "silentCheckSsoRedirectUri": "./silent-check-sso.html", "forceLogin": "true"}'
-        env='local'
-        matomo-url="https://analytics.tugraz.at/"
-        matomo-site-id="131"
+        keycloak-config='{"url": "https://auth-dev.tugraz.at/auth", "realm": "tugraz-vpu", "clientId": "auth-dev-mw-frontend-local", "silentCheckSsoRedirectUri": "./silent-check-sso.html"}'
         no-welcome-page
 ><dbp-loading-spinner></dbp-loading-spinner></dbp-check-in>
 
