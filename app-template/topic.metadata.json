@@ -13,10 +13,10 @@
   },
   "routing_name": "check-in",
   "activities": [
-    {"path": "/app/local/dbp-check-in-request.metadata.json"},
-    {"path": "/app/local/dbp-check-out-request.metadata.json"},
-    {"path": "/app/local/dbp-guest-check-in.metadata.json"},
-    {"path": "/app/local/dbp-report-risk.metadata.json"}
+    {"path": "/app/dbp-check-in-request.metadata.json"},
+    {"path": "/app/dbp-check-out-request.metadata.json"},
+    {"path": "/app/dbp-guest-check-in.metadata.json"},
+    {"path": "/app/dbp-report-risk.metadata.json"}
   ],
   "attributes": []
 }
