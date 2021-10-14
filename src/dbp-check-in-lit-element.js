@@ -113,7 +113,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                 Authorization: "Bearer " + this.auth.token
             },
         };
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
+        response = await this.httpGetAsync(this.entryPointUrl + '/checkin/check_in_actions', options);
         return response;
     }
 
@@ -128,7 +128,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         let response;
 
         let body = {
-            "location": "/check_in_places/" + locationHash,
+            "location": "/checkin/places/" + locationHash,
             "seatNumber": parseInt(seatNumber),
         };
 
@@ -141,7 +141,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             body: JSON.stringify(body)
         };
 
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_check_out_actions', options);
+        response = await this.httpGetAsync(this.entryPointUrl + '/checkin/check_out_actions', options);
         return response;
     }
 
@@ -154,7 +154,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
      */
     async sendCheckInRequest(locationHash, seatNumber) {
         let body = {
-            "location": '/check_in_places/' + locationHash,
+            "location": '/checkin/places/' + locationHash,
             "seatNumber": parseInt(seatNumber),
         };
 
@@ -167,7 +167,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             body: JSON.stringify(body)
         };
 
-        return await this.httpGetAsync(this.entryPointUrl + '/location_check_in_actions', options);
+        return await this.httpGetAsync(this.entryPointUrl + '/checkin/check_in_actions', options);
     }
 
     /**

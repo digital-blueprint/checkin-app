@@ -149,7 +149,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         let response;
 
         let body = {
-            "location": '/check_in_places/' + locationHash,
+            "location": '/checkin/places/' + locationHash,
             "seatNumber": parseInt(seatNumber),
             "email": guestEmail,
             "endTime": endTime
@@ -164,7 +164,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             body: JSON.stringify(body)
         };
 
-        response = await this.httpGetAsync(this.entryPointUrl + '/location_guest_check_in_actions', options);
+        response = await this.httpGetAsync(this.entryPointUrl + '/checkin/guest_check_in_actions', options);
 
         return response;
     }
