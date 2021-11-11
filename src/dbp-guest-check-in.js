@@ -388,7 +388,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     render() {
         const select2CSS = commonUtils.getAssetURL(select2CSSPath);
-        let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
+        let privacyURL = commonUtils.getAssetURL('@dbp-topics/check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
         const i18n = this._i18n;
         
         return html`
