@@ -115,6 +115,49 @@ Note that you will need a Keycloak server along with a client id for the domain 
     - example auth property: `{token: "THE_BEARER_TOKEN"}`
     - note: most often this should be an attribute that is not set directly, but subscribed at a provider
 
+#### Slots
+
+You use templates tags to inject slots into the activity.
+These templates will be converted to div containers when the page is loaded and will not show up before that.
+
+##### activity-description
+
+The content of this slot will be shown after the headline and can be used to provide
+further information about the process to checkin an university external person. For example a link to a page with
+more information about how to report a risk can be provided.
+
+Example:
+
+```html
+<dbp-report-risk lang="de">
+  dbp-translated subscribe="lang">
+  <div slot="de">
+    <p>
+      Melden Sie einen Gast ohne TU Graz-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der TU Graz per E-Mail kontaktiert.
+      <br>
+      <br>
+      Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App "TU Graz check-in" zur Kenntnis gebracht habe. <br>
+      <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-tu-graz-check-in.pdf') %>" title="Zur Datenschutzerklärung">
+        <span>Zur Datenschutzerklärung </span>
+      </a>
+    </p>
+  </div>
+  <div slot="en">
+    <p>
+      Melden Sie einen Gast ohne TU Graz-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der TU Graz per E-Mail kontaktiert.
+      <br>
+      <br>
+      Check in a guest without a TU Graz account at a location for the duration of their visit. The check out takes place automatically at the specified time. In the event of a risk, the guest will be contacted by TU Graz by email.<br>
+      <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-tu-graz-check-in.pdf') %>" title="Privacy statement">
+        <span>Privacy statement </span>
+      </a>
+    </p>
+  </div>
+  </dbp-translated>
+</dbp-report-risk>
+```
+
+
 ### dbp-report-risk
 
 This is an information page on how to report a risk of infection. You can use it like this:

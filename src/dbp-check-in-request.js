@@ -549,7 +549,6 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     render() {
-        let privacyURL = commonUtils.getAssetURL('dbp-check-in', 'datenschutzerklaerung-tu-graz-check-in.pdf');
         const matchRegexString = '.*' + escapeRegExp(this.searchHashString) + '.*';
         const i18n = this._i18n;
 
@@ -576,13 +575,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         </slot>
                     </p>
                     <slot name="additional-information">
-                        <!-- TODO: add default text -->
-                        <p> ${i18n.t('check-in.how-to')}</p>
+                        <p>
+                            ${i18n.t('check-in.how-to')}
+                        </p>
                         <p> 
-                            ${i18n.t('check-in.data-protection')} 
-                            <a href="${privacyURL}" title="${i18n.t('check-in.data-protection-link')}" target="_blank" class="int-link-internal"> 
-                                <span>${i18n.t('check-in.data-protection-link')} </span>
-                            </a>
+                            ${i18n.t('check-in.data-protection')}
                         </p>
                     </slot>
                 </div>
