@@ -1,7 +1,5 @@
 {
   "check-in": {
-    "title": "Check-in at a place.",
-    "description": "With this application you can check-in at a place.",
     "qr-button-text": "Check-in with QR Code",
     "manually-button-text": "Select location manually",
     "checked-in-at": "{{clock}} on ",
@@ -41,8 +39,6 @@
     "seatNr": "Seat"
   },
   "check-out": {
-    "title": "Show all check-ins",
-    "description": "With this application you can check-out from your registered locations.",
     "button-text": "Check-out",
     "checkout-success-title": "Successfully checked out!",
     "checkout-success-body": "You have successfully checked out of the {{room}}.",
@@ -55,8 +51,6 @@
     "checkin-until": "Check-in until:"
   },
   "guest-check-in": {
-    "title": "Guest registration",
-    "description": "With this application you can register a guest at a location.",
     "email": "Email of the guest",
     "end-time": "Checked in until",
     "invalid-email-address-title": "Invalid e-mail address!",
@@ -75,13 +69,7 @@
     "already-checkin-title": "Already checked in!",
     "already-checkin-body": "You are already registered here. You will not be able to register here again until your current registration has expired."
   },
-  "info": {
-    "title": "Information",
-    "description": "With this application you get information about checkin.tugraz.at."
-  },
   "report-risk": {
-    "title": "Report risk",
-    "description": "With this application, you will receive information on how to report a risk of infection.",
     "text": "If you are a suspected COVID-19 case or a case of illness, please report this immediately to your organization!"
   },
   "error-login-message": "You need to be logged in to use this function!"

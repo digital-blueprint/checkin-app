@@ -1,7 +1,5 @@
 {
   "check-in": {
-    "title": "An Ort anmelden",
-    "description": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
     "qr-button-text": "Mit QR Code anmelden",
     "manually-button-text": "Ort manuell auswählen",
     "checked-in-at": "{{clock}} Uhr am",
@@ -41,8 +39,6 @@
     "seatNr": "Sitzplatz"
   },
   "check-out": {
-    "title": "Zeige alle Anmeldungen",
-    "description": "Mit dieser Applikation können Sie sich von ihren angemeldeten Orten wieder abmelden.",
     "button-text": "Abmelden",
     "checkout-success-title": "Erfolgreich abgemeldet!",
     "checkout-success-body": "Sie haben sich erfolgreich vom Ort {{room}} abgemeldet.",
@@ -55,8 +51,6 @@
     "checkin-until": "Angemeldet bis:"
   },
   "guest-check-in": {
-    "title": "Gast an Ort anmelden",
-    "description": "Mit dieser Applikation können Sie einen Gast an einem Ort anmelden.",
     "email": "Email des Gastes",
     "end-time": "Angemeldet bis",
     "invalid-email-address-title": "Ungültige E-Mail-Adresse!",
@@ -75,13 +69,7 @@
     "already-checkin-title": "Bereits angemeldet!",
     "already-checkin-body": "Sie sind hier bereits angemeldet. Sie können sich hier erst wieder anmelden, wenn Ihre aktuelle Anmeldung abgelaufen ist."
   },
-  "info": {
-    "title": "Information",
-    "description": "Mit dieser Applikation erhalten Sie Informationen über checkin.tugraz.at."
-  },
   "report-risk": {
-    "title": "Risiko melden",
-    "description": "Mit dieser Applikation erhalten Sie Informationen, wie Sie ein Infektionsrisiko melden können.",
     "text": "Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei Ihrer Meldestelle!"
   },
   "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
