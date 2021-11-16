@@ -36,6 +36,11 @@ npx @digital-blueprint/cli install-app check-in check-in-app /
 
 Afterwards you can point your Apache web-server to `check-in-app/public`.
 
+Make sure you are allowing `.htaccess` files in your Apache configuration.
+
+Also make sure to add all of your resources you are using (like your API and Keycloak servers) to the
+`Content-Security-Policy` in your `check-in-app/public/.htaccess`, so the browser allows access to those sites.
+
 You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/)
 for example like this: [dbp-check-in/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-check-in/index.html)
 
