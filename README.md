@@ -206,7 +206,7 @@ Example:
 </dbp-report-risk>
 ```
 
-## "dbp-greenlight" Slots
+## "dbp-checkin" Slots
 
 These are common slots for the appshell. You can find the documentation of these slot in the `README.md` of the appshell webcomponent.
 
