@@ -206,6 +206,10 @@ Example:
 </dbp-report-risk>
 ```
 
+## "dbp-greenlight" Slots
+
+These are common slots for the appshell. You can find the documentation of these slot in the `README.md` of the appshell webcomponent.
+
 ### Design Note
 
 To ensure a uniform and responsive design these activities should occupy 100% width of the window when the activities width are under 768 px.
