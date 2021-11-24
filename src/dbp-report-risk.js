@@ -1,10 +1,10 @@
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
-import {css, html} from 'lit-element';
+import {css, html} from 'lit';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Icon, MiniSpinner} from "@dbp-toolkit/common";
 import {createInstance} from "./i18n";
 import * as commonStyles from "@dbp-toolkit/common/styles";
-import {classMap} from "lit-html/directives/class-map";
+import {classMap} from "lit/directives/class-map.js";
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';

@@ -1,12 +1,12 @@
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
-import {css, html} from 'lit-element';
+import {css, html} from 'lit';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {LoadingButton, Icon, MiniSpinner} from "@dbp-toolkit/common";
 import {TextSwitch} from "./textswitch";
 import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
 import {createInstance} from "./i18n";
 import * as commonStyles from "@dbp-toolkit/common/styles";
-import {classMap} from "lit-html/directives/class-map";
+import {classMap} from "lit/directives/class-map.js";
 import select2CSSPath from 'select2/dist/css/select2.min.css';
 import { send } from '@dbp-toolkit/common/notification';
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";

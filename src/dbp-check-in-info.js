@@ -5,7 +5,7 @@ import {Button, Icon, MiniSpinner} from "@dbp-toolkit/common";
 import {TextSwitch} from "./textswitch";
 import {createInstance} from "./i18n";
 import * as commonStyles from "@dbp-toolkit/common/styles";
-import {classMap} from "lit-html/directives/class-map";
+import {classMap} from "lit/directives/class-map.js";
 import DBPCheckInLitElement from "./dbp-check-in-lit-element";
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
