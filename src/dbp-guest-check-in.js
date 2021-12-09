@@ -289,7 +289,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 padding-left: 8px;
                 font-weight: 300;
                 color: inherit;
-                border: 1px solid #aaa;
+                border: 1px solid var(--dbp-text-muted-light);
                 line-height: 100%;
                 height: 28px;
                 width: 100%;
@@ -304,7 +304,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 padding-left: 8px;
                 font-weight: 300;
                 color: inherit;
-                border: 1px solid #aaa;
+                border: 1px solid var(--dbp-text-muted-light);
                 line-height: 100%;
                 height: 28px;
             }
@@ -313,19 +313,19 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 padding-left: 8px;
                 font-weight: 300;
                 color: inherit;
-                border: 1px solid #aaa;
+                border: 1px solid var(--dbp-text-muted-light);
                 line-height: 100%;
                 height: 28px;
             }
 
             .int-link-internal{
                 transition: background-color 0.15s, color 0.15s;
-                border-bottom: 1px solid rgba(0,0,0,0.3);
+                border-bottom: var(--dbp-override-border-dark);
             }
             
             .int-link-internal:hover{
-                background-color: black;
-                color: white;
+                background-color: var(--dbp-hover-base);
+                color: var(--dbp-hover-text);
             }
             
             .int-link-internal:after{
