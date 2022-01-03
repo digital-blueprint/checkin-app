@@ -34,6 +34,9 @@ If you want to install the DBP Check-in App in a new folder `check-in-app` with 
 npx @digital-blueprint/cli install-app check-in check-in-app /
 ```
 
+**Warning:** There may be issues when you run these commands as root user, best use a non-root user, like `www-data`.
+To do this you can for example open a shell with `runuser -u www-data -- bash`.
+
 Afterwards you can point your Apache web-server to `check-in-app/public`.
 
 Make sure you are allowing `.htaccess` files in your Apache configuration.
@@ -53,6 +56,9 @@ If you want to update the DBP Check-in App in the current folder you can call:
 ```bash
 npx @digital-blueprint/cli update-app check-in
 ```
+
+**Warning:** There may be issues when you run these commands as root user, best use a non-root user, like `www-data`.
+To do this you can for example open a shell with `runuser -u www-data -- bash`.
 
 ## Activities
 
