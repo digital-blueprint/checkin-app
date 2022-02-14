@@ -217,7 +217,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             .border {
                 margin-top: 2rem;
                 padding-top: 2rem;
-                border-top:  var(--dbp-border-dark);;
+                border-top:  var(--dbp-border);
             }
 
             @media only screen

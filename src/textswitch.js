@@ -67,8 +67,8 @@ export class TextSwitch extends AdapterLitElement {
             }
 
             .active {
-                background-color: var(--dbp-override-secondary-dark) !important;
-                color: var(--dbp-text-light) !important;
+                background-color: var(--dbp-secondary-surface) !important;
+                color: var(--dbp-on-secondary-surface) !important;
             }
 
             .button {
@@ -77,8 +77,8 @@ export class TextSwitch extends AdapterLitElement {
             }
 
             .button:hover {
-                background-color: var(--dbp-hover-base) !important;
-                color: var(--dbp-hover-text) !important;
+                background-color: var(--dbp-hover-background-color) !important;
+                color: var(--dbp-hover-color) !important;
             }
 
             @media only screen
