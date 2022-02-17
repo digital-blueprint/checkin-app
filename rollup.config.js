@@ -21,6 +21,7 @@ const watch = process.env.ROLLUP_WATCH === 'true';
 const buildFull = (!watch && appEnv !== 'test') || (process.env.FORCE_FULL !== undefined);
 let useTerser = buildFull;
 let useBabel = buildFull;
+let treeshake = buildFull;
 let checkLicenses = buildFull;
 let useHTTPS = true;
 
@@ -78,6 +79,7 @@ export default (async () => {
             format: 'esm',
             sourcemap: true
         },
+        treeshake: treeshake,
         preserveEntrySignatures: false,
         onwarn: function (warning, warn) {
             // ignore "suggestions" warning re "use strict"
