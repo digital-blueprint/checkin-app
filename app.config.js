@@ -6,6 +6,7 @@ export default {
         keyCloakRealm: 'tugraz-vpu',
         keyCloakClientId: 'auth-dev-mw-frontend-local',
         matomoUrl: 'https://analytics.tugraz.at/',
+        searchQRString: 'tugrazcheckin',
         matomoSiteId: 131,
     },
     development: {
@@ -15,6 +16,7 @@ export default {
         keyCloakRealm: 'tugraz-vpu',
         keyCloakClientId: 'dbp-check-in',
         matomoUrl: 'https://analytics.tugraz.at/',
+        searchQRString: 'tugrazcheckin',
         matomoSiteId: 131,
     },
     demo: {
@@ -24,6 +26,7 @@ export default {
         keyCloakRealm: 'tugraz-vpu',
         keyCloakClientId: 'dbp-check-in',
         matomoUrl: 'https://analytics.tugraz.at/',
+        searchQRString: 'tugrazcheckin',
         matomoSiteId: 131,
     },
     production: {
@@ -33,6 +36,7 @@ export default {
         keyCloakRealm: 'tugraz',
         keyCloakClientId: 'checkin_tugraz_at-CHECKIN',
         matomoUrl: 'https://analytics.tugraz.at/',
+        searchQRString: 'tugrazcheckin',
         matomoSiteId: 150,
     },
 };

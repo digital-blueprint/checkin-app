@@ -36,6 +36,7 @@ if (appEnv in appConfig) {
         keyCloakRealm: '',
         matomoUrl: '',
         matomoSiteId: -1,
+        searchQRString: '',
     };
 } else {
     console.error(`Unknown build environment: '${appEnv}', use one of '${Object.keys(appConfig)}'`);
@@ -45,8 +46,6 @@ if (appEnv in appConfig) {
 if (watch) {
     config.basePath = '/dist/';
 }
-
-config.searchQRString = 'tugrazcheckin';
 
 function getOrigin(url) {
     if (url)
