@@ -38,7 +38,8 @@
         "rollup-plugin-license": "^2.1.0",
         "rollup-plugin-serve": "^1.0.1",
         "rollup-plugin-terser": "^7.0.2",
-        "selfsigned": "^2.0.0"
+        "selfsigned": "^2.0.0",
+        "prettier": "^2.5.1"
     },
     "dependencies": {
         "@dbp-toolkit/app-shell": "^0.2.0",
@@ -51,7 +52,6 @@
         "@open-wc/scoped-elements": "^2.0.0",
         "i18next": "^21.4.2",
         "lit": "^2.0.0",
-        "prettier": "^2.5.1",
         "select2": "^4.0.10"
     },
     "scripts": {
