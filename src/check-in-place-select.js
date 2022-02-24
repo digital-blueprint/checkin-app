@@ -147,7 +147,7 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
         }
 
         // find the correct api url for a checkInPlace
-        const apiUrl = this.jsonld.getApiUrlForEntityName("CheckinPlace");
+        const apiUrl = this.jsonld.getApiUrlForEntityName('CheckinPlace');
 
         if (this.$select === null) {
             return false;
@@ -418,17 +418,18 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                 .select2-bug .loading-results {
                     display: none !important;
                 }
-                
-                .select2-container--default .select2-selection--single, .select2-dropdown, .select2-container--default .select2-search--dropdown .select2-search__field{
+
+                .select2-container--default .select2-selection--single,
+                .select2-dropdown,
+                .select2-container--default .select2-search--dropdown .select2-search__field {
                     background: var(--dbp-background);
                     border: var(--dbp-border);
                     border-color: var(--dbp-muted);
                 }
-                
-                .select2-dropdown{
+
+                .select2-dropdown {
                     background-color: var(--dbp-background);
                 }
-                
             `,
         ];
     }

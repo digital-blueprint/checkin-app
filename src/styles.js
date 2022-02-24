@@ -20,21 +20,16 @@ export function getCheckinCss() {
             margin-top: 2rem;
         }
 
-        .loading{
+        .loading {
             text-align: center;
             display: flex;
             padding: 30px;
         }
 
-
-        @media only screen
-        and (orientation: portrait)
-        and (max-width: 768px) {
-            .inline-block{
+        @media only screen and (orientation: portrait) and (max-width: 768px) {
+            .inline-block {
                 width: 100%;
             }
         }
     `;
-
-
 }

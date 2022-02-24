@@ -1,15 +1,15 @@
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import {css, html} from 'lit';
 import * as commonUtils from '@dbp-toolkit/common/utils';
-import {LoadingButton, Icon, MiniSpinner} from "@dbp-toolkit/common";
-import {TextSwitch} from "./textswitch";
+import {LoadingButton, Icon, MiniSpinner} from '@dbp-toolkit/common';
+import {TextSwitch} from './textswitch';
 import {CheckInPlaceSelect} from './check-in-place-select.js';
-import {createInstance} from "./i18n";
-import * as commonStyles from "@dbp-toolkit/common/styles";
-import {classMap} from "lit/directives/class-map.js";
+import {createInstance} from './i18n';
+import * as commonStyles from '@dbp-toolkit/common/styles';
+import {classMap} from 'lit/directives/class-map.js';
 import select2CSSPath from 'select2/dist/css/select2.min.css';
-import { send } from '@dbp-toolkit/common/notification';
-import DBPCheckInLitElement from "./dbp-check-in-lit-element";
+import {send} from '@dbp-toolkit/common/notification';
+import DBPCheckInLitElement from './dbp-check-in-lit-element';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-guest-check-in.metadata.json';
@@ -44,13 +44,13 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     static get properties() {
         return {
             ...super.properties,
-            lang: { type: String },
-            entryPointUrl: { type: String, attribute: 'entry-point-url' },
-            seatNr: { type: Number, attribute: false },
-            guestEmail: { type: String, attribute: false },
-            isRoomSelected: { type: Boolean, attribute: false },
-            roomCapacity: { type: Number, attribute: false },
-            isEmailSet: { type: Boolean, attribute: false }
+            lang: {type: String},
+            entryPointUrl: {type: String, attribute: 'entry-point-url'},
+            seatNr: {type: Number, attribute: false},
+            guestEmail: {type: String, attribute: false},
+            isRoomSelected: {type: Boolean, attribute: false},
+            roomCapacity: {type: Number, attribute: false},
+            isEmailSet: {type: Boolean, attribute: false},
         };
     }
 
@@ -61,7 +61,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
-                case "lang":
+                case 'lang':
                     this._i18n.changeLanguage(this.lang);
                     break;
             }
@@ -70,8 +70,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     }
 
     /**
-     * Processes the event from check-in-place-select 
-     * and stores the information into the 
+     * Processes the event from check-in-place-select
+     * and stores the information into the
      * correct values.
      *
      * @param event
@@ -90,7 +90,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
      */
     setSeatNumber(e) {
         let val = parseInt(this._('#select-seat').value);
-        val = isNaN(val) ? "" : val;
+        val = isNaN(val) ? '' : val;
         this.seatNr = Math.min(this.roomCapacity, val);
         this._('#select-seat').value = this.seatNr;
     }
@@ -104,7 +104,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         if (this._('#email-field').value != '') {
             this.guestEmail = this._('#email-field').value;
             this.isEmailSet = true;
-        } else { 
+        } else {
             this.isEmailSet = false;
             this.guestEmail = '';
         }
@@ -127,7 +127,12 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
             var now = new Date();
 
-            if (!(now.getHours()<hours || (now.getHours()===hours && now.getMinutes()<=minutes))) {
+            if (
+                !(
+                    now.getHours() < hours ||
+                    (now.getHours() === hours && now.getMinutes() <= minutes)
+                )
+            ) {
                 this.endTime.setTime(this.endTime.getTime() + 86400000); // next day
             }
             return true;
@@ -149,30 +154,33 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         let response;
 
         let body = {
-            "location": '/checkin/places/' + locationHash,
-            "seatNumber": parseInt(seatNumber),
-            "email": guestEmail,
-            "endTime": endTime
+            location: '/checkin/places/' + locationHash,
+            seatNumber: parseInt(seatNumber),
+            email: guestEmail,
+            endTime: endTime,
         };
 
         const options = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token
+                Authorization: 'Bearer ' + this.auth.token,
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
         };
 
-        response = await this.httpGetAsync(this.entryPointUrl + '/checkin/guest_check_in_actions', options);
+        response = await this.httpGetAsync(
+            this.entryPointUrl + '/checkin/guest_check_in_actions',
+            options
+        );
 
         return response;
     }
 
-    async _onCheckInClicked(event)  {
+    async _onCheckInClicked(event) {
         let isDisabled = true;
         let button = event.target;
-        if(button.disabled) {
+        if (button.disabled) {
             return;
         }
         try {
@@ -186,9 +194,12 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         }
     }
 
-    async _atChangeInput(event)  {
-        if (this._("#do-manually-checkin") )
-            this._("#do-manually-checkin").disabled = !this.isRoomSelected || !this.isEmailSet || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0);
+    async _atChangeInput(event) {
+        if (this._('#do-manually-checkin'))
+            this._('#do-manually-checkin').disabled =
+                !this.isRoomSelected ||
+                !this.isEmailSet ||
+                (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0);
     }
 
     /**
@@ -205,21 +216,24 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         const i18n = this._i18n;
         if (!this.validateEmail(this.guestEmail)) {
             send({
-                "summary": i18n.t('guest-check-in.invalid-email-address-title'),
-                "body":  i18n.t('guest-check-in.invalid-email-address-body'),
-                "type": "danger",
-                "timeout": 5,
+                summary: i18n.t('guest-check-in.invalid-email-address-title'),
+                body: i18n.t('guest-check-in.invalid-email-address-body'),
+                type: 'danger',
+                timeout: 5,
             });
-            this.sendSetPropertyEvent('analytics-event', {'category': 'GuestCheckInRequest', 'action': 'GuestCheckInFailedInvalidEmail'});
+            this.sendSetPropertyEvent('analytics-event', {
+                category: 'GuestCheckInRequest',
+                action: 'GuestCheckInFailedInvalidEmail',
+            });
             return;
         }
 
         if (!this.parseTime()) {
             send({
-                "summary": i18n.t('guest-check-in.no-time-title'),
-                "body":  i18n.t('guest-check-in.no-time-body'),
-                "type": "danger",
-                "timeout": 5,
+                summary: i18n.t('guest-check-in.no-time-title'),
+                body: i18n.t('guest-check-in.no-time-body'),
+                type: 'danger',
+                timeout: 5,
             });
             return;
         }
@@ -235,34 +249,49 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
         // Error: no location hash detected
         if (this.locationHash.length <= 0) {
-            this.saveWrongHashAndNotify(i18n.t('check-in.error-title'), i18n.t('check-in.error-body'), locationHash, seatNumber);
-            this.sendSetPropertyEvent('analytics-event', {'category': category, 'action': 'GuestCheckInFailedNoLocationHash'});
+            this.saveWrongHashAndNotify(
+                i18n.t('check-in.error-title'),
+                i18n.t('check-in.error-body'),
+                locationHash,
+                seatNumber
+            );
+            this.sendSetPropertyEvent('analytics-event', {
+                category: category,
+                action: 'GuestCheckInFailedNoLocationHash',
+            });
             return;
         }
 
-        let responseData = await this.sendGuestCheckInRequest(this.guestEmail, this.locationHash, this.seatNr, this.endTime);
-        await this.checkCheckinResponse(responseData, locationHash, seatNumber, locationName, category);
-
+        let responseData = await this.sendGuestCheckInRequest(
+            this.guestEmail,
+            this.locationHash,
+            this.seatNr,
+            this.endTime
+        );
+        await this.checkCheckinResponse(
+            responseData,
+            locationHash,
+            seatNumber,
+            locationName,
+            category
+        );
     }
 
     getCurrentTime() {
         let date = new Date();
         let currentHours = ('0' + (date.getHours() + 1)).slice(-2);
-        let currentMinutes = ('0' + date.getMinutes()).slice(-2); 
+        let currentMinutes = ('0' + date.getMinutes()).slice(-2);
 
         return currentHours + ':' + currentMinutes;
     }
 
     hasPermissions() {
-        if (!this.auth.person || !Array.isArray(this.auth.person.roles))
-            return false;
+        if (!this.auth.person || !Array.isArray(this.auth.person.roles)) return false;
 
         // For backwards compat, remove once the backend is new enough
-        if (this.auth.person.roles.includes('ROLE_STAFF'))
-            return true;
+        if (this.auth.person.roles.includes('ROLE_STAFF')) return true;
 
-        if (this.auth.person.roles.includes('ROLE_SCOPE_LOCATION-CHECK-IN-GUEST'))
-            return true;
+        if (this.auth.person.roles.includes('ROLE_SCOPE_LOCATION-CHECK-IN-GUEST')) return true;
 
         return false;
     }
@@ -283,7 +312,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             }
 
             .field {
-                margin-bottom: 1rem!important;
+                margin-bottom: 1rem !important;
             }
 
             #email-field {
@@ -297,9 +326,9 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 width: 100%;
             }
 
-            ::placeholder { 
+            ::placeholder {
                 color: inherit;
-                opacity: 1; 
+                opacity: 1;
             }
 
             #select-seat {
@@ -321,11 +350,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 line-height: 100%;
                 height: 28px;
             }
-            
-            @media only screen
-            and (orientation: portrait)
-            and (max-width:768px) {
 
+            @media only screen and (orientation: portrait) and (max-width: 768px) {
                 .btn {
                     display: flex;
                     flex-direction: column;
@@ -333,7 +359,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     margin-bottom: 0.5rem;
                 }
 
-                #select-seat{
+                #select-seat {
                     width: 100%;
                 }
 
@@ -344,7 +370,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         `;
     }
 
-
     render() {
         const select2CSS = commonUtils.getAssetURL(select2CSSPath);
         const i18n = this._i18n;
@@ -352,71 +377,140 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         return html`
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
                 <span class="loading">
-                    <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                    <dbp-mini-spinner
+                        text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
                 </span>
             </div>
-        
-            
-            <div class="notification is-danger ${classMap({hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading()})}">
+
+            <div
+                class="notification is-danger ${classMap({
+                    hidden: this.hasPermissions() || !this.isLoggedIn() || this.isLoading(),
+                })}">
                 ${i18n.t('guest-check-in.error-permission-message')}
             </div>
-            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading() || !this.hasPermissions()})}">
-                    ${i18n.t('error-login-message')}
+            <div
+                class="notification is-warning ${classMap({
+                    hidden: this.isLoggedIn() || this.isLoading() || !this.hasPermissions(),
+                })}">
+                ${i18n.t('error-login-message')}
             </div>
 
-            <div class="${classMap({hidden: !this.isLoggedIn() || !this.hasPermissions() || this.isLoading()})}">
-
-                <link rel="stylesheet" href="${select2CSS}">
+            <div
+                class="${classMap({
+                    hidden: !this.isLoggedIn() || !this.hasPermissions() || this.isLoading(),
+                })}">
+                <link rel="stylesheet" href="${select2CSS}" />
 
                 <h2>${this.activity.getName(this.lang)}</h2>
                 <p class="subheadline">
-                    <slot name="description">
-                        ${this.activity.getDescription(this.lang)}
-                    </slot>
+                    <slot name="description">${this.activity.getDescription(this.lang)}</slot>
                 </p>
-                
+
                 <slot name="activity-description">
-                    <p> ${i18n.t('guest-check-in.how-to')}</p>
-                    <p> ${i18n.t('guest-check-in.data-protection')} </p>
+                    <p>${i18n.t('guest-check-in.how-to')}</p>
+                    <p>${i18n.t('guest-check-in.data-protection')}</p>
                 </slot>
 
-               ${this.hasPermissions() ?
-                html`  
-                    <div class="border">
-                            <div class="container">
-                                    <div class="field">
-                                        <label class="label">${i18n.t('guest-check-in.email')}</label>
-                                        <div class="control">
-                                            <input type="email" class="input" id="email-field" placeholder="mail@email.at" name="email" .value="${this.guestEmail}" @input="${(event) => {this.processEmailInput(event); this._atChangeInput(event);}}">
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <label class="label">${i18n.t('check-in.manually-place')}</label>
-                                        <div class="control">
-                                            <dbp-check-in-place-select subscribe="auth" lang="${this.lang}" entry-point-url="${this.entryPointUrl}" @change="${(event) => {this.processSelectedPlaceInformation(event);}}"  @input="${(event) => {this._atChangeInput(event);}}"></dbp-check-in-place-select>
-                                        </div>
-                                    </div>
-                                    <div class="field ${classMap({hidden: !this.isRoomSelected || this.roomCapacity === null})}">
-                                        <link rel="stylesheet" href="${select2CSS}">
-                                        <label class="label">${i18n.t('check-in.manually-seat')}</label>
-                                        <div class="control">
-                                            <input class="input" type="text" name="seat-number" .value="${this.seatNr}" id="select-seat" min="1" max="${this.roomCapacity}" placeholder="1-${this.roomCapacity}" maxlength="4" inputmode="numeric" pattern="[0-9]*" ?disabled=${!this.isRoomSelected} @input="${(event) => {this.setSeatNumber(event); this._atChangeInput(event);}}">
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <label class="label">${i18n.t('guest-check-in.end-time')}</label>
-                                        <div class="control">
-                                            <input type="time" class="input" placeholder="hh:mm" id="end-time" name="endTime" .defaultValue="${this.getCurrentTime()}" @input="${(event) => {this._atChangeInput(event);}}">
-                                        </div>
-                                    </div>
-                                <div class="btn">
-                                    <dbp-loading-button id="do-manually-checkin" type="is-primary" value="${i18n.t('check-in.manually-checkin-button-text')}" 
-                                                        @click="${this._onCheckInClicked}" title="${i18n.t('check-in.manually-checkin-button-text')}" 
-                                                        ?disabled=${!this.isRoomSelected || !this.isEmailSet || (this.isRoomSelected && this.roomCapacity !== null && this.seatNr <= 0)}></dbp-loading-button>
-                                </div>
-                            </div>
-                    </div>
-                ` : html ``}
+                ${this.hasPermissions()
+                    ? html`
+                          <div class="border">
+                              <div class="container">
+                                  <div class="field">
+                                      <label class="label">${i18n.t('guest-check-in.email')}</label>
+                                      <div class="control">
+                                          <input
+                                              type="email"
+                                              class="input"
+                                              id="email-field"
+                                              placeholder="mail@email.at"
+                                              name="email"
+                                              .value="${this.guestEmail}"
+                                              @input="${(event) => {
+                                                  this.processEmailInput(event);
+                                                  this._atChangeInput(event);
+                                              }}" />
+                                      </div>
+                                  </div>
+                                  <div class="field">
+                                      <label class="label">
+                                          ${i18n.t('check-in.manually-place')}
+                                      </label>
+                                      <div class="control">
+                                          <dbp-check-in-place-select
+                                              subscribe="auth"
+                                              lang="${this.lang}"
+                                              entry-point-url="${this.entryPointUrl}"
+                                              @change="${(event) => {
+                                                  this.processSelectedPlaceInformation(event);
+                                              }}"
+                                              @input="${(event) => {
+                                                  this._atChangeInput(event);
+                                              }}"></dbp-check-in-place-select>
+                                      </div>
+                                  </div>
+                                  <div
+                                      class="field ${classMap({
+                                          hidden:
+                                              !this.isRoomSelected || this.roomCapacity === null,
+                                      })}">
+                                      <link rel="stylesheet" href="${select2CSS}" />
+                                      <label class="label">
+                                          ${i18n.t('check-in.manually-seat')}
+                                      </label>
+                                      <div class="control">
+                                          <input
+                                              class="input"
+                                              type="text"
+                                              name="seat-number"
+                                              .value="${this.seatNr}"
+                                              id="select-seat"
+                                              min="1"
+                                              max="${this.roomCapacity}"
+                                              placeholder="1-${this.roomCapacity}"
+                                              maxlength="4"
+                                              inputmode="numeric"
+                                              pattern="[0-9]*"
+                                              ?disabled=${!this.isRoomSelected}
+                                              @input="${(event) => {
+                                                  this.setSeatNumber(event);
+                                                  this._atChangeInput(event);
+                                              }}" />
+                                      </div>
+                                  </div>
+                                  <div class="field">
+                                      <label class="label">
+                                          ${i18n.t('guest-check-in.end-time')}
+                                      </label>
+                                      <div class="control">
+                                          <input
+                                              type="time"
+                                              class="input"
+                                              placeholder="hh:mm"
+                                              id="end-time"
+                                              name="endTime"
+                                              .defaultValue="${this.getCurrentTime()}"
+                                              @input="${(event) => {
+                                                  this._atChangeInput(event);
+                                              }}" />
+                                      </div>
+                                  </div>
+                                  <div class="btn">
+                                      <dbp-loading-button
+                                          id="do-manually-checkin"
+                                          type="is-primary"
+                                          value="${i18n.t('check-in.manually-checkin-button-text')}"
+                                          @click="${this._onCheckInClicked}"
+                                          title="${i18n.t('check-in.manually-checkin-button-text')}"
+                                          ?disabled=${!this.isRoomSelected ||
+                                          !this.isEmailSet ||
+                                          (this.isRoomSelected &&
+                                              this.roomCapacity !== null &&
+                                              this.seatNr <= 0)}></dbp-loading-button>
+                                  </div>
+                              </div>
+                          </div>
+                      `
+                    : html``}
             </div>
         `;
     }

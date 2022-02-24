@@ -1,12 +1,12 @@
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import {css, html} from 'lit-element';
 import * as commonUtils from '@dbp-toolkit/common/utils';
-import {Button, Icon, MiniSpinner} from "@dbp-toolkit/common";
-import {TextSwitch} from "./textswitch";
-import {createInstance} from "./i18n";
-import * as commonStyles from "@dbp-toolkit/common/styles";
-import {classMap} from "lit/directives/class-map.js";
-import DBPCheckInLitElement from "./dbp-check-in-lit-element";
+import {Button, Icon, MiniSpinner} from '@dbp-toolkit/common';
+import {TextSwitch} from './textswitch';
+import {createInstance} from './i18n';
+import * as commonStyles from '@dbp-toolkit/common/styles';
+import {classMap} from 'lit/directives/class-map.js';
+import DBPCheckInLitElement from './dbp-check-in-lit-element';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-check-in-info.metadata.json';
@@ -32,8 +32,8 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
     static get properties() {
         return {
             ...super.properties,
-            lang: { type: String },
-            entryPointUrl: { type: String, attribute: 'entry-point-url' },
+            lang: {type: String},
+            entryPointUrl: {type: String, attribute: 'entry-point-url'},
         };
     }
 
@@ -44,7 +44,7 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
-                case "lang":
+                case 'lang':
                     this._i18n.changeLanguage(this.lang);
                     break;
             }
@@ -65,36 +65,33 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
             .loading {
                 justify-content: center;
             }
-            
         `;
     }
-
 
     render() {
         const i18n = this._i18n;
         return html`
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
                 <span class="loading">
-                    <dbp-mini-spinner text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
+                    <dbp-mini-spinner
+                        text=${i18n.t('check-out.loading-message')}></dbp-mini-spinner>
                 </span>
             </div>
-        
-            <div class="notification is-warning ${classMap({hidden: this.isLoggedIn() || this.isLoading()})}">
-                    ${i18n.t('error-login-message')}
+
+            <div
+                class="notification is-warning ${classMap({
+                    hidden: this.isLoggedIn() || this.isLoading(),
+                })}">
+                ${i18n.t('error-login-message')}
             </div>
-    
+
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">
-                
                 <h2>${this.activity.getName(this.lang)}</h2>
                 <p class="subheadline">
-                    <slot name="description">
-                        ${this.activity.getDescription(this.lang)}
-                    </slot>
+                    <slot name="description">${this.activity.getDescription(this.lang)}</slot>
                 </p>
                 <div class="border">
-                        <div class="container">  
-                                    TODO
-                        </div>
+                    <div class="container">TODO</div>
                 </div>
             </div>
         `;

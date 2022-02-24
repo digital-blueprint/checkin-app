@@ -1,22 +1,22 @@
 {
-  "name": {
-    "de": "check-in",
-    "en": "check-in"
-  },
-  "short_name": {
-    "de": "check-in",
-    "en": "check-in"
-  },
-  "description": {
-    "de": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
-    "en": "With this application you can check-in at a place."
-  },
-  "routing_name": "check-in",
-  "activities": [
-    {"path": "/app/dbp-check-in-request.metadata.json"},
-    {"path": "/app/dbp-check-out-request.metadata.json"},
-    {"path": "/app/dbp-guest-check-in.metadata.json"},
-    {"path": "/app/dbp-report-risk.metadata.json"}
-  ],
-  "attributes": []
+    "name": {
+        "de": "check-in",
+        "en": "check-in"
+    },
+    "short_name": {
+        "de": "check-in",
+        "en": "check-in"
+    },
+    "description": {
+        "de": "Mit dieser Applikation können Sie sich an einem Ort anmelden.",
+        "en": "With this application you can check-in at a place."
+    },
+    "routing_name": "check-in",
+    "activities": [
+        {"path": "/app/dbp-check-in-request.metadata.json"},
+        {"path": "/app/dbp-check-out-request.metadata.json"},
+        {"path": "/app/dbp-guest-check-in.metadata.json"},
+        {"path": "/app/dbp-report-risk.metadata.json"}
+    ],
+    "attributes": []
 }
