@@ -3,7 +3,7 @@ import {css, html} from 'lit';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {LoadingButton, Icon, MiniSpinner} from "@dbp-toolkit/common";
 import {TextSwitch} from "./textswitch";
-import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
+import {CheckInPlaceSelect} from './check-in-place-select.js';
 import {createInstance} from "./i18n";
 import * as commonStyles from "@dbp-toolkit/common/styles";
 import {classMap} from "lit/directives/class-map.js";

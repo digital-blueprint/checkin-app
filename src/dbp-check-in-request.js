@@ -8,7 +8,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {TextSwitch} from './textswitch.js';
 import {QrCodeScanner} from '@dbp-toolkit/qr-code-scanner';
-import {CheckInPlaceSelect} from '@dbp-toolkit/check-in-place-select';
+import {CheckInPlaceSelect} from './check-in-place-select.js';
 import { send } from '@dbp-toolkit/common/notification';
 import {escapeRegExp, parseQRCode} from './utils.js';
 import * as CheckinStyles from './styles';

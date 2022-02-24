@@ -72,5 +72,9 @@
   "report-risk": {
     "text": "Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei Ihrer Meldestelle!"
   },
-  "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!"
+  "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!",
+  "check-in-place-select": {
+    "placeholder": "Z.B. \"P1\", \"Rechbauerstraße\", \"PZ2EG048\"",
+    "login-required": "Anmeldung erforderlich"
+  }
 }
