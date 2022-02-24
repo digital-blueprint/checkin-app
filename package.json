@@ -51,11 +51,15 @@
     "@open-wc/scoped-elements": "^2.0.0",
     "i18next": "^21.4.2",
     "lit": "^2.0.0",
+    "prettier": "^2.5.1",
     "select2": "^4.0.10"
   },
   "scripts": {
     "build": "rollup -c",
     "i18next": "i18next-scanner",
+    "format": "yarn run format:eslint && yarn run format:prettier",
+    "format:eslint": "eslint \"**/*.{js,ts}\" --fix",
+    "format:prettier": "prettier \"**/*.{js,json,ts}\" --write",
     "watch": "rollup -c --watch",
     "watch-local": "yarn run watch",
     "watch-full": "rollup -c --watch --environment FORCE_FULL",
