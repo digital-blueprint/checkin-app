@@ -1,7 +1,7 @@
 {
     "name": "@dbp-topics/check-in",
     "internalName": "dbp-check-in",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "main": "src/dbp-check-in.js",
     "license": "LGPL-2.1-or-later",
     "repository": {
