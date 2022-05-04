@@ -2,12 +2,14 @@
 
 [GitLab Repository](https://gitlab.tugraz.at/dbp/check-in/checkin) |
 [npmjs package](https://www.npmjs.com/package/@dbp-topics/check-in) |
-[Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/)
+[Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/) |
+[Checkin Bundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) |
+[Project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
 
 ## Prerequisites
 
 - You need the [API server](https://gitlab.tugraz.at/dbp/relay/dbp-relay-server-template) running
-- You need the [DbpRelayGreenlightBundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) to handle
+- You need the [DbpRelayCheckinBundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) to handle
   check-ins to places and contact tracing for warning about COVID-19 cases
 - For more information please visit the [Check-in project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
 
