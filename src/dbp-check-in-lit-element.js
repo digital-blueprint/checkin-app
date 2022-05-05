@@ -114,7 +114,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             },
         };
         response = await this.httpGetAsync(
-            this.entryPointUrl + '/checkin/check_in_actions',
+            this.entryPointUrl + '/checkin/check-in-actions',
             options
         );
         return response;
@@ -145,7 +145,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         };
 
         response = await this.httpGetAsync(
-            this.entryPointUrl + '/checkin/check_out_actions',
+            this.entryPointUrl + '/checkin/check-out-actions',
             options
         );
         return response;
@@ -173,7 +173,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             body: JSON.stringify(body),
         };
 
-        return await this.httpGetAsync(this.entryPointUrl + '/checkin/check_in_actions', options);
+        return await this.httpGetAsync(this.entryPointUrl + '/checkin/check-in-actions', options);
     }
 
     /**

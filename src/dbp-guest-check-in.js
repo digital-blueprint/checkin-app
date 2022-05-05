@@ -170,7 +170,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         };
 
         response = await this.httpGetAsync(
-            this.entryPointUrl + '/checkin/guest_check_in_actions',
+            this.entryPointUrl + '/checkin/guest-check-in-actions',
             options
         );
 
