@@ -59,11 +59,12 @@ function getOrigin(url) {
 }
 
 config.CSP = `default-src 'self' 'unsafe-eval' 'unsafe-inline' \
-    ${getOrigin(config.matomoUrl)} ${getOrigin(config.keyCloakBaseURL)} ${getOrigin(
-    config.entryPointURL
-)} \
-    httpbin.org ${getOrigin(config.nextcloudBaseURL)}; \
-    img-src * blob: data:; font-src 'self' data:; child-src 'self' ${getOrigin(config.keyCloakBaseURL)} blob:; worker-src 'self' blob:`;
+    ${getOrigin(config.matomoUrl)} ${getOrigin(config.keyCloakBaseURL)} \
+    ${getOrigin(config.entryPointURL)} \
+    ${getOrigin(config.nextcloudBaseURL)}; \
+    img-src * blob: data:; font-src 'self' data:; child-src 'self' ${getOrigin(
+        config.keyCloakBaseURL
+    )} blob:; worker-src 'self' blob:`;
 
 export default (async () => {
     let privatePath = await getDistPath(pkg.name);
