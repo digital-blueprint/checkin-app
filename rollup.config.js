@@ -144,7 +144,7 @@ export default (async () => {
     License: <%= pkg.license %>
     Dependencies:
     <% _.forEach(dependencies, function (dependency) { if (dependency.name) { %>
-    <%= dependency.name %>: <%= dependency.license %><% }}) %>
+    <%= dependency.name %>: <%= dependency.version %> (<%= dependency.license %>)<% }}) %>
     `,
                     },
                     thirdParty: {
