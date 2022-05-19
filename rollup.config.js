@@ -63,7 +63,7 @@ config.CSP = `default-src 'self' 'unsafe-eval' 'unsafe-inline' \
     config.entryPointURL
 )} \
     httpbin.org ${getOrigin(config.nextcloudBaseURL)}; \
-    img-src * blob: data:; font-src 'self' data:`;
+    img-src * blob: data:; font-src 'self' data:; child-src 'self' ${getOrigin(config.keyCloakBaseURL)} blob:; worker-src 'self' blob:`;
 
 export default (async () => {
     let privatePath = await getDistPath(pkg.name);
@@ -203,10 +203,6 @@ export default (async () => {
                     {
                         src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
                         dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
-                    },
-                    {
-                        src: await getPackagePath('qr-scanner', 'qr-scanner-worker.*'),
-                        dest: 'dist/' + (await getDistPath('@dbp-toolkit/qr-code-scanner')),
                     },
                 ],
             }),
