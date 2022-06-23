@@ -1,6 +1,6 @@
 import {html, css} from 'lit';
 import * as commonStyles from '@dbp-toolkit/common/styles';
-import {AdapterLitElement} from '@dbp-toolkit/provider/src/adapter-lit-element';
+import {AdapterLitElement} from '@dbp-toolkit/common';
 
 const BUTTON1 = 'button1';
 const BUTTON2 = 'button2';
