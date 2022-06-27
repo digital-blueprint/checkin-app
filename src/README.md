@@ -1,4 +1,4 @@
-# Check-in Activities
+# Check-in activities
 
 Here you can find the individual activities of the `check-in` app. If you want to use the whole app look at [check-in](https://gitlab.tugraz.at/dbp/check-in/checkin).
 
