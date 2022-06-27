@@ -1,13 +1,13 @@
 # Check-in Application
 
-A simple location based contact tracing system. 
-With the possibilities to check in yourself or a guest manually or with an in-build QR-Code scanner.
-
 [GitLab Repository](https://gitlab.tugraz.at/dbp/check-in/checkin) |
 [npmjs package](https://www.npmjs.com/package/@dbp-topics/check-in) |
 [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/) |
 [Checkin Bundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) |
 [Project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
+
+A simple location based contact tracing system.
+With the possibilities to check in yourself or a guest manually or with an in-build QR-Code scanner.
 
 ## Prerequisites
 
@@ -73,6 +73,7 @@ npx @digital-blueprint/cli update-app check-in
 To do this you can for example open a shell with `runuser -u www-data -- bash`.
 
 ## Activities
+
 This app has the following activities:
 - `dbp-check-in-request`
 - `dbp-check-out-request`
@@ -84,6 +85,7 @@ You can find the documentation of these activities in the [check-in activities d
 ## Adapt app
 
 ### Functionality
+
 You can add multiple attributes to the `<dbp-check-in>` tag.
 
 | attribute name | value | Link to description |
@@ -137,14 +139,12 @@ for a list of more attributes.
 See [Overriding slots in nested web components](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/common#overriding-slots-in-nested-web-components)
 for information about how to override slots.
 
-
 ### Design
 
 For frontend design customizations, such as logo, colors, font, favicon, and more, take a look at the [theming documentation](https://dbp-demo.tugraz.at/dev-guide/frontend/theming/).
 
+## "dbp-check-in" slots
 
-## "dbp-check-in" Slots
-
-These are common slots for the app-shell. You can find the documentation of these slot in the [app-shell documentation](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell).
+These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell).
 For the app specific slots take a look at the [check-in activities](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/main/src).
 
