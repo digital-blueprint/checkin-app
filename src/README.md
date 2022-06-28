@@ -2,9 +2,9 @@
 
 Here you can find the individual activities of the `check-in` app. If you want to use the whole app look at [check-in](https://gitlab.tugraz.at/dbp/check-in/checkin).
 
-<!-- ## Usage of an activity
-TODO add description how to only use an activity alone here
---> 
+## Usage of an activity
+
+You can use every activity alone. Take a look at our examples [here](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples).
 
 ## Activities
 
