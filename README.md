@@ -57,7 +57,7 @@ Also make sure to add all of your resources you are using (like your API and Key
 `Content-Security-Policy` in your `check-in-app/public/.htaccess`, so the browser allows access to those sites.
 
 You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/)
-for example like this: [dbp-check-in/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-check-in/index.html)
+for example like this: [dbp-check-in/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/main/examples/dbp-check-in/index.html)
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
 
@@ -90,17 +90,17 @@ You can add multiple attributes to the `<dbp-check-in>` tag.
 
 | attribute name | value | Link to description |
 |----------------|-------| ------------|
-| `provider-root` | Boolean | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
-| `lang`         | String | [language-select](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/language-select#attributes) | 
-| `entry-point-url` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
-| `keycloak-config` | Object | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
-| `base-path` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
-| `src` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes) |
-| `no-welcome-page` | Boolean | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes)
-| `html-overrides` | String | [common](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/common#overriding-slots-in-nested-web-components) |
-| `themes` | Array | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/theme-switcher#themes-attribute) |
-| `darkModeThemeOverride` | String | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/theme-switcher#themes-attribute) |
-| `search-hash-string` | String | [check-in activities](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/src)
+| `provider-root` | Boolean | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
+| `lang`         | String | [language-select](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/language-select#attributes) | 
+| `entry-point-url` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
+| `keycloak-config` | Object | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
+| `base-path` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
+| `src` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
+| `no-welcome-page` | Boolean | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes)
+| `html-overrides` | String | [common](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/common#overriding-slots-in-nested-web-components) |
+| `themes` | Array | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/theme-switcher#themes-attribute) |
+| `darkModeThemeOverride` | String | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/theme-switcher#themes-attribute) |
+| `search-hash-string` | String | [check-in activities](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/main/src)
 
 #### Mandatory attributes
 
@@ -133,10 +133,10 @@ So a working example would be:
 </dbp-check-in>
 ```
 
-See [AppShell Attributes](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell#attributes)
+See [AppShell Attributes](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes)
 for a list of more attributes.
 
-See [Overriding slots in nested web components](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/common#overriding-slots-in-nested-web-components)
+See [Overriding slots in nested web components](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/common#overriding-slots-in-nested-web-components)
 for information about how to override slots.
 
 ### Design
@@ -145,6 +145,6 @@ For frontend design customizations, such as logo, colors, font, favicon, and mor
 
 ## "dbp-check-in" slots
 
-These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/master/packages/app-shell).
+These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell).
 For the app specific slots take a look at the [check-in activities](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/main/src).
 

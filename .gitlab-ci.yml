@@ -34,7 +34,7 @@ publish:
   stage: deploy
   only:
     refs:
-      - master
+      - main
   script:
     # https://www.npmjs.com/settings/dbp-deploy/tokens
     # NPM_TOKEN needs to be a "Publish" token with 2FA disabled!
@@ -75,7 +75,7 @@ deploy_demo:
 deploy_development:
   only:
     refs:
-      - master
+      - main
   environment:
     name: development
     url: https://dbp-dev.tugraz.at/apps/checkin
@@ -99,7 +99,7 @@ deploy_production:
 e2e_tests:
   only:
     refs:
-      - master
+      - main
   variables:
     E2E_PROJECT: checkin
   stage: e2e
