@@ -1,6 +1,6 @@
 {
-    "short_name": "TU Graz check-in",
-    "name": "TU Graz check-in",
+    "short_name": "dbp check-in",
+    "name": "dbp check-in",
     "icons": [
         {
             "src": "local/@dbp-topics/check-in/icon/android-chrome-192x192.png",

@@ -6,16 +6,16 @@
     <meta name="theme-color" content="white"/>
 
     <!-- Meta Data for Search Engines -->
-    <meta title="TU Graz check-in - Das Contact Tracing System an der Universität | TU Graz">
-    <meta name="description" content="Das flächendeckende auf QR-Code-basierte Contact Tracing-System der TU Graz. Um die Kontaktpersonennachverfolgung, falls nötig, zu beschleunigen." />
+    <meta title="<%= universityShortName %> check-in - Das Contact Tracing System an der Universität | <%= universityShortName %>">
+    <meta name="description" content="Das flächendeckende auf QR-Code-basierte Contact Tracing-System von dbp. Um die Kontaktpersonennachverfolgung, falls nötig, zu beschleunigen." />
 
     <!-- Meta Data for open graph(facebook & co) -->
     <meta property="og:locale" content="de_DE" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="TU Graz check-in - Dein Contact Tracing Sytsem an der Universität | TU Graz" />
-    <meta property="og:description" content="Das flächendeckende auf QR-Code-basierte Contact Tracing-System der TU Graz. Um die Kontaktpersonennachverfolgung, falls nötig, zu beschleunigen." />
-    <meta property="og:url" content="https://checkin.tugraz.at/" />
-    <meta property="og:site_name" content="TU Graz check-in - Das Contact Tracing System an der Universität | TU Graz" />
+    <meta property="og:title" content="<%= universityShortName %> check-in - Dein Contact Tracing Sytsem an der Universität | <%= universityShortName %>" />
+    <meta property="og:description" content="Das flächendeckende auf QR-Code-basierte Contact Tracing-System der <%= universityShortName %>. Um die Kontaktpersonennachverfolgung, falls nötig, zu beschleunigen." />
+    <meta property="og:url" content="<%= appDomain %>" />
+    <meta property="og:site_name" content="<%= universityShortName %> check-in - Das Contact Tracing System an der Universität | <%= universityShortName %>" />
 
     <!-- Favicons -->
     <link rel="shortcut icon" type="image/x-icon" href="<%= getPrivateUrl('icon/favicon.ico') %>">
@@ -30,8 +30,8 @@
 
     <!-- Loading spinner -->
     <script type="module">
-        import {Spinner} from '<%= getPrivateUrl('tug_spinner.js') %>';
-        customElements.define('tug-spinner', Spinner);
+        import {Spinner} from '<%= getPrivateUrl('org_spinner.js') %>';
+        customElements.define('org-spinner', Spinner);
     </script>
 
     <!-- App bundles-->
@@ -60,33 +60,6 @@
             justify-content: center;
             align-items: center;
         }
-
-        /* TU-Graz style override */
-        html {
-            --dbp-override-background: white;
-            --dbp-override-content: black;
-
-            --dbp-override-primary: #245b78;
-            --dbp-override-secondary: black;
-            --dbp-override-secondary-surface: white;
-            --dbp-override-on-secondary-surface: black;
-            --dbp-override-secondary-surface-border-color: black;
-
-            --dbp-override-muted: #5c5856;
-            --dbp-override-accent: #e4154b;
-            --dbp-override-info: #245b78;
-            --dbp-override-success: #138800;
-            --dbp-override-warning: #af6405;
-            --dbp-override-warning-surface: #ffad4d;
-            --dbp-override-warning-surface-border-color: #ffad4d;
-            --dbp-override-on-warning-surface: black;
-            --dbp-override-danger: #e4154b;
-
-            --dbp-override-border: 1px solid black;
-
-            --dbp-override-image-nextcloud: url(<%= getUrl('') %>images/nextcloud.svg);
-        }
-
     </style>
 
     <!-- Preloading/Preconnecting -->
@@ -101,210 +74,17 @@
     search-hash-string="<%= searchQRString %>"
     src="<%= getUrl(name + '.topic.metadata.json') %>"
     base-path="<%= getUrl('') %>"
-    keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "<%= keyCloakRealm %>", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'
+    keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "<%= keyCloakRealm %>", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>"}'
     git-info='<%= buildInfo.info %>'
     build-url='<%= buildInfo.url %>'
     build-time='<%= buildInfo.time %>'
     env='<%= buildInfo.env %>'
     matomo-url="<%= matomoUrl %>"
-    matomo-site-id="<%= matomoSiteId %>"
+    matomo-site-id="131"
     no-welcome-page
     html-overrides="global-override"
-><tug-spinner id='spinner'></tug-spinner>
+><org-spinner id='spinner'></org-spinner>
 </<%= name %>>
-
-<template id="global-override">
-    <template id="<%= name %>">
-        <div slot="name">
-            TU Graz<br />
-            <dbp-translated subscribe="lang">
-                <div slot="de">
-                    Technische Universität Graz
-                </div>
-                <div slot="en">
-                    Graz University of Technology
-                </div>
-            </dbp-translated>
-        </div>
-        <div slot="logo">
-            <style>
-                #main-logo {
-                    padding: 0 50px 0 0;
-                }
-            </style>
-            <a href="https://www.tugraz.at" title="TU Graz Home" target="_blank" rel="noopener">
-                <tug-logo id="main-logo" subscribe="lang"></tug-logo>
-            </a>
-        </div>
-        <div slot="footer-links">
-            <style>
-                .footer-links {
-                    margin-top: 0.5em;
-                }
-
-                .footer-links a {
-                    border-bottom: var(--dbp-border);
-                    border-color: var(--dbp-content);
-                    padding: 0;
-                    margin-left: 1em;
-                    transition: background-color 0.15s ease 0s, color 0.15s ease 0s;
-                    color: var(--dbp-content);
-                    cursor: pointer;
-                    text-decoration: none;
-                }
-
-            </style>
-            <dbp-translated subscribe="lang">
-                <div slot="de" class="footer-links">
-                    <a target="_blank" rel="noopener" href="https://www.tugraz.at/ueber-diese-seite/datenschutzerklaerung/">Datenschutz</a>
-                    <a target="_blank" rel="noopener" href="https://www.tugraz.at/ueber-diese-seite/impressum/">Impressum</a>
-                    <a rel="noopener" href="mailto:aktuell-und-offiziell@tugraz.at">Kontakt</a>
-                </div>
-                <div slot="en" class="footer-links">
-                    <a target="_blank" rel="noopener" href="https://www.tugraz.at/en/about-this-page/privacy-policy/">Privacy Policy</a>
-                    <a target="_blank" rel="noopener" href="https://www.tugraz.at/en/about-this-page/legal-notice/">Legal Notice</a>
-                    <a rel="noopener" href="mailto:aktuell-und-offiziell@tugraz.at">Contact</a>
-                </div>
-            </dbp-translated>
-        </div>
-    </template>
-    <template id="dbp-report-risk">
-        <div slot="additional-information">
-            <style>
-                .int-link-external, .int-email-external{
-                    border-bottom: var(--dbp-border);
-                    border-color: var(--dbp-content);
-                }
-
-                .int-link-external:after{
-                    content: '\00a0\00a0\00a0';
-                    background-color: var(--dbp-content);
-                    -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Ebene_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20viewBox%3D%220%200%2022.7%2062.4%22%20style%3D%22enable-background%3Anew%200%200%2022.7%2062.4%3B%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cg%20transform%3D%22translate%28-382.21%20-336.98%29%22%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M386.9%2C380.5c-0.2%2C0-0.4-0.1-0.6-0.3c-0.3-0.3-0.3-0.8%2C0.1-1.1l12.5-10.9l-12.5-10.9c-0.3-0.3-0.4-0.8-0.1-1.1%0A%09%09%09c0.3-0.3%2C0.8-0.4%2C1.1-0.1l13.1%2C11.5c0.2%2C0.2%2C0.3%2C0.4%2C0.3%2C0.6s-0.1%2C0.5-0.3%2C0.6l-13.1%2C11.5C387.3%2C380.4%2C387.1%2C380.5%2C386.9%2C380.5z%22%0A%09%09%09%2F%3E%0A%09%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A');
-                    mask-image: url('data:image/svg+xml;charset=utf-8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Ebene_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20viewBox%3D%220%200%2022.7%2062.4%22%20style%3D%22enable-background%3Anew%200%200%2022.7%2062.4%3B%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cg%20transform%3D%22translate%28-382.21%20-336.98%29%22%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M386.9%2C380.5c-0.2%2C0-0.4-0.1-0.6-0.3c-0.3-0.3-0.3-0.8%2C0.1-1.1l12.5-10.9l-12.5-10.9c-0.3-0.3-0.4-0.8-0.1-1.1%0A%09%09%09c0.3-0.3%2C0.8-0.4%2C1.1-0.1l13.1%2C11.5c0.2%2C0.2%2C0.3%2C0.4%2C0.3%2C0.6s-0.1%2C0.5-0.3%2C0.6l-13.1%2C11.5C387.3%2C380.4%2C387.1%2C380.5%2C386.9%2C380.5z%22%0A%09%09%09%2F%3E%0A%09%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A');
-                    -webkit-mask-repeat: no-repeat;
-                    mask-repeat: no-repeat;
-                    -webkit-mask-position: center -2px;
-                    mask-position: center center;
-                    margin: 0 0 0 4px;
-                    padding: 0 0 0.25% 0;
-                    -webkit-mask-size: 100%;
-                    mask-size: 120%;
-                }
-
-            </style>
-            <dbp-translated subscribe="lang">
-                <div slot="de">
-                    Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei
-                    <a target="_blank" rel="noopener" href="mailto:coronameldung@tugraz.at" class="int-email-external"><span>coronameldung@tugraz.at</span></a>!
-                    <br /><br />
-                    Weitere Informationen über die aktuell geltenden Bestimmungen an der TU Graz erhalten Sie unter
-                    <a target="_blank" rel="noopener" href="https://www.tugraz.at/go/coronavirus" class="int-link-external"><span>www.tugraz.at/go/coronavirus</span></a>.
-                </div>
-                <div slot="en">
-                    If you are a suspected COVID-19 case or a case of illness, please report this immediately to
-                    <a target="_blank" rel="noopener" href="mailto:coronameldung@tugraz.at" class="int-email-external"><span>coronameldung@tugraz.at</span></a>!
-                    <br /><br />
-                    For more information about the currently valid regulations at Graz University of Technology, please visit
-                    <a target="_blank" rel="noopener" href="https://www.tugraz.at/go/coronavirus" class="int-link-external"><span>www.tugraz.at/go/coronavirus</span></a>.
-                </div>
-            </dbp-translated>
-        </div>
-    </template>
-    <template id="dbp-check-in-request">
-        <div slot="additional-information">
-            <style>
-                .int-link-internal{
-                    border-bottom: var(--dbp-border);
-                    border-color: var(--dbp-content);
-                }
-
-                .int-link-internal:after{
-                    content: '\00a0\00a0\00a0';
-                    background-color: var(--dbp-content);
-                    -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Ebene_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20viewBox%3D%220%200%2022.7%2062.4%22%20style%3D%22enable-background%3Anew%200%200%2022.7%2062.4%3B%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cg%20transform%3D%22translate%28-382.21%20-336.98%29%22%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M386.9%2C380.5c-0.2%2C0-0.4-0.1-0.6-0.3c-0.3-0.3-0.3-0.8%2C0.1-1.1l12.5-10.9l-12.5-10.9c-0.3-0.3-0.4-0.8-0.1-1.1%0A%09%09%09c0.3-0.3%2C0.8-0.4%2C1.1-0.1l13.1%2C11.5c0.2%2C0.2%2C0.3%2C0.4%2C0.3%2C0.6s-0.1%2C0.5-0.3%2C0.6l-13.1%2C11.5C387.3%2C380.4%2C387.1%2C380.5%2C386.9%2C380.5z%22%0A%09%09%09%2F%3E%0A%09%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A');
-                    mask-image: url('data:image/svg+xml;charset=utf-8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Ebene_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20viewBox%3D%220%200%2022.7%2062.4%22%20style%3D%22enable-background%3Anew%200%200%2022.7%2062.4%3B%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cg%20transform%3D%22translate%28-382.21%20-336.98%29%22%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M386.9%2C380.5c-0.2%2C0-0.4-0.1-0.6-0.3c-0.3-0.3-0.3-0.8%2C0.1-1.1l12.5-10.9l-12.5-10.9c-0.3-0.3-0.4-0.8-0.1-1.1%0A%09%09%09c0.3-0.3%2C0.8-0.4%2C1.1-0.1l13.1%2C11.5c0.2%2C0.2%2C0.3%2C0.4%2C0.3%2C0.6s-0.1%2C0.5-0.3%2C0.6l-13.1%2C11.5C387.3%2C380.4%2C387.1%2C380.5%2C386.9%2C380.5z%22%0A%09%09%09%2F%3E%0A%09%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A');
-                    -webkit-mask-repeat: no-repeat;
-                    mask-repeat: no-repeat;
-                    -webkit-mask-position: center -2px;
-                    mask-position: center center;
-                    margin: 0 0 0 4px;
-                    padding: 0 0 0.25% 0;
-                    -webkit-mask-size: 100%;
-                    mask-size: 120%;
-                }
-
-            </style>
-            <dbp-translated subscribe="lang">
-                <div slot="de">
-                    Scannen Sie den angebrachten QR-Code oder wählen Sie einen Ort manuell aus, um sich anzumelden. Im Risikofall werden Sie von der TU Graz per E-Mail kontaktiert.</p>
-                    <br />
-                    Was macht die TU Graz mit Ihren Daten? Die Datenschutzerklärung zur App "TU Graz check-in" finden sie hier: 
-                    <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-tu-graz-check-in.pdf') %>" title="Zur Datenschutzerklärung"> 
-                        <span>Zur Datenschutzerklärung </span>
-                    </a>
-                </div>
-                <div slot="en">
-                    Scan the attached QR code or manually select a location to check in. In the event of a risk, you will be contacted by TU Graz by email.
-                    <br />What does TU Graz do with your data? You can find the data protection declaration for the app "TU Graz check-in" here: 
-                    <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-tu-graz-check-in.pdf') %>" title="Privacy statement"> 
-                        <span>Privacy statement </span>
-                    </a>
-                </div>
-            </dbp-translated>
-        </div>
-    </template>
-    <template id="dbp-guest-check-in">
-        <div slot="activity-description">
-            <style>
-
-                .int-link-internal{
-                    border-bottom: var(--dbp-border);
-                    border-color: var(--dbp-content);
-                }
-
-                .int-link-internal:after{
-                    content: '\00a0\00a0\00a0';
-                    background-color: var(--dbp-content);
-                    -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Ebene_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20viewBox%3D%220%200%2022.7%2062.4%22%20style%3D%22enable-background%3Anew%200%200%2022.7%2062.4%3B%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cg%20transform%3D%22translate%28-382.21%20-336.98%29%22%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M386.9%2C380.5c-0.2%2C0-0.4-0.1-0.6-0.3c-0.3-0.3-0.3-0.8%2C0.1-1.1l12.5-10.9l-12.5-10.9c-0.3-0.3-0.4-0.8-0.1-1.1%0A%09%09%09c0.3-0.3%2C0.8-0.4%2C1.1-0.1l13.1%2C11.5c0.2%2C0.2%2C0.3%2C0.4%2C0.3%2C0.6s-0.1%2C0.5-0.3%2C0.6l-13.1%2C11.5C387.3%2C380.4%2C387.1%2C380.5%2C386.9%2C380.5z%22%0A%09%09%09%2F%3E%0A%09%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A');
-                    mask-image: url('data:image/svg+xml;charset=utf-8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Ebene_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20viewBox%3D%220%200%2022.7%2062.4%22%20style%3D%22enable-background%3Anew%200%200%2022.7%2062.4%3B%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cg%20transform%3D%22translate%28-382.21%20-336.98%29%22%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M386.9%2C380.5c-0.2%2C0-0.4-0.1-0.6-0.3c-0.3-0.3-0.3-0.8%2C0.1-1.1l12.5-10.9l-12.5-10.9c-0.3-0.3-0.4-0.8-0.1-1.1%0A%09%09%09c0.3-0.3%2C0.8-0.4%2C1.1-0.1l13.1%2C11.5c0.2%2C0.2%2C0.3%2C0.4%2C0.3%2C0.6s-0.1%2C0.5-0.3%2C0.6l-13.1%2C11.5C387.3%2C380.4%2C387.1%2C380.5%2C386.9%2C380.5z%22%0A%09%09%09%2F%3E%0A%09%3C%2Fg%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A');
-                    -webkit-mask-repeat: no-repeat;
-                    mask-repeat: no-repeat;
-                    -webkit-mask-position: center -2px;
-                    mask-position: center center;
-                    margin: 0 0 0 4px;
-                    padding: 0 0 0.25% 0;
-                    -webkit-mask-size: 100%;
-                    mask-size: 120%;
-                }
-
-            </style>
-            <dbp-translated subscribe="lang">
-                <div slot="de">
-                    <p>
-                        Melden Sie einen Gast ohne TU Graz-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der TU Graz per E-Mail kontaktiert.
-                        <br>
-                        <br>
-                        Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App "TU Graz check-in" zur Kenntnis gebracht habe.
-                        <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-tu-graz-check-in.pdf') %>" title="Zur Datenschutzerklärung">
-                            <span>Zur Datenschutzerklärung </span>
-                        </a>
-                    </p>
-                </div>
-                <div slot="en">
-                    <p>
-                        Melden Sie einen Gast ohne TU Graz-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der TU Graz per E-Mail kontaktiert.
-                        <br>
-                        <br>
-                        Check in a guest without a TU Graz account at a location for the duration of their visit. The check out takes place automatically at the specified time. In the event of a risk, the guest will be contacted by TU Graz by email.
-                        <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-tu-graz-check-in.pdf') %>" title="Privacy statement">
-                            <span>Privacy statement </span>
-                        </a>
-                    </p>
-                </div>
-            </dbp-translated>
-        </div>
-    </template>
-</template>
 
 <!-- Error handling for too old browsers -->
 <script src="<%= getPrivateUrl('browser-check.js') %>" defer></script>

@@ -105,7 +105,7 @@ Example:
       <br>
       <br>
       Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App "TU Graz check-in" zur Kenntnis gebracht habe. <br>
-      <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-tu-graz-check-in.pdf') %>" title="Zur Datenschutzerklärung">
+      <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-check-in.pdf') %>" title="Zur Datenschutzerklärung">
         <span>Zur Datenschutzerklärung </span>
       </a>
     </p>
@@ -116,7 +116,7 @@ Example:
       <br>
       <br>
       Check in a guest without a TU Graz account at a location for the duration of their visit. The check out takes place automatically at the specified time. In the event of a risk, the guest will be contacted by TU Graz by email.<br>
-      <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-tu-graz-check-in.pdf') %>" title="Privacy statement">
+      <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-check-in.pdf') %>" title="Privacy statement">
         <span>Privacy statement </span>
       </a>
     </p>

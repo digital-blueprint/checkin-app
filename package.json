@@ -66,6 +66,7 @@
         "format:prettier": "prettier \"**/*.{js,json,ts}\" --write",
         "watch": "rollup --bundleConfigAsCjs -c --watch",
         "watch-local": "yarn run watch",
+        "watch-tu": "rollup --bundleConfigAsCjs -c --watch --environment APP_ENV:localTUG",
         "watch-full": "rollup --bundleConfigAsCjs -c --watch --environment FORCE_FULL",
         "watch-bs": "rollup --bundleConfigAsCjs -c --watch --environment APP_ENV:bs",
         "test": "rollup --bundleConfigAsCjs -c --environment APP_ENV:test && karma start --singleRun",

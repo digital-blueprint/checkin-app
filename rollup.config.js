@@ -12,7 +12,7 @@ import license from 'rollup-plugin-license';
 import del from 'rollup-plugin-delete';
 import emitEJS from 'rollup-plugin-emit-ejs';
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
-import appConfig from './app.config.js';
+import appConfig from "./app.config";
 import {
     getPackagePath,
     getBuildInfo,
@@ -28,11 +28,43 @@ let useTerser = buildFull;
 let useBabel = buildFull;
 let treeshake = buildFull;
 let checkLicenses = buildFull;
+
+// if true, app assets and configs are whitelabel
+let whitelabel;
+// path to non whitelabel assets and configs
+let checkinPath = 'assets_tug/dbp-checkin/';
+
 let useHTTPS = true;
 
+// set whitelabel bool according to used environment
+if (appEnv.includes('TUG')) {
+    whitelabel = false;
+} else {
+    whitelabel = true;
+}
+
+// load devconfig if present
+let devConfig;
+try {
+    console.log("Loading " + "./" + checkinPath + "app.config.js ...");
+    devConfig = require("./" + checkinPath + "app.config.json");
+} catch(e) {
+    if (e.code == "MODULE_NOT_FOUND") {
+        console.warn("no dev-config found, use default whitelabel config instead ...");
+    } else {
+        throw e;
+    }
+}
+
+// decide on which configs to use
 let config;
-if (appEnv in appConfig) {
-    config = appConfig[appEnv];
+if (appEnv in appConfig || (devConfig != undefined && appEnv in devConfig)) {
+    // choose devConfig if available
+    if (devConfig != undefined && appEnv in devConfig) {
+        config = devConfig[appEnv];
+    } else {
+        config = appConfig[appEnv];
+    }
 } else if (appEnv === 'test') {
     config = {
         basePath: '/',
@@ -68,17 +100,28 @@ config.CSP = `default-src 'self' 'unsafe-eval' 'unsafe-inline' \
 
 export default (async () => {
     let privatePath = await getDistPath(pkg.name);
+
     return {
         input:
             appEnv != 'test'
-                ? [
+                ? appEnv.includes('TUG') ?
+                    [
+                        checkinPath + 'src/' + pkg.internalName + '.js',
+                        'src/dbp-check-in-request.js',
+                        'src/dbp-check-out-request.js',
+                        'src/dbp-guest-check-in.js',
+                        'src/dbp-check-in-info.js',
+                        'src/dbp-report-risk.js',
+                    ]
+                    :
+                    [
                       'src/' + pkg.internalName + '.js',
                       'src/dbp-check-in-request.js',
                       'src/dbp-check-out-request.js',
                       'src/dbp-guest-check-in.js',
                       'src/dbp-check-in-info.js',
                       'src/dbp-report-risk.js',
-                  ]
+                    ]
                 : glob.sync('test/**/*.js'),
         output: {
             dir: 'dist',
@@ -103,34 +146,63 @@ export default (async () => {
                 return;
             }
             warn(warning);
+
         },
         plugins: [
             del({
                 targets: 'dist/*',
             }),
-            emitEJS({
-                src: 'assets',
-                include: ['**/*.ejs', '**/.*.ejs'],
-                data: {
-                    getUrl: (p) => {
-                        return url.resolve(config.basePath, p);
+            whitelabel &&
+                emitEJS({
+                    src: 'assets',
+                    include: ['**/*.ejs', '**/.*.ejs'],
+                    data: {
+                        getUrl: (p) => {
+                            return url.resolve(config.basePath, p);
+                        },
+                        getPrivateUrl: (p) => {
+                            return url.resolve(`${config.basePath}${privatePath}/`, p);
+                        },
+                        name: pkg.internalName,
+                        entryPointURL: config.entryPointURL,
+                        basePath: config.basePath,
+                        keyCloakBaseURL: config.keyCloakBaseURL,
+                        keyCloakClientId: config.keyCloakClientId,
+                        keyCloakRealm: config.keyCloakRealm,
+                        CSP: config.CSP,
+                        searchQRString: config.searchQRString,
+                        matomoUrl: config.matomoUrl,
+                        buildInfo: getBuildInfo(appEnv),
+                        universityShortName: config.universityShortName,
+                        universityFullName: config.universityFullName,
+                        appDomain: config.appDomain,
                     },
-                    getPrivateUrl: (p) => {
-                        return url.resolve(`${config.basePath}${privatePath}/`, p);
+                }),
+            !whitelabel &&
+                emitEJS({
+                    src: checkinPath + 'assets',
+                    include: ['**/*.ejs', '**/.*.ejs'],
+                    data: {
+                        getUrl: (p) => {
+                            return url.resolve(config.basePath, p);},
+                        getPrivateUrl: (p) => {
+                            return url.resolve(`${config.basePath}${privatePath}/`, p);
+                        },
+                        name: pkg.internalName,
+                        entryPointURL: config.entryPointURL,
+                        basePath: config.basePath,
+                        keyCloakBaseURL: config.keyCloakBaseURL,
+                        keyCloakClientId: config.keyCloakClientId,
+                        keyCloakRealm: config.keyCloakRealm,
+                        CSP: config.CSP,
+                        searchQRString: config.searchQRString,
+                        matomoUrl: config.matomoUrl,
+                        buildInfo: getBuildInfo(appEnv),
+                        universityShortName: config.universityShortName,
+                        universityFullName: config.universityFullName,
+                        appDomain: config.appDomain,
                     },
-                    name: pkg.internalName,
-                    entryPointURL: config.entryPointURL,
-                    basePath: config.basePath,
-                    keyCloakBaseURL: config.keyCloakBaseURL,
-                    keyCloakClientId: config.keyCloakClientId,
-                    keyCloakRealm: config.keyCloakRealm,
-                    CSP: config.CSP,
-                    searchQRString: config.searchQRString,
-                    matomoUrl: config.matomoUrl,
-                    matomoSiteId: config.matomoSiteId,
-                    buildInfo: getBuildInfo(appEnv),
-                },
-            }),
+                }),
             resolve({
                 browser: true,
                 preferBuiltins: true,
@@ -164,47 +236,90 @@ export default (async () => {
                 emitFiles: true,
                 fileName: 'shared/[name].[hash][extname]',
             }),
-            copy({
-                targets: [
-                    {
-                        src: 'assets/*-placeholder.png',
-                        dest: 'dist/' + (await getDistPath(pkg.name)),
-                    },
-                    {src: 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
-                    {src: 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
-                    {src: 'src/*.metadata.json', dest: 'dist'},
-                    {src: 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
-                    {
-                        src: 'assets/datenschutzerklaerung-tu-graz-check-in.pdf',
-                        dest: 'dist/' + (await getDistPath(pkg.name)),
-                    },
-                    {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
-                    {src: 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
-                    {src: 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
-                    {src: 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
-                    {src: 'assets/silent-check-sso.html', dest: 'dist'},
-                    {
-                        src: await getPackagePath('@tugraz/web-components', 'src/spinner.js'),
-                        dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'tug_spinner.js'
-                    },
-                    {
-                        src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
-                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
-                    },
-                    {
-                        src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
-                        dest: 'dist/' + (await getDistPath(pkg.name)),
-                    },
-                    {
-                        src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'),
-                        dest: 'dist/' + (await getDistPath(pkg.name)),
-                    },
-                    {
-                        src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
-                        dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
-                    },
-                ],
-            }),
+            !whitelabel &&
+                copy({
+                    targets: [
+                        {
+                            src: checkinPath + 'assets/*-placeholder.png',
+                            dest: 'dist/' + (await getDistPath(pkg.name)),
+                        },
+                        {src: checkinPath + 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
+                        {src: checkinPath + 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
+                        {src: 'src/*.metadata.json', dest: 'dist'},
+                        {src: checkinPath + 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
+                        {
+                            src: checkinPath + 'assets/datenschutzerklaerung-check-in.pdf',
+                            dest: 'dist/' + (await getDistPath(pkg.name)),
+                        },
+                        {src: checkinPath + 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
+                        {src: checkinPath + 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
+                        {src: checkinPath + 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
+                        {src: checkinPath + 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
+                        {src: checkinPath + 'assets/silent-check-sso.html', dest: 'dist'},
+                        {
+                            src: await getPackagePath('@tugraz/web-components', 'src/spinner.js'),
+                            dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'tug_spinner.js'
+                        },
+                        {
+                            src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
+                            dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
+                        },
+                        {
+                            src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
+                            dest: 'dist/' + (await getDistPath(pkg.name)),
+                        },
+                        {
+                            src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'),
+                            dest: 'dist/' + (await getDistPath(pkg.name)),
+                        },
+                        {
+                            src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
+                            dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
+                        },
+                    ],
+                }),
+            whitelabel &&
+                 copy({
+                    targets: [
+                        {
+                            src: 'assets/*-placeholder.png',
+                            dest: 'dist/' + (await getDistPath(pkg.name)),
+                        },
+                        {src: 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
+                        {src: 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
+                        {src: 'src/*.metadata.json', dest: 'dist'},
+                        {src: 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
+                        {
+                            src: 'assets/datenschutzerklaerung-check-in.pdf',
+                            dest: 'dist/' + (await getDistPath(pkg.name)),
+                        },
+                        {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
+                        {src: 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
+                        {src: 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
+                        {src: 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
+                        {src: 'assets/silent-check-sso.html', dest: 'dist'},
+                        {
+                            src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
+                            dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'org_spinner.js'
+                        },
+                        {
+                            src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
+                            dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
+                        },
+                        {
+                            src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
+                            dest: 'dist/' + (await getDistPath(pkg.name)),
+                        },
+                        {
+                            src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'),
+                            dest: 'dist/' + (await getDistPath(pkg.name)),
+                        },
+                        {
+                            src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
+                            dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
+                        },
+                    ],
+                }),
             useBabel &&
                 getBabelOutputPlugin({
                     compact: false,
