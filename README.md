@@ -14,7 +14,7 @@ With the possibilities to check in yourself or a guest manually or with an in-bu
 ## Prerequisites
 
 - You need the [API server](https://gitlab.tugraz.at/dbp/relay/dbp-relay-server-template) running
-- You need the [DbpRelayCheckinBundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) to handle
+- You need the [RelayCheckinBundle](https://github.com/digital-blueprint/relay-checkin-bundle) to handle
   check-ins to places and contact tracing for warning about COVID-19 cases
 - For more information please visit the [Check-in project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
 
