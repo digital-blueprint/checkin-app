@@ -1,5 +1,5 @@
 {
-    "name": "@digital-blueprint/checkin",
+    "name": "@digital-blueprint/checkin-app",
     "internalName": "dbp-check-in",
     "version": "2.1.2",
     "main": "src/dbp-check-in.js",
