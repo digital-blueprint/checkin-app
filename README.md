@@ -3,7 +3,7 @@
 [GitHub Repository](https://github.com/digital-blueprint/checkin-app) |
 [npmjs package](https://www.npmjs.com/package/@digital-blueprint/checkin-app) |
 [Unpkg CDN](https://unpkg.com/browse/@digital-blueprint/checkin-app/) |
-[Checkin Bundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) |
+[Checkin Bundle](https://github.com/digital-blueprint/relay-checkin-bundle) |
 [Project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
 
 A simple location based contact tracing system.
