@@ -6,6 +6,8 @@
 [Checkin Bundle](https://github.com/digital-blueprint/relay-checkin-bundle) |
 [Project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
 
+[![Build and Test](https://github.com/digital-blueprint/checkin-app/actions/workflows/build-test-publish.yml/badge.svg)](https://github.com/digital-blueprint/checkin-app/actions/workflows/build-test-publish.yml)
+
 A simple location based contact tracing system.
 With the possibilities to check in yourself or a guest manually or with an in-build QR-Code scanner.
 
