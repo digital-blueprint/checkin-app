@@ -5,38 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Favicons -->
-    <link rel="shortcut icon" type="image/x-icon" href="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/icon/favicon.ico">
-    <link rel="icon" type="image/svg+xml" href="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/icon/favicon.svg" sizes="any">
+    <link rel="shortcut icon" type="image/x-icon" href="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/icon/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/icon/favicon.svg" sizes="any">
 
     <!-- PWA manfiest file -->
-    <link rel="manifest" href="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/dbp-check-in.manifest.json">
+    <link rel="manifest" href="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/dbp-check-in.manifest.json">
 
     <!-- PWA iphone -->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/icon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/icon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/icon/favicon-16x16.png">
-    <link rel="mask-icon" href="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/icon/safari-pinned-tab.svg" color="#e4154b">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/icon/favicon-16x16.png">
+    <link rel="mask-icon" href="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/icon/safari-pinned-tab.svg" color="#e4154b">
 
     <!-- PWA Windows -->
-    <meta name="msapplication-config" content="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/dbp-check-in.browserconfig.xml">
+    <meta name="msapplication-config" content="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/dbp-check-in.browserconfig.xml">
 
     <!-- Loading spinner -->
     <script type="module">
-        import {Spinner} from 'https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/spinner.js';
+        import {Spinner} from 'https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/spinner.js';
         customElements.define('dbp-loading-spinner', Spinner);
     </script>
 
     <!-- App bundles-->
-    <script type="module" src="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/dbp-check-in.js"></script>
+    <script type="module" src="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/dbp-check-in.js"></script>
 
     <!-- Prevent Chrome/Edge from suggesting to translate the page -->
     <meta name="google" content="notranslate">
 
     <!-- Font related CSS -->
     <style>
-        @import "https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/fonts/source-sans-pro/300.css";
-        @import "https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/fonts/source-sans-pro/400.css";
-        @import "https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/fonts/source-sans-pro/600.css";
+        @import "https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/fonts/source-sans-pro/300.css";
+        @import "https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/fonts/source-sans-pro/400.css";
+        @import "https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/fonts/source-sans-pro/600.css";
 
         body {
             font-family: 'Source Sans Pro', 'Calibri', 'Arial', 'sans-serif';
@@ -82,14 +82,14 @@
         lang="de"
         entry-point-url="https://api-dev.tugraz.at"
         search-hash-string="tugrazcheckin"
-        src="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/dbp-check-in.topic.metadata.json"
+        src="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/dbp-check-in.topic.metadata.json"
         base-path="/"
         keycloak-config='{"url": "https://auth-dev.tugraz.at/auth", "realm": "tugraz-vpu", "clientId": "auth-dev-mw-frontend-local", "silentCheckSsoRedirectUri": "./silent-check-sso.html"}'
         no-welcome-page
 ><dbp-loading-spinner></dbp-loading-spinner></dbp-check-in>
 
 <!-- Error handling for too old browsers -->
-<script src="https://unpkg.com/@dbp-topics/check-in@1.0.16/dist/local/@dbp-topics/check-in/browser-check.js" defer></script>
+<script src="https://unpkg.com/@digital-blueprint/checkin@1.0.16/dist/local/@digital-blueprint/checkin/browser-check.js" defer></script>
 <noscript>Diese Applikation benötigt Javascript / This application requires Javascript</noscript>
 </body>
 </html>

@@ -3,24 +3,24 @@
     "name": "TU Graz check-in",
     "icons": [
         {
-            "src": "local/@dbp-topics/check-in/icon/android-chrome-192x192.png",
+            "src": "local/@digital-blueprint/checkin/icon/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "local/@dbp-topics/check-in/icon/android-chrome-512x512.png",
+            "src": "local/@digital-blueprint/checkin/icon/android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "local/@dbp-topics/check-in/icon/maskable-icon-512x512.png",
+            "src": "local/@digital-blueprint/checkin/icon/maskable-icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "local/@dbp-topics/check-in/icon/maskable-icon.png",
+            "src": "local/@digital-blueprint/checkin/icon/maskable-icon.png",
             "sizes": "640x640",
             "type": "image/png",
             "purpose": "maskable"

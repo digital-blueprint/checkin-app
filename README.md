@@ -1,8 +1,8 @@
 # Check-in Application
 
 [GitHub Repository](https://github.com/digital-blueprint/checkin-app) |
-[npmjs package](https://www.npmjs.com/package/@dbp-topics/check-in) |
-[Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/) |
+[npmjs package](https://www.npmjs.com/package/@digital-blueprint/checkin) |
+[Unpkg CDN](https://unpkg.com/browse/@digital-blueprint/checkin/) |
 [Checkin Bundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) |
 [Project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
 
@@ -56,7 +56,7 @@ Make sure you are allowing `.htaccess` files in your Apache configuration.
 Also make sure to add all of your resources you are using (like your API and Keycloak servers) to the
 `Content-Security-Policy` in your `check-in-app/public/.htaccess`, so the browser allows access to those sites.
 
-You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/)
+You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@digital-blueprint/checkin/)
 for example like this: [dbp-check-in/index.html](https://github.com/digital-blueprint/checkin-app/tree/main/examples/dbp-check-in/index.html)
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
