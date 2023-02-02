@@ -1,10 +1,10 @@
 # Check-in activities
 
-Here you can find the individual activities of the `check-in` app. If you want to use the whole app look at [check-in](https://gitlab.tugraz.at/dbp/check-in/checkin).
+Here you can find the individual activities of the `check-in` app. If you want to use the whole app look at [check-in](https://github.com/digital-blueprint/checkin-app).
 
 ## Usage of an activity
 
-You can use every activity alone. Take a look at our examples [here](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples).
+You can use every activity alone. Take a look at our examples [here](https://github.com/digital-blueprint/checkin-app/-/tree/master/examples).
 
 ## Activities
 
@@ -24,7 +24,7 @@ These attributes are available for all activities listed here:
 ### dbp-check-in-request
 
 You can use this activity for checking-in to a location like this:
-[dbp-check-in-request/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-check-in-request/index.html)
+[dbp-check-in-request/index.html](https://github.com/digital-blueprint/checkin-app/-/tree/master/examples/dbp-check-in-request/index.html)
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
 
@@ -64,7 +64,7 @@ Example:
 ### dbp-check-out-request
 
 You can use this activity for checking-out from a location like this:
-[dbp-check-out-request/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-check-out-request/index.html)
+[dbp-check-out-request/index.html](https://github.com/digital-blueprint/checkin-app/-/tree/master/examples/dbp-check-out-request/index.html)
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
 
@@ -75,7 +75,7 @@ See [shared attributes](#shared-attributes).
 ### dbp-guest-check-in
 
 You can use this activity for checking-in guests to a location like this:
-[dbp-guest-check-in/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-guest-check-in/index.html)
+[dbp-guest-check-in/index.html](https://github.com/digital-blueprint/checkin-app/-/tree/master/examples/dbp-guest-check-in/index.html)
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
 
@@ -129,7 +129,7 @@ Example:
 ### dbp-report-risk
 
 This is an information page on how to report a risk of infection. You can use it like this:
-[dbp-report-risk/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/master/examples/dbp-report-risk/index.html)
+[dbp-report-risk/index.html](https://github.com/digital-blueprint/checkin-app/-/tree/master/examples/dbp-report-risk/index.html)
 
 #### Attributes
 
