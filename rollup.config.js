@@ -32,7 +32,7 @@ let checkLicenses = buildFull;
 // if true, app assets and configs are whitelabel
 let whitelabel;
 // path to non whitelabel assets and configs
-let checkinPath = 'assets_tug/dbp-checkin/';
+let checkinPath = 'deployer/dbp-checkin/';
 
 let useHTTPS = true;
 

@@ -6,3 +6,4 @@ npm-debug.log
 .cert
 package-lock.json
 assets_tug
+deployer
