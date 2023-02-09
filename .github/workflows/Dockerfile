@@ -20,10 +20,6 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.lis
 RUN apt-get update && apt-get install -y \
     nodejs \
     yarn \
-    composer \
-    php-zip \
-    php-curl \
-    rsync \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
@@ -35,16 +31,3 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     chromium \
     firefox-esr \
     && rm -rf /var/lib/apt/lists/*
-
-RUN useradd -u 1000 -ms /bin/bash user
-RUN echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-USER user
-WORKDIR /home/user
-
-# Install deployer globally and add it to PATH
-ENV COMPOSER_HOME="/home/user/.composer"
-RUN mkdir -p "${COMPOSER_HOME}"
-ADD composer.lock "${COMPOSER_HOME}"
-ADD composer.json "${COMPOSER_HOME}"
-RUN composer global install
-ENV PATH "${COMPOSER_HOME}/vendor/bin:${PATH}"

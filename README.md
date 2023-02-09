@@ -1,10 +1,12 @@
 # Check-in Application
 
-[GitLab Repository](https://gitlab.tugraz.at/dbp/check-in/checkin) |
-[npmjs package](https://www.npmjs.com/package/@dbp-topics/check-in) |
-[Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/) |
-[Checkin Bundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) |
+[GitHub Repository](https://github.com/digital-blueprint/checkin-app) |
+[npmjs package](https://www.npmjs.com/package/@digital-blueprint/checkin-app) |
+[Unpkg CDN](https://unpkg.com/browse/@digital-blueprint/checkin-app/) |
+[Checkin Bundle](https://github.com/digital-blueprint/relay-checkin-bundle) |
 [Project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
+
+[![Build and Test](https://github.com/digital-blueprint/checkin-app/actions/workflows/build-test-publish.yml/badge.svg)](https://github.com/digital-blueprint/checkin-app/actions/workflows/build-test-publish.yml)
 
 A simple location based contact tracing system.
 With the possibilities to check in yourself or a guest manually or with an in-build QR-Code scanner.
@@ -12,7 +14,7 @@ With the possibilities to check in yourself or a guest manually or with an in-bu
 ## Prerequisites
 
 - You need the [API server](https://gitlab.tugraz.at/dbp/relay/dbp-relay-server-template) running
-- You need the [DbpRelayCheckinBundle](https://gitlab.tugraz.at/dbp/check-in/dbp-relay-checkin-bundle) to handle
+- You need the [RelayCheckinBundle](https://github.com/digital-blueprint/relay-checkin-bundle) to handle
   check-ins to places and contact tracing for warning about COVID-19 cases
 - For more information please visit the [Check-in project documentation](https://dbp-demo.tugraz.at/site/software/check-in.html)
 
@@ -20,7 +22,7 @@ With the possibilities to check in yourself or a guest manually or with an in-bu
 
 ```bash
 # get the source
-git clone git@gitlab.tugraz.at:dbp/topics/checkin.git
+git clone git@github.com:digital-blueprint/checkin-app.git
 cd checkin
 git submodule update --init
 
@@ -34,7 +36,7 @@ yarn run watch
 yarn test
 ```
 
-Jump to <https://localhost:8001> and you should get a Single Sign On login page.
+Jump to<https://localhost:8001>, so you should get a Single Sign On login page.
 
 ## Using this app as pre-built package
 
@@ -56,8 +58,8 @@ Make sure you are allowing `.htaccess` files in your Apache configuration.
 Also make sure to add all of your resources you are using (like your API and Keycloak servers) to the
 `Content-Security-Policy` in your `check-in-app/public/.htaccess`, so the browser allows access to those sites.
 
-You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@dbp-topics/check-in/)
-for example like this: [dbp-check-in/index.html](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/main/examples/dbp-check-in/index.html)
+You can also use this app directly from the [Unpkg CDN](https://unpkg.com/browse/@digital-blueprint/checkin-app/)
+for example like this: [dbp-check-in/index.html](https://github.com/digital-blueprint/checkin-app/tree/main/examples/dbp-check-in/index.html)
 
 Note that you will need a Keycloak server along with a client id for the domain you are running this html on.
 
@@ -80,7 +82,7 @@ This app has the following activities:
 - `dbp-guest-check-in`
 - `dbp-report-risk`
 
-You can find the documentation of these activities in the [check-in activities documentation](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/main/src).
+You can find the documentation of these activities in the [check-in activities documentation](https://github.com/digital-blueprint/checkin-app/tree/main/src).
 
 ## Adapt app
 
@@ -100,7 +102,7 @@ You can add multiple attributes to the `<dbp-check-in>` tag.
 | `html-overrides` | String | [common](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/common#overriding-slots-in-nested-web-components) |
 | `themes` | Array | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/theme-switcher#themes-attribute) |
 | `darkModeThemeOverride` | String | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/theme-switcher#themes-attribute) |
-| `search-hash-string` | String | [check-in activities](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/main/src)
+| `search-hash-string` | String | [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src)
 
 #### Mandatory attributes
 
@@ -146,5 +148,5 @@ For frontend design customizations, such as logo, colors, font, favicon, and mor
 ## "dbp-check-in" slots
 
 These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell).
-For the app specific slots take a look at the [check-in activities](https://gitlab.tugraz.at/dbp/check-in/checkin/-/tree/main/src).
+For the app specific slots take a look at the [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src).
 
