@@ -37,7 +37,7 @@ let checkinPath = 'deployer/dbp-checkin/';
 let useHTTPS = true;
 
 // set whitelabel bool according to used environment
-if (appEnv.includes('TUG')) {
+if (appEnv.substring(appEnv.length - 3) == "TUG") {
     whitelabel = false;
 } else {
     whitelabel = true;
