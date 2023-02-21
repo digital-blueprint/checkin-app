@@ -12,7 +12,6 @@ import license from 'rollup-plugin-license';
 import del from 'rollup-plugin-delete';
 import emitEJS from 'rollup-plugin-emit-ejs';
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
-import appConfig from "./app.config";
 import {
     getPackagePath,
     getBuildInfo,
@@ -32,7 +31,11 @@ let checkLicenses = buildFull;
 // if true, app assets and configs are whitelabel
 let whitelabel;
 // path to non whitelabel assets and configs
-let checkinPath = 'deployer/dbp-checkin/';
+let checkinPath;
+// development path
+let devPath = 'deployer/dbp-checkin/';
+// deployment path
+let deplyomentPath = '../';
 
 let useHTTPS = true;
 
@@ -43,11 +46,25 @@ if (appEnv.substring(appEnv.length - 3) == "TUG") {
     whitelabel = true;
 }
 
-// load devconfig if present
+// load devconfig for local development if present
 let devConfig;
 try {
-    console.log("Loading " + "./" + checkinPath + "app.config.js ...");
-    devConfig = require("./" + checkinPath + "app.config.json");
+    console.log("Loading " + "./" + devPath + "app.config.json ...");
+    devConfig = require("./" + devPath + "app.config.json");
+    checkinPath = devPath;
+} catch(e) {
+    if (e.code == "MODULE_NOT_FOUND") {
+        console.warn("no dev-config found, try deployment config instead ...");
+    } else {
+        throw e;
+    }
+}
+
+// load devconfig for deployment if present
+try {
+    console.log("Loading " + "./" + deplyomentPath + "app.config.json ...");
+    devConfig = require("./" + deplyomentPath + "app.config.json");
+    checkinPath = deplyomentPath;
 } catch(e) {
     if (e.code == "MODULE_NOT_FOUND") {
         console.warn("no dev-config found, use default whitelabel config instead ...");
@@ -58,12 +75,10 @@ try {
 
 // decide on which configs to use
 let config;
-if (appEnv in appConfig || (devConfig != undefined && appEnv in devConfig)) {
+if ((devConfig != undefined && appEnv in devConfig)) {
     // choose devConfig if available
     if (devConfig != undefined && appEnv in devConfig) {
         config = devConfig[appEnv];
-    } else {
-        config = appConfig[appEnv];
     }
 } else if (appEnv === 'test') {
     config = {
@@ -77,7 +92,7 @@ if (appEnv in appConfig || (devConfig != undefined && appEnv in devConfig)) {
         searchQRString: '',
     };
 } else {
-    console.error(`Unknown build environment: '${appEnv}', use one of '${Object.keys(appConfig)}'`);
+    console.error(`Unknown build environment: '${appEnv}', use one of '${Object.keys(devConfig)}'`);
     process.exit(1);
 }
 
@@ -95,8 +110,8 @@ config.CSP = `default-src 'self' 'unsafe-eval' 'unsafe-inline' \
     ${getOrigin(config.entryPointURL)} \
     ${getOrigin(config.nextcloudBaseURL)}; \
     img-src * blob: data:; font-src 'self' data:; child-src 'self' ${getOrigin(
-        config.keyCloakBaseURL
-    )} blob:; worker-src 'self' blob:`;
+    config.keyCloakBaseURL
+)} blob:; worker-src 'self' blob:`;
 
 export default (async () => {
     let privatePath = await getDistPath(pkg.name);
@@ -106,21 +121,22 @@ export default (async () => {
             appEnv != 'test'
                 ? appEnv.includes('TUG') ?
                     [
-                        checkinPath + 'src/' + pkg.internalName + '.js',
+                        'src/' + pkg.internalName + '.js',
                         'src/dbp-check-in-request.js',
                         'src/dbp-check-out-request.js',
                         'src/dbp-guest-check-in.js',
                         'src/dbp-check-in-info.js',
                         'src/dbp-report-risk.js',
+                        await getPackagePath('@tugraz/web-components', 'src/logo.js'),
                     ]
                     :
                     [
-                      'src/' + pkg.internalName + '.js',
-                      'src/dbp-check-in-request.js',
-                      'src/dbp-check-out-request.js',
-                      'src/dbp-guest-check-in.js',
-                      'src/dbp-check-in-info.js',
-                      'src/dbp-report-risk.js',
+                        'src/' + pkg.internalName + '.js',
+                        'src/dbp-check-in-request.js',
+                        'src/dbp-check-out-request.js',
+                        'src/dbp-guest-check-in.js',
+                        'src/dbp-check-in-info.js',
+                        'src/dbp-report-risk.js',
                     ]
                 : glob.sync('test/**/*.js'),
         output: {
@@ -131,7 +147,7 @@ export default (async () => {
             sourcemap: true,
         },
         treeshake: treeshake,
-        preserveEntrySignatures: false,
+        //preserveEntrySignatures: false,
         onwarn: function (warning, warn) {
             // ignore "suggestions" warning re "use strict"
             if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
@@ -153,79 +169,79 @@ export default (async () => {
                 targets: 'dist/*',
             }),
             whitelabel &&
-                emitEJS({
-                    src: 'assets',
-                    include: ['**/*.ejs', '**/.*.ejs'],
-                    data: {
-                        getUrl: (p) => {
-                            return url.resolve(config.basePath, p);
-                        },
-                        getPrivateUrl: (p) => {
-                            return url.resolve(`${config.basePath}${privatePath}/`, p);
-                        },
-                        name: pkg.internalName,
-                        entryPointURL: config.entryPointURL,
-                        basePath: config.basePath,
-                        keyCloakBaseURL: config.keyCloakBaseURL,
-                        keyCloakClientId: config.keyCloakClientId,
-                        keyCloakRealm: config.keyCloakRealm,
-                        CSP: config.CSP,
-                        searchQRString: config.searchQRString,
-                        matomoUrl: config.matomoUrl,
-                        buildInfo: getBuildInfo(appEnv),
-                        universityShortName: config.universityShortName,
-                        universityFullName: config.universityFullName,
-                        appDomain: config.appDomain,
+            emitEJS({
+                src: 'assets',
+                include: ['**/*.ejs', '**/.*.ejs'],
+                data: {
+                    getUrl: (p) => {
+                        return url.resolve(config.basePath, p);
                     },
-                }),
+                    getPrivateUrl: (p) => {
+                        return url.resolve(`${config.basePath}${privatePath}/`, p);
+                    },
+                    name: pkg.internalName,
+                    entryPointURL: config.entryPointURL,
+                    basePath: config.basePath,
+                    keyCloakBaseURL: config.keyCloakBaseURL,
+                    keyCloakClientId: config.keyCloakClientId,
+                    keyCloakRealm: config.keyCloakRealm,
+                    CSP: config.CSP,
+                    searchQRString: config.searchQRString,
+                    matomoUrl: config.matomoUrl,
+                    buildInfo: getBuildInfo(appEnv),
+                    universityShortName: config.universityShortName,
+                    universityFullName: config.universityFullName,
+                    appDomain: config.appDomain,
+                },
+            }),
             !whitelabel &&
-                emitEJS({
-                    src: checkinPath + 'assets',
-                    include: ['**/*.ejs', '**/.*.ejs'],
-                    data: {
-                        getUrl: (p) => {
-                            return url.resolve(config.basePath, p);},
-                        getPrivateUrl: (p) => {
-                            return url.resolve(`${config.basePath}${privatePath}/`, p);
-                        },
-                        name: pkg.internalName,
-                        entryPointURL: config.entryPointURL,
-                        basePath: config.basePath,
-                        keyCloakBaseURL: config.keyCloakBaseURL,
-                        keyCloakClientId: config.keyCloakClientId,
-                        keyCloakRealm: config.keyCloakRealm,
-                        CSP: config.CSP,
-                        searchQRString: config.searchQRString,
-                        matomoUrl: config.matomoUrl,
-                        buildInfo: getBuildInfo(appEnv),
-                        universityShortName: config.universityShortName,
-                        universityFullName: config.universityFullName,
-                        appDomain: config.appDomain,
+            emitEJS({
+                src: checkinPath + 'assets',
+                include: ['**/*.ejs', '**/.*.ejs'],
+                data: {
+                    getUrl: (p) => {
+                        return url.resolve(config.basePath, p);},
+                    getPrivateUrl: (p) => {
+                        return url.resolve(`${config.basePath}${privatePath}/`, p);
                     },
-                }),
+                    name: pkg.internalName,
+                    entryPointURL: config.entryPointURL,
+                    basePath: config.basePath,
+                    keyCloakBaseURL: config.keyCloakBaseURL,
+                    keyCloakClientId: config.keyCloakClientId,
+                    keyCloakRealm: config.keyCloakRealm,
+                    CSP: config.CSP,
+                    searchQRString: config.searchQRString,
+                    matomoUrl: config.matomoUrl,
+                    buildInfo: getBuildInfo(appEnv),
+                    universityShortName: config.universityShortName,
+                    universityFullName: config.universityFullName,
+                    appDomain: config.appDomain,
+                },
+            }),
             resolve({
                 browser: true,
                 preferBuiltins: true,
             }),
             checkLicenses &&
-                license({
-                    banner: {
-                        commentStyle: 'ignored',
-                        content: `
+            license({
+                banner: {
+                    commentStyle: 'ignored',
+                    content: `
     License: <%= pkg.license %>
     Dependencies:
     <% _.forEach(dependencies, function (dependency) { if (dependency.name) { %>
     <%= dependency.name %>: <%= dependency.version %> (<%= dependency.license %>)<% }}) %>
     `,
+                },
+                thirdParty: {
+                    allow: {
+                        test: '(MIT OR BSD-3-Clause OR Apache-2.0 OR LGPL-2.1-or-later OR 0BSD)',
+                        failOnUnlicensed: true,
+                        failOnViolation: true,
                     },
-                    thirdParty: {
-                        allow: {
-                            test: '(MIT OR BSD-3-Clause OR Apache-2.0 OR LGPL-2.1-or-later OR 0BSD)',
-                            failOnUnlicensed: true,
-                            failOnViolation: true,
-                        },
-                    },
-                }),
+                },
+            }),
             commonjs({
                 include: 'node_modules/**',
             }),
@@ -237,119 +253,119 @@ export default (async () => {
                 fileName: 'shared/[name].[hash][extname]',
             }),
             !whitelabel &&
-                copy({
-                    targets: [
-                        {
-                            src: checkinPath + 'assets/*-placeholder.png',
-                            dest: 'dist/' + (await getDistPath(pkg.name)),
-                        },
-                        {src: checkinPath + 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
-                        {src: checkinPath + 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
-                        {src: 'src/*.metadata.json', dest: 'dist'},
-                        {src: checkinPath + 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
-                        {
-                            src: checkinPath + 'assets/datenschutzerklaerung-check-in.pdf',
-                            dest: 'dist/' + (await getDistPath(pkg.name)),
-                        },
-                        {src: checkinPath + 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
-                        {src: checkinPath + 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
-                        {src: checkinPath + 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
-                        {src: checkinPath + 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
-                        {src: checkinPath + 'assets/silent-check-sso.html', dest: 'dist'},
-                        {
-                            src: await getPackagePath('@tugraz/web-components', 'src/spinner.js'),
-                            dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'tug_spinner.js'
-                        },
-                        {
-                            src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
-                            dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
-                        },
-                        {
-                            src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
-                            dest: 'dist/' + (await getDistPath(pkg.name)),
-                        },
-                        {
-                            src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'),
-                            dest: 'dist/' + (await getDistPath(pkg.name)),
-                        },
-                        {
-                            src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
-                            dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
-                        },
-                    ],
-                }),
+            copy({
+                targets: [
+                    {
+                        src: checkinPath + 'assets/*-placeholder.png',
+                        dest: 'dist/' + (await getDistPath(pkg.name)),
+                    },
+                    {src: checkinPath + 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: checkinPath + 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: 'src/*.metadata.json', dest: 'dist'},
+                    {src: checkinPath + 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {
+                        src: checkinPath + 'assets/datenschutzerklaerung-check-in.pdf',
+                        dest: 'dist/' + (await getDistPath(pkg.name)),
+                    },
+                    {src: checkinPath + 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
+                    {src: checkinPath + 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: checkinPath + 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
+                    {src: checkinPath + 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
+                    {src: checkinPath + 'assets/silent-check-sso.html', dest: 'dist'},
+                    {
+                        src: await getPackagePath('@tugraz/web-components', 'src/spinner.js'),
+                        dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'tug_spinner.js'
+                    },
+                    {
+                        src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
+                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
+                    },
+                    {
+                        src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
+                        dest: 'dist/' + (await getDistPath(pkg.name)),
+                    },
+                    {
+                        src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'),
+                        dest: 'dist/' + (await getDistPath(pkg.name)),
+                    },
+                    {
+                        src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
+                        dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
+                    },
+                ],
+            }),
             whitelabel &&
-                 copy({
-                    targets: [
-                        {
-                            src: 'assets/*-placeholder.png',
-                            dest: 'dist/' + (await getDistPath(pkg.name)),
-                        },
-                        {src: 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
-                        {src: 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
-                        {src: 'src/*.metadata.json', dest: 'dist'},
-                        {src: 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
-                        {
-                            src: 'assets/datenschutzerklaerung-check-in.pdf',
-                            dest: 'dist/' + (await getDistPath(pkg.name)),
-                        },
-                        {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
-                        {src: 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
-                        {src: 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
-                        {src: 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
-                        {src: 'assets/silent-check-sso.html', dest: 'dist'},
-                        {
-                            src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
-                            dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'org_spinner.js'
-                        },
-                        {
-                            src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
-                            dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
-                        },
-                        {
-                            src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
-                            dest: 'dist/' + (await getDistPath(pkg.name)),
-                        },
-                        {
-                            src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'),
-                            dest: 'dist/' + (await getDistPath(pkg.name)),
-                        },
-                        {
-                            src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
-                            dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
-                        },
-                    ],
-                }),
+            copy({
+                targets: [
+                    {
+                        src: 'assets/*-placeholder.png',
+                        dest: 'dist/' + (await getDistPath(pkg.name)),
+                    },
+                    {src: 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: 'src/*.metadata.json', dest: 'dist'},
+                    {src: 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {
+                        src: 'assets/datenschutzerklaerung-check-in.pdf',
+                        dest: 'dist/' + (await getDistPath(pkg.name)),
+                    },
+                    {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
+                    {src: 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
+                    {src: 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
+                    {src: 'assets/silent-check-sso.html', dest: 'dist'},
+                    {
+                        src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
+                        dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'org_spinner.js'
+                    },
+                    {
+                        src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
+                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
+                    },
+                    {
+                        src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
+                        dest: 'dist/' + (await getDistPath(pkg.name)),
+                    },
+                    {
+                        src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'),
+                        dest: 'dist/' + (await getDistPath(pkg.name)),
+                    },
+                    {
+                        src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
+                        dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
+                    },
+                ],
+            }),
             useBabel &&
-                getBabelOutputPlugin({
-                    compact: false,
-                    presets: [
-                        [
-                            '@babel/preset-env',
-                            {
-                                loose: true,
-                                modules: false,
-                                shippedProposals: true,
-                                bugfixes: true,
-                                targets: {
-                                    esmodules: true,
-                                },
+            getBabelOutputPlugin({
+                compact: false,
+                presets: [
+                    [
+                        '@babel/preset-env',
+                        {
+                            loose: true,
+                            modules: false,
+                            shippedProposals: true,
+                            bugfixes: true,
+                            targets: {
+                                esmodules: true,
                             },
-                        ],
+                        },
                     ],
-                }),
+                ],
+            }),
             useTerser ? terser() : false,
             watch
                 ? serve({
-                      contentBase: '.',
-                      host: '127.0.0.1',
-                      port: 8001,
-                      historyApiFallback: config.basePath + pkg.internalName + '.html',
-                      https: useHTTPS ? await generateTLSConfig() : false,
-                      headers: {
-                          'Content-Security-Policy': config.CSP,
-                      },
-                  })
+                    contentBase: '.',
+                    host: '127.0.0.1',
+                    port: 8001,
+                    historyApiFallback: config.basePath + pkg.internalName + '.html',
+                    https: useHTTPS ? await generateTLSConfig() : false,
+                    headers: {
+                        'Content-Security-Policy': config.CSP,
+                    },
+                })
                 : false,
         ],
     };

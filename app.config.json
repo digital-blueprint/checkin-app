@@ -1,0 +1,15 @@
+{
+    "local": {
+        "basePath": "/dist/",
+        "entryPointURL": "",
+        "keyCloakBaseURL": "",
+        "keyCloakRealm": "",
+        "keyCloakClientId": "",
+        "matomoUrl": "",
+        "searchQRString": "",
+        "matomoSiteId": 0,
+        "universityShortName": "dbp",
+        "universityFullName": "Digital Blueprint",
+        "appDomain": ""
+    }
+}
