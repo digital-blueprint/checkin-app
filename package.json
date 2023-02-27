@@ -61,6 +61,7 @@
     "scripts": {
         "build": "rollup --bundleConfigAsCjs -c",
         "build-tu": "rollup --bundleConfigAsCjs -c --environment APP_ENV:localTUG",
+        "build-wl": "rollup --bundleConfigAsCjs -c",
         "i18next": "i18next",
         "format": "yarn run format:eslint && yarn run format:prettier",
         "format:eslint": "eslint \"**/*.{js,ts}\" --fix",
@@ -68,6 +69,7 @@
         "watch": "rollup --bundleConfigAsCjs -c --watch",
         "watch-local": "yarn run watch",
         "watch-tu": "rollup --bundleConfigAsCjs -c --watch --environment APP_ENV:localTUG",
+        "watch-wl": "rollup --bundleConfigAsCjs -c --watch",
         "watch-full": "rollup --bundleConfigAsCjs -c --watch --environment FORCE_FULL",
         "watch-bs": "rollup --bundleConfigAsCjs -c --watch --environment APP_ENV:bs",
         "test": "rollup --bundleConfigAsCjs -c --environment APP_ENV:test && karma start --singleRun",

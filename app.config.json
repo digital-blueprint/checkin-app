@@ -7,7 +7,7 @@
         "keyCloakClientId": "",
         "matomoUrl": "",
         "searchQRString": "",
-        "matomoSiteId": 0,
+        "matomoSiteId": "0",
         "universityShortName": "dbp",
         "universityFullName": "Digital Blueprint",
         "appDomain": ""

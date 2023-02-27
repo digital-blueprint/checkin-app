@@ -40,7 +40,7 @@ let deplyomentPath = '../';
 let useHTTPS = true;
 
 // set whitelabel bool according to used environment
-if (appEnv.substring(appEnv.length - 3) == "TUG") {
+if (appEnv.substring(appEnv.length - 3) == "TUG" || appEnv == "demo" || appEnv == "production") {
     whitelabel = false;
 } else {
     whitelabel = true;
@@ -188,6 +188,7 @@ export default (async () => {
                     CSP: config.CSP,
                     searchQRString: config.searchQRString,
                     matomoUrl: config.matomoUrl,
+                    matomoSiteId: config.matomoSiteId,
                     buildInfo: getBuildInfo(appEnv),
                     universityShortName: config.universityShortName,
                     universityFullName: config.universityFullName,
@@ -213,6 +214,7 @@ export default (async () => {
                     CSP: config.CSP,
                     searchQRString: config.searchQRString,
                     matomoUrl: config.matomoUrl,
+                    matomoSiteId: config.matomoSiteId,
                     buildInfo: getBuildInfo(appEnv),
                     universityShortName: config.universityShortName,
                     universityFullName: config.universityFullName,
