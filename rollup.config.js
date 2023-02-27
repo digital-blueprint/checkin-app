@@ -33,7 +33,7 @@ let whitelabel;
 // path to non whitelabel assets and configs
 let checkinPath;
 // development path
-let devPath = 'deployer/dbp-checkin/';
+let devPath = 'assets_uni/';
 // deployment path
 let deplyomentPath = '../';
 
@@ -55,19 +55,19 @@ try {
 } catch(e) {
     if (e.code == "MODULE_NOT_FOUND") {
         console.warn("no dev-config found, try deployment config instead ...");
-    } else {
-        throw e;
-    }
-}
 
-// load devconfig for deployment if present
-try {
-    console.log("Loading " + "./" + deplyomentPath + "app.config.json ...");
-    devConfig = require("./" + deplyomentPath + "app.config.json");
-    checkinPath = deplyomentPath;
-} catch(e) {
-    if (e.code == "MODULE_NOT_FOUND") {
-        console.warn("no dev-config found, use default whitelabel config instead ...");
+        // load devconfig for deployment if present
+        try {
+            console.log("Loading " + "./" + deplyomentPath + "app.config.json ...");
+            devConfig = require("./" + deplyomentPath + "app.config.json");
+            checkinPath = deplyomentPath;
+        } catch(e) {
+            if (e.code == "MODULE_NOT_FOUND") {
+                console.warn("no dev-config found, use default whitelabel config instead ...");
+            } else {
+                throw e;
+            }
+        }
     } else {
         throw e;
     }
