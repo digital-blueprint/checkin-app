@@ -33,14 +33,14 @@ let whitelabel;
 // path to non whitelabel assets and configs
 let checkinPath;
 // development path
-let devPath = 'assets_uni/';
+let devPath = 'assets_local/';
 // deployment path
 let deplyomentPath = '../';
 
 let useHTTPS = true;
 
 // set whitelabel bool according to used environment
-if (appEnv.substring(appEnv.length - 3) == "TUG" || appEnv == "demo" || appEnv == "production") {
+if (appEnv.substring(appEnv.length - 6) == "Custom" || appEnv == "production") {
     whitelabel = false;
 } else {
     whitelabel = true;
@@ -119,7 +119,7 @@ export default (async () => {
     return {
         input:
             appEnv != 'test'
-                ? appEnv.includes('TUG') ?
+                ? appEnv.substring(appEnv.length - 6) == "Custom" ?
                     [
                         'src/' + pkg.internalName + '.js',
                         'src/dbp-check-in-request.js',

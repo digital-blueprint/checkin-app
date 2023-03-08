@@ -12,7 +12,7 @@
         "universityFullName": "Digital Blueprint",
         "appDomain": "https://dbp-demo.tugraz.at/wlapps/check-in/"
     },
-    "localTUG": {
+    "localCustom": {
         "basePath": "/dist/",
         "entryPointURL": "http://127.0.0.1:8000",
         "keyCloakBaseURL": "https://auth-dev.tugraz.at/auth",
@@ -38,7 +38,7 @@
         "universityFullName": "Digital Blueprint",
         "appDomain": "https://checkin.tugraz.at/"
     },
-    "developmentTUG": {
+    "developmentCustom": {
         "basePath": "/tugapps/checkin/",
         "entryPointURL": "https://api-dev.tugraz.at",
         "keyCloakBaseURL": "https://auth-dev.tugraz.at/auth",
@@ -64,8 +64,8 @@
         "universityFullName": "Technische Universität Graz",
         "appDomain": "https://checkin.tugraz.at/"
     },
-    "demoTUG": {
-        "basePath": "/apps/checkin/",
+    "demoCustom": {
+        "basePath": "/tugapps/checkin/",
         "entryPointURL": "https://api-demo.tugraz.at",
         "keyCloakBaseURL": "https://auth-demo.tugraz.at/auth",
         "keyCloakRealm": "tugraz-vpu",
@@ -77,7 +77,7 @@
         "universityFullName": "Technische Universität Graz",
         "appDomain": "https://checkin.tugraz.at/"
     },
-    "productionTUG": {
+    "productionCustom": {
         "basePath": "/",
         "entryPointURL": "https://api.tugraz.at",
         "keyCloakBaseURL": "https://auth.tugraz.at/auth",
