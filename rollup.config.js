@@ -40,7 +40,7 @@ let deplyomentPath = '../';
 let useHTTPS = true;
 
 // set whitelabel bool according to used environment
-if (appEnv.substring(appEnv.length - 6) == "Custom" || appEnv == "production") {
+if ((appEnv.length > 6 && appEnv.substring(appEnv.length - 6) == "Custom") || appEnv == "production" || appEnv == "demo") {
     whitelabel = false;
 } else {
     whitelabel = true;
@@ -119,7 +119,7 @@ export default (async () => {
     return {
         input:
             appEnv != 'test'
-                ? appEnv.substring(appEnv.length - 6) == "Custom" ?
+                ? (appEnv.length > 6 && appEnv.substring(appEnv.length - 6) == "Custom") ?
                     [
                         'src/' + pkg.internalName + '.js',
                         'src/dbp-check-in-request.js',
