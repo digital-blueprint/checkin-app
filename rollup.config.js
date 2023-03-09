@@ -31,7 +31,7 @@ let checkLicenses = buildFull;
 // if true, app assets and configs are whitelabel
 let whitelabel;
 // path to non whitelabel assets and configs
-let checkinPath;
+let customAssetsPath;
 // development path
 let devPath = 'assets_local/';
 // deployment path
@@ -47,11 +47,11 @@ if ((appEnv.length > 6 && appEnv.substring(appEnv.length - 6) == "Custom") || ap
 }
 
 // load devconfig for local development if present
-let devConfig;
+let devConfig = require("./app.config.json");
 try {
     console.log("Loading " + "./" + devPath + "app.config.json ...");
     devConfig = require("./" + devPath + "app.config.json");
-    checkinPath = devPath;
+    customAssetsPath = devPath;
 } catch(e) {
     if (e.code == "MODULE_NOT_FOUND") {
         console.warn("no dev-config found, try deployment config instead ...");
@@ -60,7 +60,7 @@ try {
         try {
             console.log("Loading " + "./" + deplyomentPath + "app.config.json ...");
             devConfig = require("./" + deplyomentPath + "app.config.json");
-            checkinPath = deplyomentPath;
+            customAssetsPath = deplyomentPath;
         } catch(e) {
             if (e.code == "MODULE_NOT_FOUND") {
                 console.warn("no dev-config found, use default whitelabel config instead ...");
@@ -197,7 +197,7 @@ export default (async () => {
             }),
             !whitelabel &&
             emitEJS({
-                src: checkinPath + 'assets',
+                src: customAssetsPath + 'assets',
                 include: ['**/*.ejs', '**/.*.ejs'],
                 data: {
                     getUrl: (p) => {
@@ -258,22 +258,22 @@ export default (async () => {
             copy({
                 targets: [
                     {
-                        src: checkinPath + 'assets/*-placeholder.png',
+                        src: customAssetsPath + 'assets/*-placeholder.png',
                         dest: 'dist/' + (await getDistPath(pkg.name)),
                     },
-                    {src: checkinPath + 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
-                    {src: checkinPath + 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: customAssetsPath + 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: customAssetsPath + 'assets/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
                     {src: 'src/*.metadata.json', dest: 'dist'},
-                    {src: checkinPath + 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: customAssetsPath + 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
                     {
-                        src: checkinPath + 'assets/datenschutzerklaerung-check-in.pdf',
+                        src: customAssetsPath + 'assets/datenschutzerklaerung-check-in.pdf',
                         dest: 'dist/' + (await getDistPath(pkg.name)),
                     },
-                    {src: checkinPath + 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
-                    {src: checkinPath + 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
-                    {src: checkinPath + 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
-                    {src: checkinPath + 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
-                    {src: checkinPath + 'assets/silent-check-sso.html', dest: 'dist'},
+                    {src: customAssetsPath + 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
+                    {src: customAssetsPath + 'assets/icon-*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
+                    {src: customAssetsPath + 'assets/icon/*', dest: 'dist/' + (await getDistPath(pkg.name, 'icon'))},
+                    {src: customAssetsPath + 'assets/site.webmanifest', dest: 'dist', rename: pkg.internalName + '.webmanifest'},
+                    {src: customAssetsPath + 'assets/silent-check-sso.html', dest: 'dist'},
                     {
                         src: await getPackagePath('@tugraz/web-components', 'src/spinner.js'),
                         dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'tug_spinner.js'
@@ -321,8 +321,8 @@ export default (async () => {
                         dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'org_spinner.js'
                     },
                     {
-                        src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
-                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
+                        src: await getPackagePath('@fontsource/nunito-sans', '*'),
+                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/nunito-sans')),
                     },
                     {
                         src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
