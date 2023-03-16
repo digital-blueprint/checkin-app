@@ -40,7 +40,7 @@ let deplyomentPath = '../';
 let useHTTPS = true;
 
 // set whitelabel bool according to used environment
-if ((appEnv.length > 6 && appEnv.substring(appEnv.length - 6) == "Custom") || appEnv == "production" || appEnv == "demo") {
+if ((appEnv.length > 6 && appEnv.substring(appEnv.length - 6) == "Custom") || appEnv == "production") {
     whitelabel = false;
 } else {
     whitelabel = true;
