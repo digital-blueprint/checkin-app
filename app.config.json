@@ -1,7 +1,7 @@
 {
     "local": {
         "basePath": "/dist/",
-        "entryPointURL": "",
+        "entryPointURL": "http://127.0.0.1:8000",
         "keyCloakBaseURL": "",
         "keyCloakRealm": "",
         "keyCloakClientId": "",
