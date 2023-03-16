@@ -60,8 +60,8 @@
         "matomoUrl": "https://analytics.tugraz.at/",
         "searchQRString": "tugrazcheckin",
         "matomoSiteId": "131",
-        "universityShortName": "TU Graz",
-        "universityFullName": "Technische Universität Graz",
+        "universityShortName": "dbp",
+        "universityFullName": "Digital Blueprint",
         "appDomain": "https://checkin.tugraz.at/"
     },
     "demoCustom": {
