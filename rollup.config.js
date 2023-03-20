@@ -35,7 +35,7 @@ let customAssetsPath;
 // development path
 let devPath = 'assets_custom/';
 // deployment path
-let deplyomentPath = '../';
+let deploymentPath = '../';
 
 let useHTTPS = true;
 
@@ -58,9 +58,9 @@ try {
 
         // load devconfig for deployment if present
         try {
-            console.log("Loading " + "./" + deplyomentPath + "app.config.json ...");
-            devConfig = require("./" + deplyomentPath + "app.config.json");
-            customAssetsPath = deplyomentPath;
+            console.log("Loading " + "./" + deploymentPath + "app.config.json ...");
+            devConfig = require("./" + deploymentPath + "app.config.json");
+            customAssetsPath = deploymentPath;
         } catch(e) {
             if (e.code == "MODULE_NOT_FOUND") {
                 console.warn("no dev-config found, use default whitelabel config instead ...");
