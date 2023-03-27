@@ -8,8 +8,7 @@
         "matomoUrl": "https://analytics.tugraz.at/",
         "searchQRString": "tugrazcheckin",
         "matomoSiteId": "131",
-        "universityShortName": "dbp",
-        "universityFullName": "Digital Blueprint",
+        "shortName": "dbp",
         "appDomain": "https://dbp-demo.tugraz.at/wlapps/check-in/"
     },
     "localCustom": {
@@ -21,8 +20,7 @@
         "matomoUrl": "https://analytics.tugraz.at/",
         "searchQRString": "tugrazcheckin",
         "matomoSiteId": "131",
-        "universityShortName": "TU Graz",
-        "universityFullName": "Technische Universität Graz",
+        "shortName": "TU Graz",
         "appDomain": "https://checkin.tugraz.at"
     },
     "development": {
@@ -34,8 +32,7 @@
         "matomoUrl": "https://analytics.tugraz.at/",
         "searchQRString": "tugrazcheckin",
         "matomoSiteId": "131",
-        "universityShortName": "dbp",
-        "universityFullName": "Digital Blueprint",
+        "shortName": "dbp",
         "appDomain": "https://checkin.tugraz.at/"
     },
     "developmentCustom": {
@@ -47,8 +44,7 @@
         "matomoUrl": "https://analytics.tugraz.at/",
         "searchQRString": "tugrazcheckin",
         "matomoSiteId": "131",
-        "universityShortName": "TU Graz",
-        "universityFullName": "Technische Universität Graz",
+        "shortName": "TU Graz",
         "appDomain": "https://checkin.tugraz.at/"
     },
     "demo": {
@@ -60,8 +56,7 @@
         "matomoUrl": "https://analytics.tugraz.at/",
         "searchQRString": "tugrazcheckin",
         "matomoSiteId": "131",
-        "universityShortName": "dbp",
-        "universityFullName": "Digital Blueprint",
+        "shortName": "dbp",
         "appDomain": "https://checkin.tugraz.at/"
     },
     "demoCustom": {
@@ -73,21 +68,7 @@
         "matomoUrl": "https://analytics.tugraz.at/",
         "searchQRString": "tugrazcheckin",
         "matomoSiteId": "131",
-        "universityShortName": "TU Graz",
-        "universityFullName": "Technische Universität Graz",
-        "appDomain": "https://checkin.tugraz.at/"
-    },
-    "productionCustom": {
-        "basePath": "/",
-        "entryPointURL": "https://api.tugraz.at",
-        "keyCloakBaseURL": "https://auth.tugraz.at/auth",
-        "keyCloakRealm": "tugraz",
-        "keyCloakClientId": "checkin_tugraz_at-CHECKIN",
-        "matomoUrl": "https://analytics.tugraz.at/",
-        "searchQRString": "tugrazcheckin",
-        "matomoSiteId": "150",
-        "universityShortName": "TU Graz",
-        "universityFullName": "Technische Universität Graz",
+        "shortName": "TU Graz",
         "appDomain": "https://checkin.tugraz.at/"
     },
     "production": {
@@ -99,8 +80,7 @@
         "matomoUrl": "https://analytics.tugraz.at/",
         "searchQRString": "tugrazcheckin",
         "matomoSiteId": "150",
-        "universityShortName": "TU Graz",
-        "universityFullName": "Technische Universität Graz",
+        "shortName": "TU Graz",
         "appDomain": "https://checkin.tugraz.at/"
     }
 }
