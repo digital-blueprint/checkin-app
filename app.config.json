@@ -9,7 +9,19 @@
         "searchQRString": "",
         "matomoSiteId": "0",
         "universityShortName": "dbp",
-        "universityFullName": "Digital Blueprint",
+        "universityFullName": "digital blueprint",
+        "appDomain": ""
+    },
+    "localCustom": {
+        "basePath": "/dist/",
+        "entryPointURL": "http://127.0.0.1:8000",
+        "keyCloakBaseURL": "",
+        "keyCloakRealm": "",
+        "keyCloakClientId": "",
+        "matomoUrl": "",
+        "searchQRString": "",
+        "matomoSiteId": "0",
+        "shortName": "My Organization",
         "appDomain": ""
     }
 }

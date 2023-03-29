@@ -33,9 +33,9 @@ let whitelabel;
 // path to non whitelabel assets and configs
 let customAssetsPath;
 // development path
-let devPath = 'assets_custom/';
+let devPath = 'assets_custom/dbp-checkin/assets/';
 // deployment path
-let deploymentPath = '../';
+let deploymentPath = '../assets/';
 
 let useHTTPS = true;
 
@@ -64,6 +64,8 @@ try {
         } catch(e) {
             if (e.code == "MODULE_NOT_FOUND") {
                 console.warn("no dev-config found, use default whitelabel config instead ...");
+                devConfig = require("./app.config.json");
+                customAssetsPath = devPath;
             } else {
                 throw e;
             }
