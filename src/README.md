@@ -101,10 +101,10 @@ Example:
   dbp-translated subscribe="lang">
   <div slot="de">
     <p>
-      Melden Sie einen Gast ohne TU Graz-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der TU Graz per E-Mail kontaktiert.
+      Melden Sie einen Gast ohne Universitäts-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der Universität per E-Mail kontaktiert.
       <br>
       <br>
-      Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App "TU Graz check-in" zur Kenntnis gebracht habe. <br>
+      Mit der Anmeldung bestätige ich, dass ich dem von mir angemeldeten Gast die Datenschutzerklärung zur App "dbp check-in" zur Kenntnis gebracht habe. <br>
       <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-check-in.pdf') %>" title="Zur Datenschutzerklärung">
         <span>Zur Datenschutzerklärung </span>
       </a>
@@ -112,10 +112,10 @@ Example:
   </div>
   <div slot="en">
     <p>
-      Melden Sie einen Gast ohne TU Graz-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der TU Graz per E-Mail kontaktiert.
+      Melden Sie einen Gast ohne Universitäts-Account an einem Ort für die Dauer seines Besuchs an. Die Abmeldung erfolgt automatisch an dem angegebenen Zeitpunkt. Im Risikofall wird der Gast von der Universität per E-Mail kontaktiert.
       <br>
       <br>
-      Check in a guest without a TU Graz account at a location for the duration of their visit. The check out takes place automatically at the specified time. In the event of a risk, the guest will be contacted by TU Graz by email.<br>
+      Check in a guest without a university account at a location for the duration of their visit. The check out takes place automatically at the specified time. In the event of a risk, the guest will be contacted by the university by email.<br>
       <a target="_blank" class="int-link-internal" href="<%= getPrivateUrl('datenschutzerklaerung-check-in.pdf') %>" title="Privacy statement">
         <span>Privacy statement </span>
       </a>

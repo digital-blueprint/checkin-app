@@ -95,17 +95,17 @@ You can add multiple attributes to the `<dbp-check-in>` tag.
 
 | attribute name | value | Link to description |
 |----------------|-------| ------------|
-| `provider-root` | Boolean | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
-| `lang`         | String | [language-select](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/language-select#attributes) | 
-| `entry-point-url` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
-| `keycloak-config` | Object | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
-| `base-path` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
-| `src` | String | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes) |
-| `no-welcome-page` | Boolean | [appshell](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes)
-| `html-overrides` | String | [common](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/common#overriding-slots-in-nested-web-components) |
-| `themes` | Array | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/theme-switcher#themes-attribute) |
-| `darkModeThemeOverride` | String | [theme-switcher](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/theme-switcher#themes-attribute) |
-| `search-hash-string` | String | [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src)
+| `provider-root` | Boolean | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
+| `lang`         | String | [language-select](https://github.com/digital-blueprint/toolkit/tree/main/packages/language-select#attributes) | 
+| `entry-point-url` | String | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
+| `keycloak-config` | Object | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
+| `base-path` | String | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
+| `src` | String | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
+| `no-welcome-page` | Boolean | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)
+| `html-overrides` | String | [common](https://github.com/digital-blueprint/toolkit/tree/main/packages/common#overriding-slots-in-nested-web-components) |
+| `themes` | Array | [theme-switcher](https://github.com/digital-blueprint/toolkit/tree/main/packages/theme-switcher#attributes) |
+| `darkModeThemeOverride` | String | [theme-switcher](https://github.com/digital-blueprint/toolkit/tree/main/packages/theme-switcher#themes-attribute) |
+| `search-hash-string` | String | [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src#check-in-activities)
 
 #### Mandatory attributes
 
@@ -138,18 +138,18 @@ So a working example would be:
 </dbp-check-in>
 ```
 
-See [AppShell Attributes](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell#attributes)
+See [AppShell Attributes](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)
 for a list of more attributes.
 
-See [Overriding slots in nested web components](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/common#overriding-slots-in-nested-web-components)
+See [Overriding slots in nested web components](https://github.com/digital-blueprint/toolkit/tree/main/packages/common#overriding-slots-in-nested-web-components)
 for information about how to override slots.
 
 ### Design
 
-For frontend design customizations, such as logo, colors, font, favicon, and more, take a look at the [theming documentation](https://dbp-demo.tugraz.at/dev-guide/frontend/theming/).
+For frontend design customizations, such as logo, colors, font, favicon, and more, take a look at the [theming documentation](https://handbook.digital-blueprint.org/frontend/theming/).
 
 ## "dbp-check-in" slots
 
-These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://gitlab.tugraz.at/dbp/web-components/toolkit/-/tree/main/packages/app-shell).
-For the app specific slots take a look at the [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src).
+These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell).
+For the app specific slots take a look at the [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src#check-in-activities).
 
