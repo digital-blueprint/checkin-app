@@ -22,5 +22,17 @@
         "matomoSiteId": "0",
         "shortName": "My Organization",
         "appDomain": ""
+    },
+    "development": {
+        "basePath": "/apps/checkin/",
+        "entryPointURL": "https://api-dev.tugraz.at",
+        "keyCloakBaseURL": "https://auth-dev.tugraz.at/auth",
+        "keyCloakRealm": "tugraz-vpu",
+        "keyCloakClientId": "dbp-check-in",
+        "matomoUrl": "https://analytics.tugraz.at/",
+        "searchQRString": "tugrazcheckin",
+        "matomoSiteId": "131",
+        "shortName": "dbp",
+        "appDomain": "https://checkin.tugraz.at/"
     }
 }
