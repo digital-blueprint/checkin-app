@@ -8,8 +8,7 @@
         "matomoUrl": "",
         "searchQRString": "",
         "matomoSiteId": "0",
-        "universityShortName": "dbp",
-        "universityFullName": "digital blueprint",
+        "shortName": "dbp",
         "appDomain": ""
     },
     "localCustom": {
