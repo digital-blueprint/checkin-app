@@ -32,7 +32,7 @@ npm install
 # constantly build dist/bundle.js and run a local web-server on port 8001 
 npm run watch
 
-# constantly build dist/bundle.js and run a local web-server on port 8001 using a custom assets directory assets_local/
+# constantly build dist/bundle.js and run a local web-server on port 8001 using a custom assets directory assets_custom/
 npm run watch-custom
 
 # run tests
@@ -40,6 +40,9 @@ npm test
 ```
 
 Jump to<https://localhost:8001>, so you should get a Single Sign On login page.
+
+To enable building with custom assets, you need to provide your custom assets in the directory `assets_custom/checkin-app/assets/`. If you want to, you can also change this path in the file `rollup.config.js`. For more information, please visit the [dbp handbook page on custom assets](https://handbook.digital-blueprint.org/frameworks/frontend/dev/assets/#custom-assets).
+
 
 ## Using this app as pre-built package
 
