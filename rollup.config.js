@@ -33,7 +33,7 @@ let whitelabel;
 // path to non whitelabel assets and configs
 let customAssetsPath;
 // development path
-let devPath = 'assets_custom/dbp-checkin/assets/';
+let devPath = 'assets_custom/checkin-app/assets/';
 // deployment path
 let deploymentPath = '../assets/';
 
