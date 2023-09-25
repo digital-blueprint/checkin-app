@@ -6,7 +6,7 @@ module.exports = {
     output: 'src/i18n/$LOCALE/$NAMESPACE.json',
     input: ['src/**/*.js'],
     sort: true,
-    i18nextOptions: {compatibilityJSON: 'v3'},
+    i18nextOptions: {compatibilityJSON: 'v4'},
     lexers: {
         js: [
             {

@@ -23,7 +23,7 @@ With the possibilities to check in yourself or a guest manually or with an in-bu
 ```bash
 # get the source
 git clone git@github.com:digital-blueprint/checkin-app.git
-cd checkin
+cd checkin-app
 git submodule update --init
 
 # install dependencies
