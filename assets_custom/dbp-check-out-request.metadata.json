@@ -1,0 +1,18 @@
+{
+    "element": "dbp-check-out-request",
+    "module_src": "dbp-check-out-request.js",
+    "routing_name": "check-out-request",
+    "name": {
+        "de": "Von Orten abmelden",
+        "en": "Check-out from places"
+    },
+    "short_name": {
+        "de": "Von Orten abmelden",
+        "en": "Check-out from places"
+    },
+    "description": {
+        "de": "Zeigt alle angemeldeten Orte.",
+        "en": "Shows all checked-in places."
+    },
+    "subscribe": "lang:lang,entry-point-url:entry-point-url,auth:auth"
+}

@@ -1,0 +1,18 @@
+{
+    "element": "dbp-guest-check-in",
+    "module_src": "dbp-guest-check-in.js",
+    "routing_name": "guest-check-in",
+    "name": {
+        "de": "Gast an Ort anmelden",
+        "en": "Check-in guest at a place"
+    },
+    "short_name": {
+        "de": "Gast an Ort anmelden",
+        "en": "Check-in guest at a place"
+    },
+    "description": {
+        "de": "Meldet einen Gast an einem Ort an.",
+        "en": "Logs a guest in one place."
+    },
+    "subscribe": "lang,entry-point-url,auth,html-overrides"
+}
