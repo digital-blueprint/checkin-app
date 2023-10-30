@@ -12,12 +12,6 @@ import select2CSSPath from 'select2/dist/css/select2.min.css';
 import * as errorUtils from '@dbp-toolkit/common/error';
 import {AdapterLitElement} from '@dbp-toolkit/common';
 
-const checkInPlaceContext = {
-    '@id': '@id',
-    name: 'http://schema.org/name',
-    maximumPhysicalAttendeeCapacity: 'http://schema.org/maximumPhysicalAttendeeCapacity',
-};
-
 export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
     constructor() {
         super();
@@ -184,9 +178,9 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                         that.$('#check-in-place-select-dropdown').addClass('select2-bug');
 
                         that.lastResult = data;
-                        let transformed = that.jsonld.transformMembers(data, checkInPlaceContext);
+                        const members = data['hydra:member'];
                         const results = [];
-                        transformed.forEach((place) => {
+                        members.forEach((place) => {
                             results.push({
                                 id: place['@id'],
                                 maximumPhysicalAttendeeCapacity:
@@ -274,17 +268,13 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                 })
                 .then((place) => {
                     that.object = place;
-                    const transformed = that.jsonld.compactMember(
-                        that.jsonld.expandMember(place),
-                        checkInPlaceContext
-                    );
-                    const identifier = transformed['@id'];
-                    const maxCapacity = transformed['maximumPhysicalAttendeeCapacity'];
-                    const roomName = transformed['name'];
+                    const identifier = place['@id'];
+                    const maxCapacity = place['maximumPhysicalAttendeeCapacity'];
+                    const roomName = place['name'];
                     const room = place.identifier;
 
                     const option = new Option(
-                        that.generateOptionText(transformed),
+                        that.generateOptionText(place),
                         identifier,
                         true,
                         true
