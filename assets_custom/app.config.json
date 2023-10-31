@@ -70,17 +70,5 @@
         "matomoSiteId": "131",
         "shortName": "TU Graz",
         "appDomain": "https://checkin.tugraz.at/"
-    },
-    "production": {
-        "basePath": "/",
-        "entryPointURL": "https://api.tugraz.at",
-        "keyCloakBaseURL": "https://auth.tugraz.at/auth",
-        "keyCloakRealm": "tugraz",
-        "keyCloakClientId": "checkin_tugraz_at-CHECKIN",
-        "matomoUrl": "https://analytics.tugraz.at/",
-        "searchQRString": "tugrazcheckin",
-        "matomoSiteId": "150",
-        "shortName": "TU Graz",
-        "appDomain": "https://checkin.tugraz.at/"
     }
 }
