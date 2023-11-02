@@ -1,29 +1,21 @@
 import {findObjectInApiResults} from './utils.js';
 import select2LangDe from './i18n/de/select2';
 import select2LangEn from './i18n/en/select2';
-import JSONLD from '@dbp-toolkit/common/jsonld';
 import {css, html} from 'lit';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import {createInstance} from './i18n.js';
-import {Icon} from '@dbp-toolkit/common';
+import {Icon, combineURLs} from '@dbp-toolkit/common';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import select2CSSPath from 'select2/dist/css/select2.min.css';
 import * as errorUtils from '@dbp-toolkit/common/error';
 import {AdapterLitElement} from '@dbp-toolkit/common';
 
-const checkInPlaceContext = {
-    '@id': '@id',
-    name: 'http://schema.org/name',
-    maximumPhysicalAttendeeCapacity: 'http://schema.org/maximumPhysicalAttendeeCapacity',
-};
-
 export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
     constructor() {
         super();
         Object.assign(CheckInPlaceSelect.prototype, errorUtils.errorMixin);
         this.entryPointUrl = '';
-        this.jsonld = null;
         this.$select = null;
         this.active = false;
         // For some reason using the same ID on the whole page twice breaks select2 (regardless if they are in different custom elements)
@@ -88,12 +80,12 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
         const that = this;
 
         this.$select = this.$('#' + that.selectId);
+        if (!this.select2IsInitialized()) {
+            this.initSelect2();
+        }
 
         // Close the popup when clicking outside of select2
         document.addEventListener('click', this._onDocumentClicked);
-
-        // try an init when user-interface is loaded
-        this.initJSONLD();
     }
 
     disconnectedCallback() {
@@ -110,29 +102,6 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
         }
     }
 
-    initJSONLD(ignorePreset = false) {
-        const that = this;
-
-        JSONLD.getInstance(this.entryPointUrl).then(
-            function (jsonld) {
-                that.jsonld = jsonld;
-                that.active = true;
-
-                // we need to poll because maybe the user interface isn't loaded yet
-                // Note: we need to call initSelect2() in a different function so we can access "this" inside initSelect2()
-                commonUtils.pollFunc(
-                    () => {
-                        return that.initSelect2(ignorePreset);
-                    },
-                    10000,
-                    100
-                );
-            },
-            {},
-            this.lang
-        );
-    }
-
     /**
      * Initializes the Select2 selector
      *
@@ -142,16 +111,11 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
         const that = this;
         const $this = this.$(this);
 
-        if (this.jsonld === null) {
+        if (this.$select === null || this.entryPointUrl === null) {
             return false;
         }
 
-        // find the correct api url for a checkInPlace
-        const apiUrl = this.jsonld.getApiUrlForEntityName('CheckinPlace');
-
-        if (this.$select === null) {
-            return false;
-        }
+        const apiUrl = combineURLs(this.entryPointUrl, '/checkin/places');
 
         // we need to destroy Select2 and remove the event listeners before we can initialize it again
         if (this.$select && this.$select.hasClass('select2-hidden-accessible')) {
@@ -184,9 +148,9 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                         that.$('#check-in-place-select-dropdown').addClass('select2-bug');
 
                         that.lastResult = data;
-                        let transformed = that.jsonld.transformMembers(data, checkInPlaceContext);
+                        const members = data['hydra:member'];
                         const results = [];
-                        transformed.forEach((place) => {
+                        members.forEach((place) => {
                             results.push({
                                 id: place['@id'],
                                 maximumPhysicalAttendeeCapacity:
@@ -274,17 +238,13 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                 })
                 .then((place) => {
                     that.object = place;
-                    const transformed = that.jsonld.compactMember(
-                        that.jsonld.expandMember(place),
-                        checkInPlaceContext
-                    );
-                    const identifier = transformed['@id'];
-                    const maxCapacity = transformed['maximumPhysicalAttendeeCapacity'];
-                    const roomName = transformed['name'];
+                    const identifier = place['@id'];
+                    const maxCapacity = place['maximumPhysicalAttendeeCapacity'];
+                    const roomName = place['name'];
                     const room = place.identifier;
 
                     const option = new Option(
-                        that.generateOptionText(transformed),
+                        that.generateOptionText(place),
                         identifier,
                         true,
                         true
@@ -351,7 +311,13 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                     break;
                 case 'entryPointUrl':
                     // we don't need to preset the selector if the entry point url changes
-                    this.initJSONLD(true);
+                    this.initSelect2(true);
+                    break;
+                case 'auth':
+                    this.active = !!this.auth.token;
+                    if (this.active && (!oldValue || !oldValue.token)) {
+                        this.initSelect2();
+                    }
                     break;
             }
         });

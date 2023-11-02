@@ -6,16 +6,16 @@
     <meta name="theme-color" content="white"/>
 
     <!-- Meta Data for Search Engines -->
-    <meta title="<%= universityShortName %> check-in - Das Contact Tracing System an der Universität | <%= universityShortName %>">
-    <meta name="description" content="Das flächendeckende auf QR-Code-basierte Contact Tracing-System der <%= universityShortName %>. Um die Kontaktpersonennachverfolgung, falls nötig, zu beschleunigen." />
+    <meta title="<%= shortName %> check-in - Das Contact Tracing System an der Universität | <%= shortName %>">
+    <meta name="description" content="Das flächendeckende auf QR-Code-basierte Contact Tracing-System der <%= shortName %>. Um die Kontaktpersonennachverfolgung, falls nötig, zu beschleunigen." />
 
     <!-- Meta Data for open graph(facebook & co) -->
     <meta property="og:locale" content="de_DE" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="<%= universityShortName %> check-in - Dein Contact Tracing System an der Universität | <%= universityShortName %>" />
-    <meta property="og:description" content="Das flächendeckende auf QR-Code-basierte Contact Tracing-System der <%= universityShortName %>. Um die Kontaktpersonennachverfolgung, falls nötig, zu beschleunigen." />
-    <meta property="og:url" content="https://checkin.tugraz.at/" />
-    <meta property="og:site_name" content="<%= universityShortName %> check-in - Das Contact Tracing System an der Universität | <%= universityShortName %>" />
+    <meta property="og:title" content="<%= shortName %> check-in - Dein Contact Tracing Sytsem an der Universität | <%= shortName %>" />
+    <meta property="og:description" content="Das flächendeckende auf QR-Code-basierte Contact Tracing-System der <%= shortName %>. Um die Kontaktpersonennachverfolgung, falls nötig, zu beschleunigen." />
+    <meta property="og:url" content="<%= appDomain %>" />
+    <meta property="og:site_name" content="<%= shortName %> check-in - Das Contact Tracing System an der Universität | <%= shortName %>" />
 
     <!-- Favicons -->
     <link rel="shortcut icon" type="image/x-icon" href="<%= getPrivateUrl('icon/favicon.ico') %>">
@@ -108,7 +108,7 @@
     search-hash-string="<%= searchQRString %>"
     src="<%= getUrl(name + '.topic.metadata.json') %>"
     base-path="<%= getUrl('') %>"
-    keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "<%= keyCloakRealm %>", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>"}'
+    keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "<%= keyCloakRealm %>", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>", "forceLogin": "true"}'
     git-info='<%= buildInfo.info %>'
     build-url='<%= buildInfo.url %>'
     build-time='<%= buildInfo.time %>'
@@ -123,7 +123,7 @@
 <template id="global-override">
     <template id="<%= name %>">
         <div slot="name">
-            TU Graz<br />
+            <%= shortName %><br />
             <dbp-translated subscribe="lang">
                 <div slot="de">
                     Technische Universität Graz
