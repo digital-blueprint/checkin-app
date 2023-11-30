@@ -123,15 +123,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
      * @returns {Array} list
      */
     parseActiveCheckins(response) {
-        let list = [];
-
-        let numTypes = parseInt(response['hydra:totalItems']);
-        if (isNaN(numTypes)) {
-            numTypes = 0;
-        }
-        for (let i = 0; i < numTypes; i++) {
-            list[i] = response['hydra:member'][i];
-        }
+        let list = Array.from(response['hydra:member']);
         list.sort(this.compareListItems);
 
         return list;
