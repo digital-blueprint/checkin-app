@@ -148,22 +148,6 @@ export default (async () => {
         },
         treeshake: treeshake,
         //preserveEntrySignatures: false,
-        onwarn: function (warning, warn) {
-            // ignore "suggestions" warning re "use strict"
-            if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
-                return;
-            }
-            // ignore chai warnings
-            if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('chai')) {
-                return;
-            }
-            // keycloak bundled code uses eval
-            if (warning.code === 'EVAL' && warning.id.includes('sha256.js')) {
-                return;
-            }
-            warn(warning);
-
-        },
         plugins: [
             del({
                 targets: 'dist/*',
