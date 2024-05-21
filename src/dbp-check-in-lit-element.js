@@ -191,7 +191,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         // after this function, but still a TypeError will occur if .json() was already called before this function
         try {
             responseBody = await responseData.clone().json();
-        } catch (e) {
+        } catch {
             // NOP
         }
 

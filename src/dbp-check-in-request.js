@@ -259,7 +259,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         let location, seat;
         try {
             [location, seat] = parseQRCode(data, this.searchHashString);
-        } catch (error) {
+        } catch {
             let checkAlreadySend = await this.wrongQR.includes(data);
             if (checkAlreadySend) {
                 const that = this;
