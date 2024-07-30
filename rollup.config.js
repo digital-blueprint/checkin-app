@@ -1,4 +1,3 @@
-import path from 'path';
 import url from 'url';
 import {globSync} from 'glob';
 import resolve from '@rollup/plugin-node-resolve';
@@ -17,7 +16,7 @@ import {
     getBuildInfo,
     generateTLSConfig,
     getDistPath,
-} from './vendor/toolkit/rollup.utils.js';
+} from '@dbp-toolkit/dev-utils';
 import { createRequire } from "module";
 
 const require = createRequire(import.meta.url);
