@@ -18,7 +18,9 @@ import {
     generateTLSConfig,
     getDistPath,
 } from './vendor/toolkit/rollup.utils.js';
+import { createRequire } from "module";
 
+const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 const appEnv = typeof process.env.APP_ENV !== 'undefined' ? process.env.APP_ENV : 'local';
 const watch = process.env.ROLLUP_WATCH === 'true';
