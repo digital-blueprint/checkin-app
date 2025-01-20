@@ -1,4 +1,4 @@
-import {ScopedElementsMixin} from '@open-wc/scoped-elements';
+import {ScopedElementsMixin} from '@dbp-toolkit/common';
 import {css, html} from 'lit-element';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Button, Icon, MiniSpinner} from '@dbp-toolkit/common';
