@@ -47,6 +47,11 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
         super.update(changedProperties);
     }
 
+    _onLoginClicked(e) {
+        this.sendSetPropertyEvent('requested-login-status', "logged-in");
+        e.preventDefault();
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -78,7 +83,7 @@ class ReportRisk extends ScopedElementsMixin(DBPCheckInLitElement) {
                 class="notification is-warning ${classMap({
                     hidden: this.isLoggedIn() || this.isLoading(),
                 })}">
-                ${i18n.t('error-login-message')}
+                ${i18n.t('error-login-message')} <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
             </div>
 
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">

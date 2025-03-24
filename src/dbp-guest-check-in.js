@@ -392,7 +392,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 class="notification is-warning ${classMap({
                     hidden: this.isLoggedIn() || this.isLoading() || !this.hasPermissions(),
                 })}">
-                ${i18n.t('error-login-message')}
+                ${i18n.t('error-login-message')} <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
             </div>
 
             <div

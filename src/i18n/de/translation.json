@@ -54,7 +54,8 @@
         "loading-message": "Lädt...",
         "no-checkins-message": "Sie sind derzeit an keinem Ort angemeldet."
     },
-    "error-login-message": "Sie müssen eingeloggt sein um diese Funktion nutzen zu können!",
+    "error-login-message": "Bitte melden Sie sich an, um diese Funktion nutzen zu können.",
+    "error-login-link": "Zur Anmeldung",
     "guest-check-in": {
         "already-checkin-body": "Sie sind hier bereits angemeldet. Sie können sich hier erst wieder anmelden, wenn Ihre aktuelle Anmeldung abgelaufen ist.",
         "already-checkin-title": "Bereits angemeldet!",
