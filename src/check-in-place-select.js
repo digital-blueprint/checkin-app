@@ -2,7 +2,7 @@ import {findObjectInApiResults} from './utils.js';
 import select2LangDe from './i18n/de/select2';
 import select2LangEn from './i18n/en/select2';
 import {css, html} from 'lit';
-import {ScopedElementsMixin} from '@open-wc/scoped-elements';
+import {ScopedElementsMixin} from '@dbp-toolkit/common';
 import {createInstance} from './i18n.js';
 import {Icon, combineURLs} from '@dbp-toolkit/common';
 import * as commonUtils from '@dbp-toolkit/common/utils';

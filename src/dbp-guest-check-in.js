@@ -1,4 +1,4 @@
-import {ScopedElementsMixin} from '@open-wc/scoped-elements';
+import {ScopedElementsMixin} from '@dbp-toolkit/common';
 import {css, html} from 'lit';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {LoadingButton, Icon, MiniSpinner} from '@dbp-toolkit/common';
@@ -287,9 +287,6 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
     hasPermissions() {
         if (!this.auth.person || !Array.isArray(this.auth.person.roles)) return false;
-
-        // For backwards compat, remove once the backend is new enough
-        if (this.auth.person.roles.includes('ROLE_STAFF')) return true;
 
         if (this.auth.person.roles.includes('ROLE_SCOPE_LOCATION-CHECK-IN-GUEST')) return true;
 

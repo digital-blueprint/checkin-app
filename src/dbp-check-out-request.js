@@ -2,7 +2,7 @@ import {createInstance} from './i18n.js';
 import {css, html} from 'lit';
 import DBPCheckInLitElement from './dbp-check-in-lit-element';
 import {classMap} from 'lit/directives/class-map.js';
-import {ScopedElementsMixin} from '@open-wc/scoped-elements';
+import {ScopedElementsMixin} from '@dbp-toolkit/common';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {Icon, LoadingButton, MiniSpinner} from '@dbp-toolkit/common';
 import * as commonStyles from '@dbp-toolkit/common/styles';

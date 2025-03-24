@@ -30,7 +30,7 @@
 
     <!-- Loading spinner -->
     <script type="module">
-        import {Spinner} from '<%= getPrivateUrl('org_spinner.js') %>';
+        import {Spinner} from "<%= getPrivateUrl('org_spinner.js') %>";
         customElements.define('org-spinner', Spinner);
     </script>
 
@@ -54,7 +54,7 @@
             margin: 0;
         }
 
-        #spinner{
+        #spinner {
             height: 100vh;
             width: 100vw;
             display: flex;
@@ -62,7 +62,7 @@
             align-items: center;
         }
 
-        .light-theme{
+        .light-theme {
             --dbp-override-background: white;
             --dbp-override-content: #222120;
 
@@ -87,7 +87,7 @@
             --dbp-override-border: 1px solid #222120;
         }
 
-        .dark-theme{
+        .dark-theme {
             --dbp-override-background: #222120;
             --dbp-override-content: white;
 
@@ -133,7 +133,8 @@
     no-welcome-page
     html-overrides="global-override"
     themes='[{"class": "light-theme", "icon": "sun", "name": "Light Mode"},
-                {"class": "dark-theme", "icon": "night", "name": "Dark Mode"}]'
+        {"class": "dark-theme", "icon": "night", "name": "Dark Mode"}]'
+    app-name='<%= name %>'
 ><org-spinner id='spinner'></org-spinner>
 </<%= name %>>
 
