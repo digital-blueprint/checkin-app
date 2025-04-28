@@ -14,6 +14,7 @@ import {escapeRegExp, parseQRCode} from './utils.js';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-check-in-request.metadata.json';
+import {LoginStatus} from "@dbp-toolkit/auth/src/util.js";
 
 class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -530,6 +531,11 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this._('#qr-scanner').scrollIntoView({behavior: 'smooth', block: 'start'});
             }, 0);
         });
+    }
+
+    _onLoginClicked(e) {
+        this.sendSetPropertyEvent('requested-login-status', LoginStatus.LOGGED_IN);
+        e.preventDefault();
     }
 
     render() {

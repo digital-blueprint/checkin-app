@@ -10,6 +10,7 @@ import DBPCheckInLitElement from './dbp-check-in-lit-element';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-check-in-info.metadata.json';
+import {LoginStatus} from "@dbp-toolkit/auth/src/util.js";
 
 class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -50,6 +51,11 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
             }
         });
         super.update(changedProperties);
+    }
+
+    _onLoginClicked(e) {
+        this.sendSetPropertyEvent('requested-login-status', LoginStatus.LOGGED_IN);
+        e.preventDefault();
     }
 
     static get styles() {

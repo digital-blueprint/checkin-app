@@ -11,6 +11,7 @@ import {send} from '@dbp-toolkit/common/notification';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-check-out-request.metadata.json';
+import {LoginStatus} from "@dbp-toolkit/auth/src/util.js";
 
 class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -184,6 +185,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             button.stop();
             this.loading = false;
         }
+    }
+
+    _onLoginClicked(e) {
+        this.sendSetPropertyEvent('requested-login-status', LoginStatus.LOGGED_IN);
+        e.preventDefault();
     }
 
     static get styles() {
