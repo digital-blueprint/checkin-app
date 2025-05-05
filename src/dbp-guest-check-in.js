@@ -294,10 +294,10 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         return false;
     }
 
-    /*_onLoginClicked(e) {
+    _onLoginClicked(e) {
         this.sendSetPropertyEvent('requested-login-status', LoginStatus.LOGGED_IN);
         e.preventDefault();
-    }*/
+    }
 
     static get styles() {
         // language=css
