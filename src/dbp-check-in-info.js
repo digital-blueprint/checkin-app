@@ -10,7 +10,7 @@ import DBPCheckInLitElement from './dbp-check-in-lit-element';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-check-in-info.metadata.json';
-import {LoginStatus} from "@dbp-toolkit/auth/src/util.js";
+import {LoginStatus} from '@dbp-toolkit/auth/src/util.js';
 
 class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -88,7 +88,8 @@ class CheckInInfo extends ScopedElementsMixin(DBPCheckInLitElement) {
                 class="notification is-warning ${classMap({
                     hidden: this.isLoggedIn() || this.isLoading(),
                 })}">
-                ${i18n.t('error-login-message')} <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
+                ${i18n.t('error-login-message')}
+                <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
             </div>
 
             <div class="${classMap({hidden: !this.isLoggedIn() || this.isLoading()})}">

@@ -175,7 +175,7 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                 const selectId = e.target.id;
 
                 that.$(
-                    ".select2-search__field[aria-controls='select2-" + selectId + "-results']"
+                    ".select2-search__field[aria-controls='select2-" + selectId + "-results']",
                 ).each(function (key, value) {
                     value.focus();
                 });
@@ -207,7 +207,7 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                                 name: roomName,
                             },
                             bubbles: true,
-                        })
+                        }),
                     );
                 }
             })
@@ -247,7 +247,7 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                         that.generateOptionText(place),
                         identifier,
                         true,
-                        true
+                        true,
                     );
                     $this.attr('data-object', JSON.stringify(place));
                     $this.data('object', place);
@@ -263,7 +263,7 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                                 name: roomName,
                             },
                             bubbles: true,
-                        })
+                        }),
                     );
                 })
                 .catch((e) => {
@@ -341,7 +341,7 @@ export class CheckInPlaceSelect extends ScopedElementsMixin(AdapterLitElement) {
                     value: this.value,
                 },
                 bubbles: true,
-            })
+            }),
         );
     }
 

@@ -115,7 +115,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         };
         response = await this.httpGetAsync(
             this.entryPointUrl + '/checkin/check-in-actions',
-            options
+            options,
         );
         return response;
     }
@@ -146,7 +146,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
 
         response = await this.httpGetAsync(
             this.entryPointUrl + '/checkin/check-out-actions',
-            options
+            options,
         );
         return response;
     }
@@ -233,7 +233,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         locationName,
         category,
         refresh = false,
-        setAdditional = false
+        setAdditional = false,
     ) {
         const i18n = this._i18n;
 
@@ -243,7 +243,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                 i18n.t('check-in.error-title'),
                 i18n.t('check-in.error-body'),
                 locationHash,
-                seatNumber
+                seatNumber,
             );
             this.sendSetPropertyEvent('analytics-event', {
                 category: category,
@@ -260,7 +260,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             locationName,
             category,
             refresh,
-            setAdditional
+            setAdditional,
         );
     }
 
@@ -287,7 +287,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         locationName,
         category,
         refresh = false,
-        setAdditional = false
+        setAdditional = false,
     ) {
         const i18n = this._i18n;
 
@@ -368,7 +368,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     i18n.t('check-in.invalid-input-title'),
                     i18n.t('check-in.invalid-input-body'),
                     locationHash,
-                    seatNumber
+                    seatNumber,
                 );
                 this.sendSetPropertyEvent('analytics-event', {
                     category: category,
@@ -383,13 +383,13 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     i18n.t('check-in.no-permission-title'),
                     i18n.t('check-in.no-permission-body'),
                     locationHash,
-                    seatNumber
+                    seatNumber,
                 );
                 await this.sendErrorAnalyticsEvent(
                     category,
                     'CheckInFailed403',
                     locationName,
-                    responseData
+                    responseData,
                 );
                 break;
 
@@ -399,7 +399,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     i18n.t('check-in.hash-false-title'),
                     i18n.t('check-in.hash-false-body'),
                     locationHash,
-                    seatNumber
+                    seatNumber,
                 );
                 this.sendSetPropertyEvent('analytics-event', {
                     category: category,
@@ -414,12 +414,12 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     category,
                     'CheckInFailed424',
                     locationName,
-                    responseData
+                    responseData,
                 );
                 await this.checkErrorDescription(
                     responseBody['hydra:description'],
                     locationHash,
-                    seatNumber
+                    seatNumber,
                 );
                 break;
 
@@ -429,7 +429,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     i18n.t('check-in.error-title'),
                     i18n.t('check-in.error-body'),
                     locationHash,
-                    seatNumber
+                    seatNumber,
                 );
                 this.sendSetPropertyEvent('analytics-event', {
                     category: category,
@@ -451,7 +451,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     i18n.t('check-in.invalid-seatnr-title'),
                     i18n.t('check-in.invalid-seatnr-body'),
                     locationHash,
-                    seatNumber
+                    seatNumber,
                 );
                 break;
 
@@ -461,7 +461,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     i18n.t('check-in.no-seatnr-title'),
                     i18n.t('check-in.no-seatnr-body'),
                     locationHash,
-                    seatNumber
+                    seatNumber,
                 );
                 break;
 
@@ -471,7 +471,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     i18n.t('guest-check-in.no-seatnr-title'),
                     i18n.t('guest-check-in.no-seatnr-body'),
                     locationHash,
-                    seatNumber
+                    seatNumber,
                 );
                 break;
 
@@ -513,7 +513,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                 i18n.t('check-in.error-title'),
                 i18n.t('check-in.error-body'),
                 locationHash,
-                seatNumber
+                seatNumber,
             );
             return;
         }
@@ -524,7 +524,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         let checkActiveCheckin = checkInsArray.filter(
             (x) =>
                 x.location.identifier === locationHash &&
-                x.seatNumber === (seatNumber === '' ? null : parseInt(seatNumber))
+                x.seatNumber === (seatNumber === '' ? null : parseInt(seatNumber)),
         );
         if (checkActiveCheckin.length === 0) return -1;
 
@@ -543,14 +543,14 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         let atActualRoomCheckIn = checkInsArray.filter(
             (x) =>
                 x.location.identifier === locationHash &&
-                x.seatNumber === (seatNumber === '' ? null : parseInt(seatNumber))
+                x.seatNumber === (seatNumber === '' ? null : parseInt(seatNumber)),
         );
         if (atActualRoomCheckIn.length !== 1) {
             this.saveWrongHashAndNotify(
                 i18n.t('check-in.error-title'),
                 i18n.t('check-in.error-body'),
                 locationHash,
-                seatNumber
+                seatNumber,
             );
             return;
         }
@@ -600,7 +600,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                 locationName,
                 category,
                 true,
-                setAdditionals
+                setAdditionals,
             );
             return;
         }
@@ -619,7 +619,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                     locationName,
                     category,
                     true,
-                    setAdditionals
+                    setAdditionals,
                 );
                 return;
             }
@@ -636,7 +636,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
             'CheckInRequest',
             'RefreshFailed',
             locationName,
-            responseCheckout
+            responseCheckout,
         );
     }
 
@@ -670,7 +670,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
         locationName,
         category,
         that = null,
-        setAdditional = function () {}
+        setAdditional = function () {},
     ) {
         const i18n = this._i18n;
 
@@ -716,7 +716,7 @@ export default class DBPCheckInLitElement extends DBPLitElement {
                 category,
                 'CheckOutFailed',
                 this.checkedInRoom,
-                response
+                response,
             );
         }
     }

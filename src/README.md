@@ -13,13 +13,12 @@ You can use every activity alone. Take a look at our examples [here](https://git
 These attributes are available for all activities listed here:
 
 - `lang` (optional, default: `de`): set to `de` or `en` for German or English
-  - example `lang="de"`
+    - example `lang="de"`
 - `entry-point-url` (optional, default is the TU Graz entry point url): entry point url to access the api
-  - example `entry-point-url="https://api-dev.tugraz.at"`
+    - example `entry-point-url="https://api-dev.tugraz.at"`
 - `auth` object: you need to set that object property for the auth token
-  - example auth property: `{token: "THE_BEARER_TOKEN"}`
-  - note: most often this should be an attribute that is not set directly, but subscribed at a provider
-
+    - example auth property: `{token: "THE_BEARER_TOKEN"}`
+    - note: most often this should be an attribute that is not set directly, but subscribed at a provider
 
 ### dbp-check-in-request
 
@@ -48,16 +47,18 @@ Example:
 
 ```html
 <dbp-check-in-request lang="de">
-  <template slot="additional-information">
-    <dbp-translated subscribe="lang">
-      <div slot="de">
-        Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei email@email.com.
-      </div>
-      <div slot="en">
-        If you are a suspected COVID-19 case or a case of illness, please report this immediately to email@email.com.
-      </div>
-    </dbp-translated>
-  </template>
+    <template slot="additional-information">
+        <dbp-translated subscribe="lang">
+            <div slot="de">
+                Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich
+                bitte umgehend bei email@email.com.
+            </div>
+            <div slot="en">
+                If you are a suspected COVID-19 case or a case of illness, please report this
+                immediately to email@email.com.
+            </div>
+        </dbp-translated>
+    </template>
 </dbp-check-in-request>
 ```
 
@@ -125,7 +126,6 @@ Example:
 </dbp-report-risk>
 ```
 
-
 ### dbp-report-risk
 
 This is an information page on how to report a risk of infection. You can use it like this:
@@ -150,18 +150,22 @@ Example:
 
 ```html
 <dbp-report-risk lang="de">
-  <template slot="additional-information">
-    <dbp-translated subscribe="lang">
-      <div slot="de">
-        Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich bitte umgehend bei
-        <a target="_blank" href="mailto:your@email.address">your@email.address</a>!
-      </div>
-      <div slot="en">
-        If you are a suspected COVID-19 case or a case of illness, please report this immediately to
-        <a target="_blank" href="mailto:your@email.address">your@email.address</a>!
-      </div>
-    </dbp-translated>
-  </template>
+    <template slot="additional-information">
+        <dbp-translated subscribe="lang">
+            <div slot="de">
+                Sollten Sie als COVID-19-Verdachts- oder -Erkrankungsfall gelten, melden Sie sich
+                bitte umgehend bei
+                <a target="_blank" href="mailto:your@email.address">your@email.address</a>
+                !
+            </div>
+            <div slot="en">
+                If you are a suspected COVID-19 case or a case of illness, please report this
+                immediately to
+                <a target="_blank" href="mailto:your@email.address">your@email.address</a>
+                !
+            </div>
+        </dbp-translated>
+    </template>
 </dbp-report-risk>
 ```
 
@@ -169,18 +173,11 @@ Example:
 
 To ensure a uniform and responsive design these activities should occupy 100% width of the window when the activities width are under 768 px.
 
-
 ## Mandatory attributes
 
 If you are not using the `provider-root` attribute to "terminate" all provider attributes
 you need to manually add these attributes so that the topic will work properly:
 
 ```html
-<dbp-check-in
-    auth
-    requested-login-status
-    analytics-event
-    ...
->
-</dbp-check-in>
+<dbp-check-in auth requested-login-status analytics-event ...></dbp-check-in>
 ```

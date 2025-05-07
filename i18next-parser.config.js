@@ -1,4 +1,4 @@
-export default = {
+export default {
     createOldCatalogs: false,
     indentation: 4,
     keepRemoved: false,

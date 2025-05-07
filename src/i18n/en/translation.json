@@ -22,8 +22,8 @@
         "no-permission-title": "No permissions",
         "no-seatnr-body": "The specified room has no seats. Please register without a seat number.",
         "no-seatnr-title": "Room has no seats defined!",
-        "other-checkins-notification-body": "You have one more check-in at another location. <a href=\"check-out-request\" title=\"\" target=\"_self\" class=\"int-link-internal\"><span>Show all check-ins</span></a>",
-        "other-checkins-notification-body_plural": "You have {{count}} more check-ins at other locations. <a href=\"check-out-request\" title=\"\" target=\"_self\" class=\"int-link-internal\"><span>Show all check-ins</span></a>",
+        "other-checkins-notification-body_one": "You have one more check-in at another location. <a href=\"check-out-request\" title=\"\" target=\"_self\" class=\"int-link-internal\"><span>Show all check-ins</span></a>",
+        "other-checkins-notification-body_other": "You have {{count}} more check-ins at other locations. <a href=\"check-out-request\" title=\"\" target=\"_self\" class=\"int-link-internal\"><span>Show all check-ins</span></a>",
         "other-checkins-notification-title": "More check-ins found!",
         "qr-button-text": "Check-in with QR Code",
         "qr-false-body": "This code is not for this application. Please use a check-in QR code.",
@@ -54,8 +54,8 @@
         "loading-message": "Loading...",
         "no-checkins-message": "You are currently not checked-in at any location."
     },
-    "error-login-message": "Bitte melden Sie sich an, um diese Funktion nutzen zu können.",
     "error-login-link": "Zur Anmeldung",
+    "error-login-message": "Bitte melden Sie sich an, um diese Funktion nutzen zu können.",
     "guest-check-in": {
         "already-checkin-body": "You are already registered here. You will not be able to register here again until your current registration has expired.",
         "already-checkin-title": "Already checked in!",

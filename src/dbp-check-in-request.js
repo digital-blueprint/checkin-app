@@ -14,7 +14,7 @@ import {escapeRegExp, parseQRCode} from './utils.js';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-check-in-request.metadata.json';
-import {LoginStatus} from "@dbp-toolkit/auth/src/util.js";
+import {LoginStatus} from '@dbp-toolkit/auth/src/util.js';
 
 class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -135,9 +135,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
         that.checkedInEndTime = '';
         that.isRoomSelected = false;
 
-        let checkInPlaceSelect = that.shadowRoot.querySelector(
-            'dbp-check-in-place-select'
-        );
+        let checkInPlaceSelect = that.shadowRoot.querySelector('dbp-check-in-place-select');
         if (checkInPlaceSelect !== null) {
             checkInPlaceSelect.clear();
         }
@@ -167,7 +165,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.checkedInRoom,
             'CheckInRequest',
             this,
-            this.resetCheckin
+            this.resetCheckin,
         );
 
         return response;
@@ -197,7 +195,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     this.checkedInRoom,
                     'CheckInRequest',
                     false,
-                    true
+                    true,
                 );
             }
         } finally {
@@ -224,7 +222,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.checkedInRoom,
                 'CheckInRequest',
                 false,
-                true
+                true,
             );
         } finally {
             button.stop();
@@ -340,7 +338,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                     this.checkedInRoom,
                     'CheckInRequest',
                     false,
-                    true
+                    true,
                 );
             }
         });
@@ -398,7 +396,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 this.seatNr,
                 this.checkedInRoom,
                 'CheckInRequest',
-                true
+                true,
             );
         } finally {
             button.stop();
@@ -547,7 +545,8 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 class="notification is-warning ${classMap({
                     hidden: this.isLoggedIn() || this.isLoading(),
                 })}">
-                ${i18n.t('error-login-message')} <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
+                ${i18n.t('error-login-message')}
+                <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
             </div>
 
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
@@ -576,7 +575,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                         name1="qr-reader"
                         name2="manual"
                         name="${i18n.t('check-in.qr-button-text')} || ${i18n.t(
-                            'check-in.manually-button-text'
+                            'check-in.manually-button-text',
                         )}"
                         class="switch"
                         value1="${i18n.t('check-in.qr-button-text')}"
@@ -620,7 +619,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                         this.doRefreshSession(event);
                                     }}"
                                     title="${i18n.t(
-                                        'check-in.refresh-button-text'
+                                        'check-in.refresh-button-text',
                                     )}"></dbp-loading-button>
                             </div>
                         </div>
@@ -633,7 +632,7 @@ class CheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                                   summary="${i18n.t(this.status.summary)}"
                                   body="${i18n.t(
                                       this.status.body,
-                                      this.status.options
+                                      this.status.options,
                                   )}"></dbp-inline-notification>
                           `
                         : ``}

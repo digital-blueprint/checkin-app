@@ -29,7 +29,7 @@ git submodule update --init
 # install dependencies
 npm install
 
-# constantly build dist/bundle.js and run a local web-server on port 8001 
+# constantly build dist/bundle.js and run a local web-server on port 8001
 npm run watch
 
 # constantly build dist/bundle.js and run a local web-server on port 8001 using a custom assets directory assets_custom/
@@ -42,7 +42,6 @@ npm test
 Jump to<https://localhost:8001>, so you should get a Single Sign On login page.
 
 To enable building with custom assets, you need to provide your custom assets in the directory `assets_custom/checkin-app/assets/`. If you want to, you can also change this path in the file `rollup.config.js`. For more information, please visit the [dbp handbook page on custom assets](https://handbook.digital-blueprint.org/frameworks/frontend/dev/assets/#custom-assets).
-
 
 ## Using this app as pre-built package
 
@@ -83,6 +82,7 @@ To do this you can for example open a shell with `runuser -u www-data -- bash`.
 ## Activities
 
 This app has the following activities:
+
 - `dbp-check-in-request`
 - `dbp-check-out-request`
 - `dbp-guest-check-in`
@@ -96,19 +96,19 @@ You can find the documentation of these activities in the [check-in activities d
 
 You can add multiple attributes to the `<dbp-check-in>` tag.
 
-| attribute name | value | Link to description |
-|----------------|-------| ------------|
-| `provider-root` | Boolean | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
-| `lang`         | String | [language-select](https://github.com/digital-blueprint/toolkit/tree/main/packages/language-select#attributes) | 
-| `entry-point-url` | String | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
-| `keycloak-config` | Object | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
-| `base-path` | String | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
-| `src` | String | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes) |
-| `no-welcome-page` | Boolean | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)
-| `html-overrides` | String | [common](https://github.com/digital-blueprint/toolkit/tree/main/packages/common#overriding-slots-in-nested-web-components) |
-| `themes` | Array | [theme-switcher](https://github.com/digital-blueprint/toolkit/tree/main/packages/theme-switcher#attributes) |
-| `darkModeThemeOverride` | String | [theme-switcher](https://github.com/digital-blueprint/toolkit/tree/main/packages/theme-switcher#themes-attribute) |
-| `search-hash-string` | String | [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src#check-in-activities)
+| attribute name          | value   | Link to description                                                                                                        |
+| ----------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `provider-root`         | Boolean | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                           |
+| `lang`                  | String  | [language-select](https://github.com/digital-blueprint/toolkit/tree/main/packages/language-select#attributes)              |
+| `entry-point-url`       | String  | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                           |
+| `keycloak-config`       | Object  | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                           |
+| `base-path`             | String  | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                           |
+| `src`                   | String  | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                           |
+| `no-welcome-page`       | Boolean | [appshell](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell#attributes)                           |
+| `html-overrides`        | String  | [common](https://github.com/digital-blueprint/toolkit/tree/main/packages/common#overriding-slots-in-nested-web-components) |
+| `themes`                | Array   | [theme-switcher](https://github.com/digital-blueprint/toolkit/tree/main/packages/theme-switcher#attributes)                |
+| `darkModeThemeOverride` | String  | [theme-switcher](https://github.com/digital-blueprint/toolkit/tree/main/packages/theme-switcher#themes-attribute)          |
+| `search-hash-string`    | String  | [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src#check-in-activities)                  |
 
 #### Mandatory attributes
 
@@ -116,13 +116,7 @@ If you are not using the `provider-root` attribute to "terminate" all provider a
 you need to manually add these attributes so that the topic will work properly:
 
 ```html
-<dbp-check-in
-    auth
-    requested-login-status
-    analytics-event
-    ...
->
-</dbp-check-in>
+<dbp-check-in auth requested-login-status analytics-event ...></dbp-check-in>
 ```
 
 So a working example would be:
@@ -136,8 +130,8 @@ So a working example would be:
     html-overrides="global-override"
     src="/path/dbp-check-in.topic.metadata.json"
     base-path="/"
-    keycloak-config='{"url": "https://keyclock.url/auth", "realm": "your-realm", "clientId": "your-client-id", "silentCheckSsoRedirectUri": "/path/silent-check-sso.html"}'
-><dbp-loading-spinner></dbp-loading-spinner>
+    keycloak-config='{"url": "https://keyclock.url/auth", "realm": "your-realm", "clientId": "your-client-id", "silentCheckSsoRedirectUri": "/path/silent-check-sso.html"}'>
+    <dbp-loading-spinner></dbp-loading-spinner>
 </dbp-check-in>
 ```
 
@@ -155,4 +149,3 @@ For frontend design customizations, such as logo, colors, font, favicon, and mor
 
 These are common slots for the app-shell. You can find the documentation of these slots in the [app-shell documentation](https://github.com/digital-blueprint/toolkit/tree/main/packages/app-shell).
 For the app specific slots take a look at the [check-in activities](https://github.com/digital-blueprint/checkin-app/tree/main/src#check-in-activities).
-

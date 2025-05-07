@@ -11,7 +11,7 @@ import {send} from '@dbp-toolkit/common/notification';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-check-out-request.metadata.json';
-import {LoginStatus} from "@dbp-toolkit/auth/src/util.js";
+import {LoginStatus} from '@dbp-toolkit/auth/src/util.js';
 
 class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -92,7 +92,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
             await this.sendErrorAnalyticsEvent(
                 'CheckOutRequest',
                 'CheckOutFailed',
-                this.checkedInRoom
+                this.checkedInRoom,
             );
         } else {
             let response;
@@ -112,7 +112,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 locationHash,
                 seatNr,
                 locationName,
-                'CheckOutRequest'
+                'CheckOutRequest',
             );
         }
     }
@@ -265,7 +265,8 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                 class="notification is-warning ${classMap({
                     hidden: this.isLoggedIn() || this.isLoading(),
                 })}">
-                ${i18n.t('error-login-message')} <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
+                ${i18n.t('error-login-message')}
+                <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
             </div>
 
             <div class="control ${classMap({hidden: this.isLoggedIn() || !this.isLoading()})}">
@@ -309,7 +310,7 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                                             this.doCheckOut(event, i);
                                         }}"
                                         title="${i18n.t(
-                                            'check-out.button-text'
+                                            'check-out.button-text',
                                         )}"></dbp-loading-button>
                                 </div>
                             </div>
@@ -323,11 +324,11 @@ class CheckOut extends ScopedElementsMixin(DBPCheckInLitElement) {
                                             this.doRefreshSession(event, i);
                                         }}"
                                         title="${i18n.t(
-                                            'check-in.refresh-button-text'
+                                            'check-in.refresh-button-text',
                                         )}"></dbp-loading-button>
                                 </div>
                             </div>
-                        `
+                        `,
                     )}
                     <span
                         class="control ${classMap({

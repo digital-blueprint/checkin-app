@@ -13,7 +13,7 @@ import DBPCheckInLitElement from './dbp-check-in-lit-element';
 import * as CheckinStyles from './styles';
 import {Activity} from './activity.js';
 import metadata from './dbp-guest-check-in.metadata.json';
-import {LoginStatus} from "@dbp-toolkit/auth/src/util.js";
+import {LoginStatus} from '@dbp-toolkit/auth/src/util.js';
 
 class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
     constructor() {
@@ -172,7 +172,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
 
         response = await this.httpGetAsync(
             this.entryPointUrl + '/checkin/guest-check-in-actions',
-            options
+            options,
         );
 
         return response;
@@ -254,7 +254,7 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 i18n.t('check-in.error-title'),
                 i18n.t('check-in.error-body'),
                 locationHash,
-                seatNumber
+                seatNumber,
             );
             this.sendSetPropertyEvent('analytics-event', {
                 category: category,
@@ -267,14 +267,14 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
             this.guestEmail,
             this.locationHash,
             this.seatNr,
-            this.endTime
+            this.endTime,
         );
         await this.checkCheckinResponse(
             responseData,
             locationHash,
             seatNumber,
             locationName,
-            category
+            category,
         );
     }
 
@@ -395,7 +395,8 @@ class GuestCheckIn extends ScopedElementsMixin(DBPCheckInLitElement) {
                 class="notification is-warning ${classMap({
                     hidden: this.isLoggedIn() || this.isLoading() || !this.hasPermissions(),
                 })}">
-                ${i18n.t('error-login-message')} <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
+                ${i18n.t('error-login-message')}
+                <a href="#" @click="${this._onLoginClicked}">${i18n.t('error-login-link')}</a>
             </div>
 
             <div
