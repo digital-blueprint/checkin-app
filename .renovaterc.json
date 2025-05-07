@@ -9,6 +9,5 @@
         "enabled": true
     },
     "cloneSubmodules": true,
-    "packageRules": [
-    ]
+    "packageRules": []
 }
