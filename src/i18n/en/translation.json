@@ -54,8 +54,8 @@
         "loading-message": "Loading...",
         "no-checkins-message": "You are currently not checked-in at any location."
     },
-    "error-login-message": "Please log in to use this functionality.",
     "error-login-link": "Log in",
+    "error-login-message": "Please log in to use this functionality.",
     "guest-check-in": {
         "already-checkin-body": "You are already registered here. You will not be able to register here again until your current registration has expired.",
         "already-checkin-title": "Already checked in!",
