@@ -11,6 +11,8 @@
 A simple location based contact tracing system.
 With the possibilities to check in yourself or a guest manually or with an in-build QR-Code scanner.
 
+![Screenshot](./screenshot.jpg)
+
 ## Prerequisites
 
 - You need the [API server](https://gitlab.tugraz.at/dbp/relay/dbp-relay-server-template) running
